@@ -1,0 +1,80 @@
+import { ReportService } from './report.service';
+export declare class ReportController {
+    private readonly reportService;
+    constructor(reportService: ReportService);
+    findAllReportAdmin(header: Headers, startDate: Date, endDate: Date): Promise<{
+        name: string;
+        value: any;
+    }[]>;
+    findAllByAgentId(header: string, filter: string): Promise<{
+        depositCount: any;
+        depositAmount: any;
+        refundCount: any;
+        refundAmount: any;
+        reissueCount: any;
+        reissueAmount: any;
+        ticketCount: any;
+        ticketAmount: any;
+        voidCount: any;
+        voidAmount: any;
+        data: any;
+    }>;
+    findAllBydate(header: string, startDate: Date, endDate: Date): Promise<import("./report.model").AgentLedgerModel[]>;
+    findDashboard(header: Headers): Promise<{
+        AgentData: import("../agent/agent.model").AgentModel[];
+        SearchData: import("../searchhistory/searchhistory.model").SearchHistoryModel[];
+        TotalAgent: number;
+        TotalBookingData: import("../booking/booking.model").BookingModel[];
+        TotalBooking: number;
+        Cancelled: number;
+        Ticketed: number;
+        TotalDepositAmount: any;
+        TotalDepositData: import("../deposit/deposit.model").DepositModel[];
+        TotalDeposit: number;
+        TotalDepositApproved: number;
+        TotalDepositPending: number;
+        TotalDepositRejected: number;
+    }>;
+    findDashboardAgent(header: string): Promise<{
+        todaybooking: number;
+        todayticketed: number;
+        todaysearch: number;
+        todaysell: any;
+        todaydeposit: any;
+        totalsell: any;
+        totaldeposit: any;
+    }>;
+    findAllLedger(header: Headers, page?: number, type?: string, filter?: string, limit?: number): Promise<{
+        limit: number;
+        page: number;
+        totalpage: number;
+        totaldata: number;
+        report: {
+            depositCount: any;
+            depositAmount: any;
+            refundCount: any;
+            refundAmount: any;
+            reissueCount: any;
+            reissueAmount: any;
+            ticketCount: any;
+            ticketAmount: any;
+            voidCount: any;
+            voidAmount: any;
+        };
+        data: import("./report.model").AgentLedgerModel[];
+    }>;
+    findAllSales(header: Headers, page?: number, type?: string, filter?: string, limit?: number): Promise<{
+        limit: number;
+        page: number;
+        totalpage: number;
+        totaldata: number;
+        data: import("./report.model").AgentLedgerModel[];
+    }>;
+    findAllSalesAgent(header: Headers, page?: number, type?: string, filter?: string, limit?: number): Promise<{
+        limit: number;
+        page: number;
+        totalpage: number;
+        totaldata: number;
+        data: import("./report.model").AgentLedgerModel[];
+    }>;
+}

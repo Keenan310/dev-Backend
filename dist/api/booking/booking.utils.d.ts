@@ -1,0 +1,43 @@
+import { AgentModel } from '../agent/agent.model';
+import { BookingModel } from './booking.model';
+import { Repository } from 'typeorm';
+import { ActivitylogService } from '../activitylog/activitylog.service';
+export declare class BookingUtils {
+    private readonly bookingRepository;
+    private readonly activityLogService;
+    constructor(bookingRepository: Repository<BookingModel>, activityLogService: ActivitylogService);
+    bookingParser(agentdata: AgentModel, responseData: any, bookingDto: any, priceCheck: any): Promise<{
+        agentId: string;
+        bookingId: string;
+        system: string;
+        carrier_name: any;
+        carrier_code: any;
+        depfrom: any;
+        pnr: string;
+        airlinespnr: string;
+        refundable: any;
+        instant_payment: any;
+        issue_permit: any;
+        arrto: any;
+        triptype: any;
+        netfare: any;
+        grossfare: any;
+        comission: any;
+        status: string;
+        name: string;
+        email: string;
+        phone: string;
+        adultcount: number;
+        childcount: number;
+        infantcount: number;
+        totalpax: number;
+        flightdata: any;
+        totalsegment: number;
+        itenary: any;
+        timelimit: any;
+        flightdate: any;
+        companyname: string;
+    }>;
+    generatePNR(): Promise<string>;
+    generateAirlinesPNR(): Promise<string>;
+}

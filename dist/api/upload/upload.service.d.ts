@@ -1,0 +1,35 @@
+import * as AWS from 'aws-sdk';
+import { AgentModel } from '../agent/agent.model';
+import { Repository } from 'typeorm';
+import { AuthService } from '../auth/auth.service';
+import { BookingModel } from '../booking/booking.model';
+import { ReissueModel } from '../reissue/reissue.model';
+import { PromotionModel } from '../promotion/promotion.model';
+import { DepositModel } from '../deposit/deposit.model';
+import { PassengerModel } from '../passenger/passenger.model';
+import { MailService } from 'src/mail/mail.service';
+import { StaffModel } from '../staff/staff.model';
+import { AdminModel } from '../admin/admin.model';
+import { AuthUtils } from '../auth/auth.utils';
+export declare class UploadService {
+    private readonly s3;
+    private readonly agentRepository;
+    private readonly passengerRepository;
+    private readonly adminRepository;
+    private readonly bookingRepository;
+    private readonly staffRepository;
+    private readonly promotionRepository;
+    private readonly reissueRepository;
+    private readonly depositRepository;
+    private readonly authService;
+    private readonly mailService;
+    private readonly authUtils;
+    constructor(s3: AWS.S3, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, adminRepository: Repository<AdminModel>, bookingRepository: Repository<BookingModel>, staffRepository: Repository<StaffModel>, promotionRepository: Repository<PromotionModel>, reissueRepository: Repository<ReissueModel>, depositRepository: Repository<DepositModel>, authService: AuthService, mailService: MailService, authUtils: AuthUtils);
+    signup(agentDto: AgentModel, files: any): Promise<any>;
+    uploadAgentLogo(header: any, file: any, res: any): Promise<void>;
+    uploadAgentTradeLicense(agentUId: string, file: any, res: any): Promise<void>;
+    uploadPassengerDocs(docs: string, paxUId: string, file: any, res: any): Promise<void>;
+    addDeposit(header: any, amount: number, sender: string, receiver: string, paymentway: string, reference: string, file: any, res: any): Promise<void>;
+    addPromotion(header: any, category: string, file: any, res: any): Promise<void>;
+    uploadReissueTicketCopy(header: any, bookingUId: string, file: any, res: any): Promise<void>;
+}

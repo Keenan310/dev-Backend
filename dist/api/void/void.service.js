@@ -1,0 +1,153 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VoidService = void 0;
+const common_1 = require("@nestjs/common");
+const void_model_1 = require("./void.model");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const agent_model_1 = require("../agent/agent.model");
+const booking_model_1 = require("../booking/booking.model");
+const report_model_1 = require("../report/report.model");
+const auth_service_1 = require("../auth/auth.service");
+const axios_1 = require("axios");
+const mail_service_1 = require("../../mail/mail.service");
+let VoidService = class VoidService {
+    constructor(voidRepository, agentRepository, bookingRepository, agentLedgerRepository, authService, mailService) {
+        this.voidRepository = voidRepository;
+        this.agentRepository = agentRepository;
+        this.bookingRepository = bookingRepository;
+        this.agentLedgerRepository = agentLedgerRepository;
+        this.authService = authService;
+        this.mailService = mailService;
+    }
+    async createVoidRequest(header, bookingUId, createVoidDto) {
+        const agent = await this.authService.verifyAgentToken(header);
+        if (!agent) {
+            throw new common_1.UnauthorizedException();
+        }
+        const booking = await this.bookingRepository.findOne({ where: { uid: bookingUId } });
+        if (!booking) {
+            throw new common_1.NotFoundException("Booking not found");
+        }
+        const voidRes = await this.voidRepository.findOne({ where: { bookingId: booking.bookingId } });
+        if (voidRes) {
+            throw new common_1.HttpException('Booking Id Already exist in refund', axios_1.HttpStatusCode.Conflict);
+        }
+        if (booking.status === 'Ticketed') {
+            const RequestVoid = {
+                agentId: booking.agentId,
+                bookingId: booking.bookingId,
+                passengerdata: createVoidDto.passengerdata,
+                reason: createVoidDto.reason
+            };
+            await this.voidRepository.save(RequestVoid);
+            booking.status = 'Void Requested';
+            const bookingResponse = await this.bookingRepository.update(booking.id, booking);
+            if (bookingResponse.affected === 1) {
+                await this.mailService.voidRequestMail(booking);
+                return { message: booking.status + ' Successfully.' };
+            }
+            else {
+                return { message: 'Something error' };
+            }
+        }
+        else {
+            throw new common_1.NotFoundException(`Ticket Is Already In Another status ${booking.status}`);
+        }
+    }
+    async voidDecision(header, bookingUId, status, servicefee) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        const booking = await this.bookingRepository.findOne({ where: { uid: bookingUId } });
+        if (!booking) {
+            throw new common_1.NotFoundException("Booking not found");
+        }
+        const voidData = await this.voidRepository.findOne({ where: { bookingId: booking.bookingId } });
+        if (!voidData) {
+            throw new common_1.NotFoundException("Void data not found");
+        }
+        let bookingstatus;
+        if (status == 'accept') {
+            bookingstatus = 'Voided';
+        }
+        else if (status == 'reject') {
+            bookingstatus = 'Void Rejected';
+        }
+        if (booking.status === 'Void Requested' && status === 'accept') {
+            booking['status'] = bookingstatus;
+            const feeDetails = servicefee + ' BDT Void Charge. ' + voidData.passengerdata + ' By ' + verifyAdminId?.firstname;
+            const agentLedgerData1 = {
+                agentId: booking.agentId,
+                trxtype: 'fee',
+                amount: -(servicefee),
+                refId: booking.bookingId,
+                details: feeDetails,
+                companyname: booking.companyname
+            };
+            await this.agentLedgerRepository.save(agentLedgerData1);
+            const voidedAmount = Number(booking.netfare) - servicefee;
+            const details = voidedAmount + ' BDT Void. ' + voidData.passengerdata + ' with Service Fee: ' + servicefee + 'BDT' + ' By ' + verifyAdminId.firstname;
+            const agentLedgerData2 = {
+                agentId: booking.agentId,
+                trxtype: 'void',
+                amount: voidedAmount,
+                refId: booking.bookingId,
+                details: details,
+            };
+            await this.agentLedgerRepository.save(agentLedgerData2);
+            voidData.amount = voidedAmount;
+            voidData.servicefee = servicefee;
+            await this.voidRepository.update(voidData.id, voidData);
+            const bookingResponse = await this.bookingRepository.update(booking.id, booking);
+            if (bookingResponse.affected === 1) {
+                await this.mailService.voidResultMail(booking);
+                return { message: bookingstatus + ' Successfully.' };
+            }
+            else {
+                return { message: 'Something error' };
+            }
+        }
+        else if (booking.status === 'Void Requested' && status === 'reject') {
+            booking.status = bookingstatus;
+            const bookingResponse = await this.bookingRepository.update(booking.id, booking);
+            if (bookingResponse.affected === 1) {
+                return { message: bookingstatus + ' Successfully.' };
+            }
+            else {
+                return { message: 'Something error' };
+            }
+        }
+        else {
+            throw new common_1.HttpException("Ticket Is Already In Another status", axios_1.HttpStatusCode.BadRequest);
+        }
+    }
+};
+exports.VoidService = VoidService;
+exports.VoidService = VoidService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, typeorm_1.InjectRepository)(void_model_1.VoidModel)),
+    __param(1, (0, typeorm_1.InjectRepository)(agent_model_1.AgentModel)),
+    __param(2, (0, typeorm_1.InjectRepository)(booking_model_1.BookingModel)),
+    __param(3, (0, typeorm_1.InjectRepository)(report_model_1.AgentLedgerModel)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        auth_service_1.AuthService,
+        mail_service_1.MailService])
+], VoidService);
+//# sourceMappingURL=void.service.js.map

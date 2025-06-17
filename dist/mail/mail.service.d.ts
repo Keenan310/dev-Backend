@@ -1,0 +1,34 @@
+import { AgentModel } from 'src/api/agent/agent.model';
+import { BookingModel } from 'src/api/booking/booking.model';
+import { DepositModel } from 'src/api/deposit/deposit.model';
+import { AgentLedgerModel } from 'src/api/report/report.model';
+import { Repository } from 'typeorm';
+export declare class MailService {
+    private readonly agentRepository;
+    private transporter;
+    constructor(agentRepository: Repository<AgentModel>);
+    OTPSend(agentData: AgentModel, OTPcode: number): Promise<void>;
+    forgetPasswordMail(agentData: AgentModel): Promise<void>;
+    resetPasswordMail(agentData: AgentModel, newPassword: string): Promise<void>;
+    signUpMail(agentData: AgentModel): Promise<void>;
+    signUpDecisionMail(agentData: AgentModel): Promise<void>;
+    depositRequestApproved(depositData: DepositModel): Promise<void>;
+    depositRequest(depositData: DepositModel, file: any): Promise<void>;
+    depositRequestDecision(depositData: DepositModel): Promise<void>;
+    depositBonus(depositBonus: AgentLedgerModel): Promise<void>;
+    bookingConfirmation(bookingData: BookingModel): Promise<void>;
+    IssueRequestMail(bookingData: BookingModel): Promise<void>;
+    IssueRequestRejectMail(bookingData: BookingModel): Promise<void>;
+    partialPaymentMail(booking: any, partial: any): Promise<void>;
+    ticketedMail(): string;
+    voidRequestMail(bookingData: BookingModel): Promise<void>;
+    voidResultMail(bookingData: BookingModel): Promise<void>;
+    refundRequestMail(): Promise<string>;
+    refundQuotationMail(): Promise<string>;
+    refundQuotationDesicionMail(): Promise<string>;
+    refundQuotationResultMail(): Promise<string>;
+    reissueRequestMail(): Promise<string>;
+    reissueQuotationMail(): Promise<string>;
+    reissueQuotationDesicionMail(): Promise<string>;
+    reissueResultMail(): Promise<string>;
+}
