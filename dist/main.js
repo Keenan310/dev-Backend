@@ -13,8 +13,8 @@ async function bootstrap() {
     app.use((0, helmet_1.default)());
     app.use(compression({ filter: () => { return true; }, threshold: 0 }));
     const config = new swagger_1.DocumentBuilder()
-        .setTitle('Porject OTA API')
-        .setDescription('Project OTA API description')
+        .setTitle('Porject OTA API (Keenan Travel)')
+        .setDescription('Keenan Travel API description BY Project OTA')
         .setVersion('1.0.0')
         .addTag('flights-api-b2b')
         .addSecurityRequirements('token')

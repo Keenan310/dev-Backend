@@ -14,8 +14,8 @@ async function bootstrap() {
   app.use(compression({filter: () => { return true }, threshold: 0}));
 
   const config = new DocumentBuilder()
-    .setTitle('Porject OTA API')
-    .setDescription('Project OTA API description')
+    .setTitle('Porject OTA API (Keenan Travel)')
+    .setDescription('Keenan Travel API description BY Project OTA')
     .setVersion('1.0.0')
     .addTag('flights-api-b2b')
     .addSecurityRequirements('token')
