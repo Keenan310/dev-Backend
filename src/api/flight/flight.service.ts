@@ -17,6 +17,7 @@ import { FareRulesDto } from './dto/farerules-flight.dto';
 import { PartialPaymentModel } from '../partialpayment/entities/partialpayment.entity';
 import { AuthService } from '../auth/auth.service';
 import { SearchHistoryModel } from '../searchhistory/searchhistory.model';
+import { AlhindAPI } from './alhind.flights.service';
 
 @Injectable()
 export class FlightService {
@@ -41,6 +42,7 @@ export class FlightService {
       private readonly sabreService: SabreService,
       private readonly bookingService: BookingService,
       private readonly groupFareService: GroupfareService,
+      private readonly alhindAPI: AlhindAPI,
     ) {}
 
   async airsearch(header: any, flightDto :FlightSearchModel){
@@ -50,28 +52,30 @@ export class FlightService {
       throw new UnauthorizedException();
     }
 
-    const search = await this.searchHistoryRepository
-    .createQueryBuilder('search')
-    .where(`DATE(created_at) = CURDATE()`)
-    .andWhere('search.agentId = :agentId', { agentId: agent.agentId })
-    .getCount();
+    // const search = await this.searchHistoryRepository
+    // .createQueryBuilder('search')
+    // .where(`DATE(created_at) = CURDATE()`)
+    // .andWhere('search.agentId = :agentId', { agentId: agent.agentId })
+    // .getCount();
 
-    if(search > agent.searchlimit){
-      throw new NotFoundException(" Daily Search Limit Exceed");
-    }else{
-      const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
+    // if(search > agent.searchlimit){
+    //   throw new NotFoundException(" Daily Search Limit Exceed");
+    // }else{
+    //   const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
 
-      let Groupdata: any[] = [];
-      if (flightDto.segments.length === 1 && flightDto.adultcount === 1) {
-        Groupdata = await this.groupFareService.findBySearchFlight(flightDto);
-      }
+    //   let Groupdata: any[] = [];
+    //   if (flightDto.segments.length === 1 && flightDto.adultcount === 1) {
+    //     Groupdata = await this.groupFareService.findBySearchFlight(flightDto);
+    //   }
 
-      const combinedArray = Sabre_FlightData.concat(Groupdata);
-      combinedArray.sort((a, b) => a.NetFare - b.NetFare);
+    //   const combinedArray = Sabre_FlightData.concat(Groupdata);
+    //   combinedArray.sort((a, b) => a.NetFare - b.NetFare);
       
-      return combinedArray;
+    //   return combinedArray;
 
-    }
+    // }
+
+    return await this.alhindAPI.flights(agent, flightDto);
   }
 
   async airrevalidation(header: any, revalidationDto: any){

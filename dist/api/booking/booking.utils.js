@@ -19,7 +19,6 @@ const typeorm_1 = require("@nestjs/typeorm");
 const booking_model_1 = require("./booking.model");
 const typeorm_2 = require("typeorm");
 const activitylog_service_1 = require("../activitylog/activitylog.service");
-const supertest_1 = require("supertest");
 dotenv.config();
 let BookingUtils = class BookingUtils {
     constructor(bookingRepository, activityLogService) {
@@ -84,7 +83,7 @@ let BookingUtils = class BookingUtils {
             companyname: agentdata.company
         };
         const activityLog = { agentId: agentId, status: 'Hold', platform: 'B2B',
-            refId: bookingId, module: 'Booking', action_by: supertest_1.agent.name };
+            refId: bookingId, module: 'Booking', action_by: agentdata.name };
         await this.activityLogService.create(activityLog);
         return bookingData;
     }

@@ -93,6 +93,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], PartialpaymentController.prototype, "payduePartialPayment", null);
 exports.PartialpaymentController = PartialpaymentController = __decorate([
+    (0, swagger_1.ApiExcludeController)(),
     (0, swagger_1.ApiTags)('Partial Payment'),
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [partialpayment_service_1.PartialpaymentService])

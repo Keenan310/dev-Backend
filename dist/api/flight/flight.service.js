@@ -28,8 +28,9 @@ const booking_service_1 = require("../booking/booking.service");
 const partialpayment_entity_1 = require("../partialpayment/entities/partialpayment.entity");
 const auth_service_1 = require("../auth/auth.service");
 const searchhistory_model_1 = require("../searchhistory/searchhistory.model");
+const alhind_flights_service_1 = require("./alhind.flights.service");
 let FlightService = class FlightService {
-    constructor(bookingRepository, partialPaymentRepository, agentRepository, passengerRepository, reissueRepository, refundRepository, ticketingRepository, searchHistoryRepository, authService, sabreService, bookingService, groupFareService) {
+    constructor(bookingRepository, partialPaymentRepository, agentRepository, passengerRepository, reissueRepository, refundRepository, ticketingRepository, searchHistoryRepository, authService, sabreService, bookingService, groupFareService, alhindAPI) {
         this.bookingRepository = bookingRepository;
         this.partialPaymentRepository = partialPaymentRepository;
         this.agentRepository = agentRepository;
@@ -42,30 +43,14 @@ let FlightService = class FlightService {
         this.sabreService = sabreService;
         this.bookingService = bookingService;
         this.groupFareService = groupFareService;
+        this.alhindAPI = alhindAPI;
     }
     async airsearch(header, flightDto) {
         const agent = await this.authService.verifyAgentToken(header);
         if (!agent) {
             throw new common_1.UnauthorizedException();
         }
-        const search = await this.searchHistoryRepository
-            .createQueryBuilder('search')
-            .where(`DATE(created_at) = CURDATE()`)
-            .andWhere('search.agentId = :agentId', { agentId: agent.agentId })
-            .getCount();
-        if (search > agent.searchlimit) {
-            throw new common_1.NotFoundException(" Daily Search Limit Exceed");
-        }
-        else {
-            const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
-            let Groupdata = [];
-            if (flightDto.segments.length === 1 && flightDto.adultcount === 1) {
-                Groupdata = await this.groupFareService.findBySearchFlight(flightDto);
-            }
-            const combinedArray = Sabre_FlightData.concat(Groupdata);
-            combinedArray.sort((a, b) => a.NetFare - b.NetFare);
-            return combinedArray;
-        }
+        return await this.alhindAPI.flights(agent, flightDto);
     }
     async airrevalidation(header, revalidationDto) {
         const agent = await this.authService.verifyAgentToken(header);
@@ -493,6 +478,7 @@ exports.FlightService = FlightService = __decorate([
         auth_service_1.AuthService,
         sabre_flights_service_1.SabreService,
         booking_service_1.BookingService,
-        groupfare_service_1.GroupfareService])
+        groupfare_service_1.GroupfareService,
+        alhind_flights_service_1.AlhindAPI])
 ], FlightService);
 //# sourceMappingURL=flight.service.js.map

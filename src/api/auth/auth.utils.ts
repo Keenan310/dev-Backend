@@ -1,43 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import axios from "axios";
-import { createCipheriv, createDecipheriv, scrypt } from 'crypto';
 import * as dotenv from "dotenv";
-import { promisify } from "util";
+import * as bcrypt from 'bcrypt';
 dotenv.config()
 
 @Injectable()
 export class AuthUtils {
 
     async encrypt(password : string) {
-        const secret = process.env.PASSWORD_SECRET_KEY;
-        const iv = process.env.PASSWORD_SECRET_IV;
-        try {
-
-            const key = (await promisify(scrypt)(secret, 'salt', 32)) as Buffer;
-            const cipher = createCipheriv('aes-256-ctr', key, iv);
-
-            let encryptedPassword = cipher.update(password, 'utf8', 'hex');
-            encryptedPassword += cipher.final('hex');
-    
-            return encryptedPassword;
-        } catch (error) {
-            throw error;
-        }
-    }
-    
-    async decrypt(password : string) {
-        const secret = process.env.PASSWORD_SECRET_KEY;
-        const iv = process.env.PASSWORD_SECRET_IV;
-        try {
-            const key = (await promisify(scrypt)(secret, 'salt', 32)) as Buffer;
-            const decipher = createDecipheriv('aes-256-ctr', key, iv);
-            let decryptedPassword = decipher.update(password, 'hex', 'utf8');
-            decryptedPassword += decipher.final('utf8');
-    
-            return decryptedPassword;
-        } catch (error) {
-            throw error;
-        }
+        const saltRounds = 10;
+        return await bcrypt.hash(password, saltRounds);
     }
 
     async getPublicIp(): Promise<string> {

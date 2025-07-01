@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { extname } from 'path';
 import * as AWS from 'aws-sdk';
+import * as bcrypt from 'bcrypt';
 import {DoSpacesServiceLib} from './upload.provider.service';
 import { v4 as uuidv4 } from 'uuid';
 import { AgentModel } from '../agent/agent.model';
@@ -13,7 +14,6 @@ import { PromotionModel } from '../promotion/promotion.model';
 import { DepositModel } from '../deposit/deposit.model';
 import * as dotenv from "dotenv"
 import { PassengerModel } from '../passenger/passenger.model';
-import { EventsGateway } from 'src/gateway/gateway';
 import { MailService } from 'src/mail/mail.service';
 import { StaffModel } from '../staff/staff.model';
 import { AdminModel } from '../admin/admin.model';
@@ -75,7 +75,7 @@ export class UploadService {
         agentId = 'POA1000';
       }
 
-      const hashedPassword = await this.authUtils.encrypt(agentDto.password);
+      const hashedPassword = await bcrypt.hash(agentDto.password, 9);
       agentDto.password = hashedPassword;
       agentDto.agentId = agentId;
       agentDto.status = 'pending';

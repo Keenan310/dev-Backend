@@ -1,6 +1,7 @@
 
 import { HttpException, HttpStatus, Injectable, NotAcceptableException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { MoreThan, Repository } from 'typeorm';
 import { AgentModel } from '../agent/agent.model';
 import { AuthModel, OTPModel } from './auth.model';
@@ -61,8 +62,8 @@ export class AuthService {
     const existStaff = await this.staffRepository.findOne({where: { email: authDto.email }});
 
     if(existAgent){
-      const hashedPassword = await this.authUtils.encrypt(authDto.password);
-      if (existAgent.password === hashedPassword) {
+      const isMatch = await bcrypt.compare(authDto.password, existAgent.password);
+      if (isMatch) {
 
         delete existAgent.password;
         existAgent['usertype'] = 'agent';
@@ -84,8 +85,8 @@ export class AuthService {
         throw new HttpException('Agent Wrong password', HttpStatus.UNAUTHORIZED);
       }
     }else if(existStaff){
-      const hashedPassword = await this.authUtils.encrypt(authDto.password);
-      if (existStaff.password === hashedPassword) {
+      const isMatch = await bcrypt.compare(authDto.password, existStaff.password);;
+      if (isMatch) {
         const existAgent = await this.agentRepository.findOne({where: { agentId: existStaff.agentId }});
         delete existStaff.password;
         delete existAgent.password;
@@ -111,7 +112,7 @@ export class AuthService {
         return {access_token: token}
 
       }else{
-        throw new HttpException('Agent Wrong password', HttpStatus.UNAUTHORIZED);
+        throw new HttpException('Staff Wrong password', HttpStatus.UNAUTHORIZED);
       }
 
     }else{
@@ -203,7 +204,7 @@ export class AuthService {
         throw new UnauthorizedException();
       }
 
-      const decodedToken = jwt.verify(token, process.env.JWT_SECREATE_KEY);
+      jwt.verify(token, process.env.JWT_SECREATE_KEY);
       const adminToken = this.jwtService.decode(token);
       const adminData = await this.adminRepository.findOne({where : {uid: adminToken.adminUId}});
 
@@ -227,7 +228,7 @@ export class AuthService {
     try {
       const token = header.authorization.replace('Bearer ', '');
 
-      const decodedToken = jwt.verify(token, process.env.JWT_SECREATE_KEY);
+      jwt.verify(token, process.env.JWT_SECREATE_KEY);
       const agentToken = this.jwtService.decode(token);
       const agentData = await this.agentRepository.findOne({ where: { uid: agentToken.uid } });
 

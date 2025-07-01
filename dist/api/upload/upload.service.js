@@ -16,6 +16,7 @@ exports.UploadService = void 0;
 const common_1 = require("@nestjs/common");
 const path_1 = require("path");
 const AWS = require("aws-sdk");
+const bcrypt = require("bcrypt");
 const upload_provider_service_1 = require("./upload.provider.service");
 const uuid_1 = require("uuid");
 const agent_model_1 = require("../agent/agent.model");
@@ -73,7 +74,7 @@ let UploadService = class UploadService {
         else {
             agentId = 'POA1000';
         }
-        const hashedPassword = await this.authUtils.encrypt(agentDto.password);
+        const hashedPassword = await bcrypt.hash(agentDto.password, 9);
         agentDto.password = hashedPassword;
         agentDto.agentId = agentId;
         agentDto.status = 'pending';

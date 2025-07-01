@@ -210,7 +210,7 @@ export class AgentService {
     
     if (!agent) {throw new NotFoundException('Agent not found')}
 
-    agent['password'] = await this.authUtils.decrypt(agent.password );
+
     const agentLedger = await this.agentLedgerRepository
     .createQueryBuilder()
     .select('SUM(amount)', 'sum')

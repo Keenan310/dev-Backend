@@ -14,7 +14,6 @@ import { AgentLedgerModel } from '../report/report.model';
 import { AirBookingModel } from '../flight/dto/booking-flight.dto';
 import { TravellerService } from '../traveller/traveller.service';
 import { BookingUtils } from './booking.utils';
-import { agent } from 'supertest';
 
 @Injectable()
 export class BookingService {
@@ -218,6 +217,7 @@ export class BookingService {
     let queryBuilder = this.bookingRepository.createQueryBuilder("booking");
     queryBuilder.select([
       'booking.bookingId',
+      'booking.system',
       'booking.status',
       'booking.name',
       'booking.totalpax',
@@ -286,6 +286,7 @@ export class BookingService {
     let queryBuilder = this.bookingRepository.createQueryBuilder("booking");
     queryBuilder.select([
       'booking.bookingId',
+      'booking.system',
       'booking.status',
       'booking.name',
       'booking.totalpax',

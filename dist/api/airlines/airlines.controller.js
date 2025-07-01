@@ -46,6 +46,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AirlinesController.prototype, "updatemarkup", null);
 exports.AirlinesController = AirlinesController = __decorate([
+    (0, swagger_1.ApiExcludeController)(),
     (0, swagger_1.ApiTags)("Admin Module"),
     (0, common_1.Controller)(),
     (0, swagger_1.ApiBearerAuth)(),

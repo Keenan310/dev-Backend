@@ -189,6 +189,7 @@ let BookingService = class BookingService {
         let queryBuilder = this.bookingRepository.createQueryBuilder("booking");
         queryBuilder.select([
             'booking.bookingId',
+            'booking.system',
             'booking.status',
             'booking.name',
             'booking.totalpax',
@@ -244,6 +245,7 @@ let BookingService = class BookingService {
         let queryBuilder = this.bookingRepository.createQueryBuilder("booking");
         queryBuilder.select([
             'booking.bookingId',
+            'booking.system',
             'booking.status',
             'booking.name',
             'booking.totalpax',

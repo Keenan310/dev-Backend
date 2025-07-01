@@ -9,38 +9,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthUtils = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = require("axios");
-const crypto_1 = require("crypto");
 const dotenv = require("dotenv");
-const util_1 = require("util");
+const bcrypt = require("bcrypt");
 dotenv.config();
 let AuthUtils = class AuthUtils {
     async encrypt(password) {
-        const secret = process.env.PASSWORD_SECRET_KEY;
-        const iv = process.env.PASSWORD_SECRET_IV;
-        try {
-            const key = (await (0, util_1.promisify)(crypto_1.scrypt)(secret, 'salt', 32));
-            const cipher = (0, crypto_1.createCipheriv)('aes-256-ctr', key, iv);
-            let encryptedPassword = cipher.update(password, 'utf8', 'hex');
-            encryptedPassword += cipher.final('hex');
-            return encryptedPassword;
-        }
-        catch (error) {
-            throw error;
-        }
-    }
-    async decrypt(password) {
-        const secret = process.env.PASSWORD_SECRET_KEY;
-        const iv = process.env.PASSWORD_SECRET_IV;
-        try {
-            const key = (await (0, util_1.promisify)(crypto_1.scrypt)(secret, 'salt', 32));
-            const decipher = (0, crypto_1.createDecipheriv)('aes-256-ctr', key, iv);
-            let decryptedPassword = decipher.update(password, 'hex', 'utf8');
-            decryptedPassword += decipher.final('utf8');
-            return decryptedPassword;
-        }
-        catch (error) {
-            throw error;
-        }
+        const saltRounds = 10;
+        return await bcrypt.hash(password, saltRounds);
     }
     async getPublicIp() {
         try {

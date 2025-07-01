@@ -14,6 +14,7 @@ import { FareRulesDto } from './dto/farerules-flight.dto';
 import { PartialPaymentModel } from '../partialpayment/entities/partialpayment.entity';
 import { AuthService } from '../auth/auth.service';
 import { SearchHistoryModel } from '../searchhistory/searchhistory.model';
+import { AlhindAPI } from './alhind.flights.service';
 export declare class FlightService {
     private readonly bookingRepository;
     private readonly partialPaymentRepository;
@@ -27,8 +28,9 @@ export declare class FlightService {
     private readonly sabreService;
     private readonly bookingService;
     private readonly groupFareService;
-    constructor(bookingRepository: Repository<BookingModel>, partialPaymentRepository: Repository<PartialPaymentModel>, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, reissueRepository: Repository<ReissueModel>, refundRepository: Repository<RefundModel>, ticketingRepository: Repository<TicketModel>, searchHistoryRepository: Repository<SearchHistoryModel>, authService: AuthService, sabreService: SabreService, bookingService: BookingService, groupFareService: GroupfareService);
-    airsearch(header: any, flightDto: FlightSearchModel): Promise<any[]>;
+    private readonly alhindAPI;
+    constructor(bookingRepository: Repository<BookingModel>, partialPaymentRepository: Repository<PartialPaymentModel>, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, reissueRepository: Repository<ReissueModel>, refundRepository: Repository<RefundModel>, ticketingRepository: Repository<TicketModel>, searchHistoryRepository: Repository<SearchHistoryModel>, authService: AuthService, sabreService: SabreService, bookingService: BookingService, groupFareService: GroupfareService, alhindAPI: AlhindAPI);
+    airsearch(header: any, flightDto: FlightSearchModel): Promise<any>;
     airrevalidation(header: any, revalidationDto: any): Promise<any>;
     pricecheck(agentUId: string, revalidationDto: any): Promise<any[] | "Other System">;
     airbooking(header: any, bookingDto: AirBookingModel): Promise<({

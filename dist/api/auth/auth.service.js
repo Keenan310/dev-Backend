@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const bcrypt = require("bcrypt");
 const typeorm_2 = require("typeorm");
 const agent_model_1 = require("../agent/agent.model");
 const auth_model_1 = require("./auth.model");
@@ -59,8 +60,8 @@ let AuthService = class AuthService {
         const existAgent = await this.agentRepository.findOne({ where: { email: authDto.email } });
         const existStaff = await this.staffRepository.findOne({ where: { email: authDto.email } });
         if (existAgent) {
-            const hashedPassword = await this.authUtils.encrypt(authDto.password);
-            if (existAgent.password === hashedPassword) {
+            const isMatch = await bcrypt.compare(authDto.password, existAgent.password);
+            if (isMatch) {
                 delete existAgent.password;
                 existAgent['usertype'] = 'agent';
                 existAgent["staffdata"] = [];
@@ -81,8 +82,9 @@ let AuthService = class AuthService {
             }
         }
         else if (existStaff) {
-            const hashedPassword = await this.authUtils.encrypt(authDto.password);
-            if (existStaff.password === hashedPassword) {
+            const isMatch = await bcrypt.compare(authDto.password, existStaff.password);
+            ;
+            if (isMatch) {
                 const existAgent = await this.agentRepository.findOne({ where: { agentId: existStaff.agentId } });
                 delete existStaff.password;
                 delete existAgent.password;
@@ -107,7 +109,7 @@ let AuthService = class AuthService {
                 return { access_token: token };
             }
             else {
-                throw new common_1.HttpException('Agent Wrong password', common_1.HttpStatus.UNAUTHORIZED);
+                throw new common_1.HttpException('Staff Wrong password', common_1.HttpStatus.UNAUTHORIZED);
             }
         }
         else {
@@ -174,7 +176,7 @@ let AuthService = class AuthService {
             if (!token) {
                 throw new common_1.UnauthorizedException();
             }
-            const decodedToken = jwt.verify(token, process.env.JWT_SECREATE_KEY);
+            jwt.verify(token, process.env.JWT_SECREATE_KEY);
             const adminToken = this.jwtService.decode(token);
             const adminData = await this.adminRepository.findOne({ where: { uid: adminToken.adminUId } });
             if (!adminData) {
@@ -192,7 +194,7 @@ let AuthService = class AuthService {
     async verifyAgentToken(header) {
         try {
             const token = header.authorization.replace('Bearer ', '');
-            const decodedToken = jwt.verify(token, process.env.JWT_SECREATE_KEY);
+            jwt.verify(token, process.env.JWT_SECREATE_KEY);
             const agentToken = this.jwtService.decode(token);
             const agentData = await this.agentRepository.findOne({ where: { uid: agentToken.uid } });
             if (!agentData) {

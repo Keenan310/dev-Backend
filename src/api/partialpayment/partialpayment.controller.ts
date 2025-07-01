@@ -1,8 +1,9 @@
 import { Controller, Get, Headers, Param, NotAcceptableException, Query, Patch, Body } from '@nestjs/common';
 import { PartialpaymentService } from './partialpayment.service';
-import { ApiBearerAuth, ApiHeader, ApiHeaders, ApiQuery, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeController, ApiHeader, ApiHeaders, ApiQuery, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { UpdatePartialpaymentDto } from './dto/update-partialpayment.dto';
 
+@ApiExcludeController()
 @ApiTags('Partial Payment')
 @Controller()
 export class PartialpaymentController {

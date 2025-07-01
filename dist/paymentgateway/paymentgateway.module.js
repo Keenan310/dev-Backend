@@ -9,14 +9,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentgatewayModule = void 0;
 const common_1 = require("@nestjs/common");
 const paymentgateway_service_1 = require("./paymentgateway.service");
-const nagad_module_1 = require("./nagad/nagad.module");
-const bkash_module_1 = require("./bkash/bkash.module");
 let PaymentgatewayModule = class PaymentgatewayModule {
 };
 exports.PaymentgatewayModule = PaymentgatewayModule;
 exports.PaymentgatewayModule = PaymentgatewayModule = __decorate([
     (0, common_1.Module)({
-        imports: [nagad_module_1.NagadModule, bkash_module_1.BkashModule],
+        imports: [],
         controllers: [],
         providers: [paymentgateway_service_1.PaymentgatewayService],
     })

@@ -83,6 +83,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AirportsController.prototype, "remove", null);
 exports.AirportsController = AirportsController = __decorate([
+    (0, swagger_1.ApiExcludeController)(),
     (0, swagger_1.ApiTags)("Airports Module"),
     (0, common_1.Controller)('admin/airports'),
     __metadata("design:paramtypes", [airports_service_1.AirportsService])

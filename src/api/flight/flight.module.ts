@@ -35,6 +35,7 @@ import { PreFlightController } from './pre-flight.controller';
 import { PostFlightController } from './post-flight.controller';
 import { ActivitylogService } from '../activitylog/activitylog.service';
 import { ActivityLogModel } from '../activitylog/entities/activitylog.entity';
+import { AlhindAPI } from './alhind.flights.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature(
@@ -44,6 +45,6 @@ import { ActivityLogModel } from '../activitylog/entities/activitylog.entity';
   controllers: [PreFlightController, PostFlightController],
   providers: [FlightService, TravellerService , GroupfareService, SabreService, AirlinesService, BookingUtils,
     MailService, AirportsService, BookingService , PassengerService, AuthService, JwtService, SabreUtils,
-    SearchhistoryService, AuthUtils, ActivitylogService]
+    SearchhistoryService, AuthUtils, ActivitylogService, AlhindAPI]
 })
 export class FlightModule {}

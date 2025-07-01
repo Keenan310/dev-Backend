@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Headers } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Headers } from '@nestjs/common';
 import { AirlinesService } from './airlines.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeController, ApiTags } from '@nestjs/swagger';
 import { AirlinesUpdateModel } from './airlines.model';
 
+@ApiExcludeController()
 @ApiTags("Admin Module")
 @Controller()
 @ApiBearerAuth()

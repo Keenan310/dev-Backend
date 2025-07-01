@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { AirportsService } from './airports.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
 import { AirportsModel, AirportsModelUpdate } from './airports.model';
 
-
+@ApiExcludeController()
 @ApiTags("Airports Module")
 @Controller('admin/airports')
 export class AirportsController {
