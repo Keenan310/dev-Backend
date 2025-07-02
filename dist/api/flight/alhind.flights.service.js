@@ -100,8 +100,8 @@ let AlhindAPI = class AlhindAPI {
             return this.flightUtils(result, agent, flightDto);
         }
         catch (err) {
-            console.log(err);
-            return err.data;
+            console.log(err.response.data);
+            return err.response.data;
         }
     }
     async flightUtils(result, agentdata, flighDto) {
@@ -137,18 +137,26 @@ let AlhindAPI = class AlhindAPI {
             else if (flighDto?.segments?.length > 1) {
                 TripType = 'Return';
             }
+            const AllFareWithPrice = [];
             for (const flights of AllFlights) {
+                for (const flight of flights?.FlightFares) {
+                    flights['PriceBreakDown'] = flight;
+                    delete flights.FlightFares;
+                    AllFareWithPrice.push(flights);
+                }
+            }
+            for (const flights of AllFareWithPrice) {
                 const ValidatingCarrier = flights?.TicketingCarrier;
                 const airlineData = await this.airlinesService.getAirlines(ValidatingCarrier);
                 const FareType = flights?.ProviderCode;
-                const AllPassenger = [];
+                const AllPassenger = flights.PriceBreakDown?.Fares;
                 const CarrierName = airlineData?.marketing_name || 'N/F';
                 const Instant_Payment = false;
                 const IssuePermit = false;
                 const IsBookable = true;
-                const equivalentAmount = 0;
-                const Taxes = 0;
-                let TotalFare = 0;
+                const equivalentAmount = flights.PriceBreakDown?.AprxTotalBaseFare;
+                const Taxes = flights.PriceBreakDown?.AprxTotalTax;
+                let TotalFare = flights.PriceBreakDown?.TotalAmount;
                 const adminMarkUpType = agentdata?.markuptype;
                 const adminMarkUp = agentdata?.markup;
                 let adminMarkUpAmount = 0;
@@ -186,28 +194,52 @@ let AlhindAPI = class AlhindAPI {
                 if (NetFare > TotalFare) {
                     TotalFare = NetFare;
                 }
-                const PartialAmount = NetFare * 0.30;
-                const Refundable = true;
+                const PartialAmount = 0;
+                const Refundable = flights.PriceBreakDown?.RefundableInfo;
                 let TimeLimit = '';
+                const BrandName = flights.PriceBreakDown?.FareName;
                 let cabinclass = 'Y';
-                let Class;
-                switch (cabinclass) {
-                    case 'P':
-                        Class = "First";
-                        break;
-                    case 'J':
-                        Class = "Premium Business";
-                        break;
-                    case 'C':
-                        Class = "Business";
-                        break;
-                    case 'S':
-                        Class = "Premium Economy";
-                        break;
-                    case 'Y':
-                        Class = "Economy";
-                        break;
-                }
+                let Class = flights.PriceBreakDown?.FareName;
+                const PriceBreakDown = AllPassenger?.map(allPassenger => {
+                    const PaxType = allPassenger?.PTC;
+                    let paxCount = 0;
+                    if (PaxType === 'ADT') {
+                        paxCount = flighDto.adultcount;
+                    }
+                    else if (PaxType === 'CHD') {
+                        paxCount = flighDto.childcount;
+                    }
+                    else if (PaxType === 'INF') {
+                        paxCount = flighDto.childcount;
+                    }
+                    const totalTaxAmount = allPassenger?.Tax;
+                    const PaxequivalentAmount = allPassenger?.BaseFare;
+                    const PaxtotalFare = PaxequivalentAmount + totalTaxAmount;
+                    const BaggageAllowance = flights?.FlightLegs;
+                    const Baggage = BaggageAllowance?.map(baggageAllowance => {
+                        const BagAirlineCode = baggageAllowance?.airlineCode;
+                        const AllowanceRef = '';
+                        let Allowance = '';
+                        if (AllowanceRef) {
+                            Allowance = AllowanceRef + ' Piece';
+                        }
+                        else {
+                            Allowance = AllowanceRef + ' KG';
+                        }
+                        return {
+                            Airline: BagAirlineCode,
+                            Allowance: Allowance,
+                        };
+                    });
+                    let i = 0;
+                    return {
+                        PaxType: PaxType,
+                        BaseFare: PaxequivalentAmount,
+                        Taxes: totalTaxAmount,
+                        TotalFare: PaxtotalFare,
+                        PaxCount: paxCount,
+                    };
+                });
                 const AllLegsInfo = [];
                 const AllLegsData = flights?.FlightLegs;
                 let i = 0;
@@ -270,7 +302,7 @@ let AlhindAPI = class AlhindAPI {
                     Comission: ComissionPolicy,
                     TimeLimit: TimeLimit,
                     Refundable: Refundable,
-                    PriceBreakDown: [],
+                    PriceBreakDown: PriceBreakDown,
                     AllLegsInfo: AllLegsInfo
                 });
             }
