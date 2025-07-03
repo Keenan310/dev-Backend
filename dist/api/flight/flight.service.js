@@ -25,14 +25,12 @@ const refund_model_1 = require("../refund/refund.model");
 const agent_model_1 = require("../agent/agent.model");
 const groupfare_service_1 = require("../groupfare/groupfare.service");
 const booking_service_1 = require("../booking/booking.service");
-const partialpayment_entity_1 = require("../partialpayment/entities/partialpayment.entity");
 const auth_service_1 = require("../auth/auth.service");
 const searchhistory_model_1 = require("../searchhistory/searchhistory.model");
 const alhind_flights_service_1 = require("./alhind.flights.service");
 let FlightService = class FlightService {
-    constructor(bookingRepository, partialPaymentRepository, agentRepository, passengerRepository, reissueRepository, refundRepository, ticketingRepository, searchHistoryRepository, authService, sabreService, bookingService, groupFareService, alhindAPI) {
+    constructor(bookingRepository, agentRepository, passengerRepository, reissueRepository, refundRepository, ticketingRepository, searchHistoryRepository, authService, sabreService, bookingService, groupFareService, alhindAPI) {
         this.bookingRepository = bookingRepository;
-        this.partialPaymentRepository = partialPaymentRepository;
         this.agentRepository = agentRepository;
         this.passengerRepository = passengerRepository;
         this.reissueRepository = reissueRepository;
@@ -50,7 +48,9 @@ let FlightService = class FlightService {
         if (!agent) {
             throw new common_1.UnauthorizedException();
         }
-        return await this.alhindAPI.flights(agent, flightDto);
+        const AlhindData = await this.alhindAPI.flights(agent, flightDto);
+        AlhindData.sort((a, b) => a.NetFare - b.NetFare);
+        return AlhindData;
     }
     async airrevalidation(header, revalidationDto) {
         const agent = await this.authService.verifyAgentToken(header);
@@ -269,17 +269,7 @@ let FlightService = class FlightService {
         if (!agent) {
             throw new common_1.UnauthorizedException();
         }
-        const partialpaymentdata = await this.partialPaymentRepository.findOne({ where: { uid: bookingUId } });
         let booking;
-        if (partialpaymentdata) {
-            booking = await this.bookingRepository.findOne({ where: { bookingId: partialpaymentdata.bookingId } });
-        }
-        else if (!partialpaymentdata) {
-            booking = await this.bookingRepository.findOne({ where: { uid: bookingUId } });
-        }
-        else if (!booking) {
-            throw new common_1.HttpException("BookingUId not found", axios_1.HttpStatusCode.NotFound);
-        }
         const passengerdata = await this.passengerRepository.find({ where: { bookingId: booking.bookingId } });
         if (booking.system === 'Sabre') {
             let bookingresponse = await this.sabreService.airretrieve(booking.pnr);
@@ -297,7 +287,6 @@ let FlightService = class FlightService {
             const ticketdetails = await this.ticketingRepository.find({ where: { bookingId: booking.bookingId } });
             const refunddata = await this.refundRepository.findOne({ where: { bookingId: booking.bookingId } });
             const reissuedata = await this.reissueRepository.find({ where: { bookingId: booking.bookingId } });
-            const pp = await this.partialPaymentRepository.findOne({ where: { bookingId: booking.bookingId } });
             const customResponseData = {
                 bookingdata: booking,
                 sabredata: bookingresponse,
@@ -305,7 +294,7 @@ let FlightService = class FlightService {
                 refunddata: refunddata,
                 reissuedata: reissuedata,
                 ticketdetails: ticketdetails,
-                partialpaymentdata: partialpaymentdata || pp
+                partialpaymentdata: ''
             };
             return customResponseData;
         }
@@ -313,7 +302,6 @@ let FlightService = class FlightService {
             const ticketdetails = await this.ticketingRepository.find({ where: { bookingId: booking.bookingId } });
             const refunddata = await this.refundRepository.findOne({ where: { bookingId: booking.bookingId } });
             const reissuedata = await this.reissueRepository.find({ where: { bookingId: booking.bookingId } });
-            const pp = await this.partialPaymentRepository.findOne({ where: { bookingId: booking.bookingId } });
             const customResponseData = {
                 bookingdata: booking,
                 sabredata: [],
@@ -321,7 +309,7 @@ let FlightService = class FlightService {
                 refunddata: refunddata,
                 reissuedata: reissuedata,
                 ticketdetails: ticketdetails,
-                partialpaymentdata: partialpaymentdata || pp
+                partialpaymentdata: ''
             };
             return customResponseData;
         }
@@ -344,18 +332,10 @@ let FlightService = class FlightService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        const partialpaymentdata = await this.partialPaymentRepository.findOne({ where: { uid: bookingUId } });
-        let bookingdata;
-        if (partialpaymentdata) {
-            bookingdata = await this.bookingRepository.findOne({ where: { bookingId: partialpaymentdata.bookingId } });
-        }
-        else if (!partialpaymentdata) {
-            bookingdata = await this.bookingRepository.findOne({ where: { uid: bookingUId } });
-        }
-        else if (!bookingdata) {
+        let bookingdata = await this.bookingRepository.findOne({ where: { uid: bookingUId } });
+        if (!bookingdata) {
             throw new common_1.HttpException("BookingUId not found", axios_1.HttpStatusCode.NotFound);
         }
-        const pp = await this.partialPaymentRepository.findOne({ where: { bookingId: bookingdata.bookingId } });
         const passengerdata = await this.passengerRepository.find({ where: { bookingId: bookingdata.bookingId } });
         if (bookingdata.system === 'Sabre') {
             let bookingresponse = await this.sabreService.airretrieve(bookingdata.pnr);
@@ -377,7 +357,7 @@ let FlightService = class FlightService {
                 refunddata: refunddata,
                 reissuedata: reissuedata,
                 ticketdetails: ticketdetails,
-                partialpaymentdata: partialpaymentdata || pp
+                partialpaymentdata: ''
             };
             return customResponseData;
         }
@@ -392,7 +372,7 @@ let FlightService = class FlightService {
                 refunddata: refunddata,
                 reissuedata: reissuedata,
                 ticketdetails: ticketdetails,
-                partialpaymentdata: partialpaymentdata || pp
+                partialpaymentdata: ''
             };
             return customResponseData;
         }
@@ -460,15 +440,13 @@ exports.FlightService = FlightService;
 exports.FlightService = FlightService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(booking_model_1.BookingModel)),
-    __param(1, (0, typeorm_1.InjectRepository)(partialpayment_entity_1.PartialPaymentModel)),
-    __param(2, (0, typeorm_1.InjectRepository)(agent_model_1.AgentModel)),
-    __param(3, (0, typeorm_1.InjectRepository)(passenger_model_1.PassengerModel)),
-    __param(4, (0, typeorm_1.InjectRepository)(reissue_model_1.ReissueModel)),
-    __param(5, (0, typeorm_1.InjectRepository)(refund_model_1.RefundModel)),
-    __param(6, (0, typeorm_1.InjectRepository)(booking_model_1.TicketModel)),
-    __param(7, (0, typeorm_1.InjectRepository)(searchhistory_model_1.SearchHistoryModel)),
+    __param(1, (0, typeorm_1.InjectRepository)(agent_model_1.AgentModel)),
+    __param(2, (0, typeorm_1.InjectRepository)(passenger_model_1.PassengerModel)),
+    __param(3, (0, typeorm_1.InjectRepository)(reissue_model_1.ReissueModel)),
+    __param(4, (0, typeorm_1.InjectRepository)(refund_model_1.RefundModel)),
+    __param(5, (0, typeorm_1.InjectRepository)(booking_model_1.TicketModel)),
+    __param(6, (0, typeorm_1.InjectRepository)(searchhistory_model_1.SearchHistoryModel)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

@@ -11,13 +11,11 @@ import { BookingService } from '../booking/booking.service';
 import { AirBookingModel } from './dto/booking-flight.dto';
 import { FlightSearchModel } from './dto/search-flight.dto';
 import { FareRulesDto } from './dto/farerules-flight.dto';
-import { PartialPaymentModel } from '../partialpayment/entities/partialpayment.entity';
 import { AuthService } from '../auth/auth.service';
 import { SearchHistoryModel } from '../searchhistory/searchhistory.model';
 import { AlhindAPI } from './alhind.flights.service';
 export declare class FlightService {
     private readonly bookingRepository;
-    private readonly partialPaymentRepository;
     private readonly agentRepository;
     private readonly passengerRepository;
     private readonly reissueRepository;
@@ -29,7 +27,7 @@ export declare class FlightService {
     private readonly bookingService;
     private readonly groupFareService;
     private readonly alhindAPI;
-    constructor(bookingRepository: Repository<BookingModel>, partialPaymentRepository: Repository<PartialPaymentModel>, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, reissueRepository: Repository<ReissueModel>, refundRepository: Repository<RefundModel>, ticketingRepository: Repository<TicketModel>, searchHistoryRepository: Repository<SearchHistoryModel>, authService: AuthService, sabreService: SabreService, bookingService: BookingService, groupFareService: GroupfareService, alhindAPI: AlhindAPI);
+    constructor(bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, reissueRepository: Repository<ReissueModel>, refundRepository: Repository<RefundModel>, ticketingRepository: Repository<TicketModel>, searchHistoryRepository: Repository<SearchHistoryModel>, authService: AuthService, sabreService: SabreService, bookingService: BookingService, groupFareService: GroupfareService, alhindAPI: AlhindAPI);
     airsearch(header: any, flightDto: FlightSearchModel): Promise<any>;
     airrevalidation(header: any, revalidationDto: any): Promise<any>;
     pricecheck(agentUId: string, revalidationDto: any): Promise<any[] | "Other System">;
@@ -114,7 +112,7 @@ export declare class FlightService {
         refunddata: RefundModel;
         reissuedata: ReissueModel[];
         ticketdetails: TicketModel[];
-        partialpaymentdata: PartialPaymentModel;
+        partialpaymentdata: string;
     } | {
         bookingdata: any;
         sabredata: any[];
@@ -125,15 +123,15 @@ export declare class FlightService {
         partialpaymentdata: {};
     }>;
     airretrieveadmin(header: any, bookingUId: string): Promise<{
-        bookingdata: any;
+        bookingdata: BookingModel;
         sabredata: any;
         passengerdata: PassengerModel[];
         refunddata: RefundModel;
         reissuedata: ReissueModel[];
         ticketdetails: TicketModel[];
-        partialpaymentdata: PartialPaymentModel;
+        partialpaymentdata: string;
     } | {
-        bookingdata: any;
+        bookingdata: BookingModel;
         sabredata: any[];
         passengerdata: PassengerModel[];
         refunddata: any[];

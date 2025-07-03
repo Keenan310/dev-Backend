@@ -23,12 +23,11 @@ const deposit_model_1 = require("../deposit/deposit.model");
 const auth_service_1 = require("../auth/auth.service");
 const searchhistory_model_1 = require("../searchhistory/searchhistory.model");
 let ReportService = class ReportService {
-    constructor(ledgerRepository, bookingRepository, agentRepository, depositRepository, agentledgerRepository, searchHistoryRepository, authService) {
+    constructor(ledgerRepository, bookingRepository, agentRepository, depositRepository, searchHistoryRepository, authService) {
         this.ledgerRepository = ledgerRepository;
         this.bookingRepository = bookingRepository;
         this.agentRepository = agentRepository;
         this.depositRepository = depositRepository;
-        this.agentledgerRepository = agentledgerRepository;
         this.searchHistoryRepository = searchHistoryRepository;
         this.authService = authService;
     }
@@ -325,9 +324,6 @@ let ReportService = class ReportService {
             },
             order: { id: 'DESC' },
         });
-        if (!ledger) {
-            throw new common_1.NotFoundException('Agent not found');
-        }
         return ledger;
     }
     async findDashboard(header) {
@@ -523,10 +519,8 @@ exports.ReportService = ReportService = __decorate([
     __param(1, (0, typeorm_1.InjectRepository)(booking_model_1.BookingModel)),
     __param(2, (0, typeorm_1.InjectRepository)(agent_model_1.AgentModel)),
     __param(3, (0, typeorm_1.InjectRepository)(deposit_model_1.DepositModel)),
-    __param(4, (0, typeorm_1.InjectRepository)(report_model_1.AgentLedgerModel)),
-    __param(5, (0, typeorm_1.InjectRepository)(searchhistory_model_1.SearchHistoryModel)),
+    __param(4, (0, typeorm_1.InjectRepository)(searchhistory_model_1.SearchHistoryModel)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

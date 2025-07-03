@@ -41,10 +41,6 @@ let VoidService = class VoidService {
         if (!booking) {
             throw new common_1.NotFoundException("Booking not found");
         }
-        const voidRes = await this.voidRepository.findOne({ where: { bookingId: booking.bookingId } });
-        if (voidRes) {
-            throw new common_1.HttpException('Booking Id Already exist in refund', axios_1.HttpStatusCode.Conflict);
-        }
         if (booking.status === 'Ticketed') {
             const RequestVoid = {
                 agentId: booking.agentId,
@@ -89,7 +85,7 @@ let VoidService = class VoidService {
         }
         if (booking.status === 'Void Requested' && status === 'accept') {
             booking['status'] = bookingstatus;
-            const feeDetails = servicefee + ' BDT Void Charge. ' + voidData.passengerdata + ' By ' + verifyAdminId?.firstname;
+            const feeDetails = servicefee + ' AED Void Charge. ' + voidData.passengerdata + ' By ' + verifyAdminId?.firstname;
             const agentLedgerData1 = {
                 agentId: booking.agentId,
                 trxtype: 'fee',
@@ -100,7 +96,7 @@ let VoidService = class VoidService {
             };
             await this.agentLedgerRepository.save(agentLedgerData1);
             const voidedAmount = Number(booking.netfare) - servicefee;
-            const details = voidedAmount + ' BDT Void. ' + voidData.passengerdata + ' with Service Fee: ' + servicefee + 'BDT' + ' By ' + verifyAdminId.firstname;
+            const details = voidedAmount + ' AED Void. ' + voidData.passengerdata + ' with Service Fee: ' + servicefee + 'AED' + ' By ' + verifyAdminId.firstname;
             const agentLedgerData2 = {
                 agentId: booking.agentId,
                 trxtype: 'void',

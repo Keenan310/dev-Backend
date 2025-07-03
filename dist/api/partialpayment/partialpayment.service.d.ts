@@ -28,7 +28,4 @@ export declare class PartialpaymentService {
         totaldata: number;
         data: PartialPaymentModel[];
     }>;
-    paydue(header: string, uid: string): Promise<{
-        message: string;
-    }>;
 }

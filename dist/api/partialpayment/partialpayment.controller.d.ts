@@ -18,7 +18,4 @@ export declare class PartialpaymentController {
         totaldata: number;
         data: import("./entities/partialpayment.entity").PartialPaymentModel[];
     }>;
-    payduePartialPayment(header: string, uid: string): Promise<{
-        message: string;
-    }>;
 }

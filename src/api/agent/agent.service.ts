@@ -1,4 +1,4 @@
-import { HttpCode, HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { AgentBalanceUpdate, AgentCreditModel, AgentMarkUpUpdate, AgentModel, AgentModelUpdateAdmin, AgentModelUpdateAgent } from './agent.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -160,9 +160,6 @@ export class AgentService {
     }else{
       throw new HttpException('error Occure' , HttpStatusCode.BadRequest);
     }
-
-
-
   }
 
   async remove(header: any, uid: string) {
@@ -348,7 +345,7 @@ export class AgentService {
       throw new NotFoundException('Agent not found');
     }
 
-    const details = updateAgentBalanceDto.amount + ' BDT By '+ verifyAdminId.firstname;
+    const details = updateAgentBalanceDto.amount + ' AED By '+ verifyAdminId.firstname;
 
     const AgentLedgerData = {
       agentId: agent.agentId,

@@ -37,13 +37,11 @@ let RefundService = class RefundService {
         if (!booking) {
             throw new common_1.NotFoundException("Booking not found");
         }
-        const refund = await this.refundRepository.findOne({ where: { bookingId: booking.bookingId } });
-        if (refund) {
-            throw new common_1.HttpException('Booking Id Already exist in refund', axios_1.HttpStatusCode.Conflict);
-        }
         if (booking.status === 'Ticketed' || booking.status === 'Void Rejected' ||
             booking.status === 'Reissued' || booking.status === 'Reissue Rejected' ||
-            booking.status === 'Reissue Quotation Rejected') {
+            booking.status === 'Reissue Quotation Rejected' ||
+            booking.status === 'Refund Quotation Rejected' ||
+            booking.status === 'Refunded' || booking.status === 'Refund Rejected') {
             const RequestRefund = {
                 agentId: booking.agentId,
                 bookingId: booking.bookingId,
@@ -155,7 +153,7 @@ let RefundService = class RefundService {
         }
         if (booking.status === 'Refund Quotation Accepted' && status === 'accept') {
             booking['status'] = bookingstatus;
-            const details = refund.quotationamount + ' BDT Refund. ' + refund.passengerdata + ' By ' + verifyAdminId.firstname;
+            const details = refund.quotationamount + ' AED Refund. ' + refund.passengerdata + ' By ' + verifyAdminId.firstname;
             const AgentLedgerData = {
                 agentId: booking.agentId,
                 trxtype: 'refund',

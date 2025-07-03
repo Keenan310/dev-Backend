@@ -14,7 +14,6 @@ import { BookingService } from '../booking/booking.service';
 import { AirBookingModel } from './dto/booking-flight.dto';
 import { FlightSearchModel } from './dto/search-flight.dto';
 import { FareRulesDto } from './dto/farerules-flight.dto';
-import { PartialPaymentModel } from '../partialpayment/entities/partialpayment.entity';
 import { AuthService } from '../auth/auth.service';
 import { SearchHistoryModel } from '../searchhistory/searchhistory.model';
 import { AlhindAPI } from './alhind.flights.service';
@@ -24,8 +23,6 @@ export class FlightService {
   constructor(
       @InjectRepository(BookingModel)
       private readonly bookingRepository: Repository<BookingModel>,
-      @InjectRepository(PartialPaymentModel)
-      private readonly partialPaymentRepository: Repository<PartialPaymentModel>,
       @InjectRepository(AgentModel)
       private readonly agentRepository: Repository<AgentModel>,
       @InjectRepository(PassengerModel)
@@ -61,21 +58,22 @@ export class FlightService {
     // if(search > agent.searchlimit){
     //   throw new NotFoundException(" Daily Search Limit Exceed");
     // }else{
-    //   const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
+     //const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
 
-    //   let Groupdata: any[] = [];
-    //   if (flightDto.segments.length === 1 && flightDto.adultcount === 1) {
-    //     Groupdata = await this.groupFareService.findBySearchFlight(flightDto);
-    //   }
+      // let Groupdata: any[] = [];
+      // if (flightDto.segments.length === 1 && flightDto.adultcount === 1) {
+      //   Groupdata = await this.groupFareService.findBySearchFlight(flightDto);
+      // }
 
-    //   const combinedArray = Sabre_FlightData.concat(Groupdata);
-    //   combinedArray.sort((a, b) => a.NetFare - b.NetFare);
+      const AlhindData = await this.alhindAPI.flights(agent, flightDto);
+
+      //const combinedArray = Sabre_FlightData.concat(AlhindData);
+      AlhindData.sort((a, b) => a.NetFare - b.NetFare);
       
-    //   return combinedArray;
+      return AlhindData;
 
-    // }
+    //}
 
-    return await this.alhindAPI.flights(agent, flightDto);
   }
 
   async airrevalidation(header: any, revalidationDto: any){
@@ -324,16 +322,8 @@ export class FlightService {
       throw new UnauthorizedException();
     }
 
-    const partialpaymentdata =  await this.partialPaymentRepository.findOne({ where : {uid: bookingUId}});
 
     let booking: any;
-    if(partialpaymentdata){
-      booking =  await this.bookingRepository.findOne({ where : {bookingId: partialpaymentdata.bookingId}});
-    }else if(!partialpaymentdata){
-      booking =  await this.bookingRepository.findOne({ where : {uid: bookingUId}});
-    }else if(!booking){
-      throw new HttpException("BookingUId not found", HttpStatusCode.NotFound);
-    }
 
     const passengerdata =  await this.passengerRepository.find({ where : {bookingId: booking.bookingId}});
 
@@ -355,7 +345,6 @@ export class FlightService {
       const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
       const refunddata = await this.refundRepository.findOne({ where : {bookingId: booking.bookingId}});
       const reissuedata =  await this.reissueRepository.find({ where : {bookingId: booking.bookingId}});
-      const pp = await this.partialPaymentRepository.findOne({ where : {bookingId: booking.bookingId}});
 
       const customResponseData = {
         bookingdata: booking,
@@ -364,7 +353,7 @@ export class FlightService {
         refunddata: refunddata,
         reissuedata: reissuedata,
         ticketdetails: ticketdetails,
-        partialpaymentdata: partialpaymentdata || pp
+        partialpaymentdata: ''
       };
 
       return customResponseData;
@@ -374,7 +363,6 @@ export class FlightService {
       const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
       const refunddata = await this.refundRepository.findOne({ where : {bookingId: booking.bookingId}});
       const reissuedata =  await this.reissueRepository.find({ where : {bookingId: booking.bookingId}});
-      const pp = await this.partialPaymentRepository.findOne({ where : {bookingId: booking.bookingId}});
 
       const customResponseData = {
         bookingdata: booking,
@@ -383,7 +371,7 @@ export class FlightService {
         refunddata: refunddata,
         reissuedata: reissuedata,
         ticketdetails: ticketdetails,
-        partialpaymentdata: partialpaymentdata || pp
+        partialpaymentdata: ''
 
       };
 
@@ -417,18 +405,12 @@ export class FlightService {
         throw new UnauthorizedException();
     }
 
-    const partialpaymentdata =  await this.partialPaymentRepository.findOne({ where : {uid: bookingUId}});
 
-    let bookingdata: any;
-    if(partialpaymentdata){
-      bookingdata =  await this.bookingRepository.findOne({ where : {bookingId: partialpaymentdata.bookingId}});
-    }else if(!partialpaymentdata){
-      bookingdata =  await this.bookingRepository.findOne({ where : {uid: bookingUId}});
-    }else if(!bookingdata){
+    let bookingdata =  await this.bookingRepository.findOne({ where : {uid: bookingUId}});
+    if(!bookingdata){
       throw new HttpException("BookingUId not found", HttpStatusCode.NotFound);
     }
 
-    const pp =  await this.partialPaymentRepository.findOne({ where : {bookingId: bookingdata.bookingId}});
     const passengerdata =  await this.passengerRepository.find({ where : {bookingId: bookingdata.bookingId}});
 
     if(bookingdata.system === 'Sabre'){
@@ -454,7 +436,7 @@ export class FlightService {
         refunddata: refunddata,
         reissuedata: reissuedata,
         ticketdetails: ticketdetails,
-        partialpaymentdata: partialpaymentdata || pp
+        partialpaymentdata: ''
       };
 
       return customResponseData;
@@ -472,7 +454,7 @@ export class FlightService {
         refunddata: refunddata,
         reissuedata: reissuedata,
         ticketdetails: ticketdetails,
-        partialpaymentdata: partialpaymentdata || pp
+        partialpaymentdata: ''
 
       };
 
@@ -547,6 +529,5 @@ export class FlightService {
       throw new HttpException("System not found", HttpStatusCode.NotFound);
     }
   }
-
 }
 

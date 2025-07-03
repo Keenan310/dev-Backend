@@ -28,7 +28,6 @@ import { SearchHistoryModel } from '../searchhistory/searchhistory.model';
 import { SabreUtils } from './sabre.flight.utils';
 import { SearchhistoryService } from '../searchhistory/searchhistory.service';
 import { BookingUtils } from '../booking/booking.utils';
-import { PartialPaymentModel } from '../partialpayment/entities/partialpayment.entity';
 import { AuthUtils } from '../auth/auth.utils';
 import { OTPModel } from '../auth/auth.model';
 import { PreFlightController } from './pre-flight.controller';
@@ -41,7 +40,7 @@ import { AlhindAPI } from './alhind.flights.service';
   imports: [TypeOrmModule.forFeature(
     [AirlinesModel,SearchHistoryModel, GroupFareModel, TravellerModel,TicketModel, AirportsModel,
     BookingModel, PassengerModel, AgentModel, StaffModel, AdminModel,RefundModel, ReissueModel,
-    AgentLedgerModel, PartialPaymentModel, OTPModel, ActivityLogModel])],
+    AgentLedgerModel, OTPModel, ActivityLogModel])],
   controllers: [PreFlightController, PostFlightController],
   providers: [FlightService, TravellerService , GroupfareService, SabreService, AirlinesService, BookingUtils,
     MailService, AirportsService, BookingService , PassengerService, AuthService, JwtService, SabreUtils,

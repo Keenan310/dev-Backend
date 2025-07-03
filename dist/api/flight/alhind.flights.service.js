@@ -194,65 +194,103 @@ let AlhindAPI = class AlhindAPI {
                 if (NetFare > TotalFare) {
                     TotalFare = NetFare;
                 }
-                const PartialAmount = 0;
                 const Refundable = flights.PriceBreakDown?.RefundableInfo;
                 let TimeLimit = '';
-                const BrandName = flights.PriceBreakDown?.FareName;
                 let cabinclass = 'Y';
                 let Class = flights.PriceBreakDown?.FareName;
                 const PriceBreakDown = AllPassenger?.map(allPassenger => {
-                    const PaxType = allPassenger?.PTC;
-                    let paxCount = 0;
+                    const BaggageAllowance = flights?.FlightLegs[0]?.FreeBaggages;
+                    const fidToSearch = flights.PriceBreakDown?.FID;
+                    const bagAllowance = BaggageAllowance.find(baggage => baggage.FID === fidToSearch);
+                    const PaxType = allPassenger?.PTC === 'CHD' ? 'CNN' : allPassenger?.PTC;
+                    let paxCount;
+                    let Baggage;
                     if (PaxType === 'ADT') {
                         paxCount = flighDto.adultcount;
+                        if (flighDto.segments.length === 1) {
+                            Baggage = [
+                                {
+                                    Airline: ValidatingCarrier,
+                                    Allowance: bagAllowance?.Adt_Baggage || '',
+                                }
+                            ];
+                        }
+                        else if (flighDto.segments.length === 2) {
+                            Baggage = [
+                                {
+                                    Airline: ValidatingCarrier,
+                                    Allowance: bagAllowance?.Adt_Baggage || '',
+                                },
+                                {
+                                    Airline: ValidatingCarrier,
+                                    Allowance: bagAllowance?.Adt_Baggage || '',
+                                }
+                            ];
+                        }
                     }
-                    else if (PaxType === 'CHD') {
+                    else if (PaxType === 'CHD' || PaxType === 'CNN') {
                         paxCount = flighDto.childcount;
+                        if (flighDto.segments.length === 1) {
+                            Baggage = [
+                                {
+                                    Airline: ValidatingCarrier,
+                                    Allowance: bagAllowance?.Chd_Baggage || '',
+                                }
+                            ];
+                        }
+                        else if (flighDto.segments.length === 2) {
+                            Baggage = [
+                                {
+                                    Airline: ValidatingCarrier,
+                                    Allowance: bagAllowance?.Chd_Baggage || '',
+                                },
+                                {
+                                    Airline: ValidatingCarrier,
+                                    Allowance: bagAllowance?.Chd_Baggage || '',
+                                }
+                            ];
+                        }
                     }
                     else if (PaxType === 'INF') {
                         paxCount = flighDto.childcount;
+                        if (flighDto.segments.length === 1) {
+                            Baggage = [
+                                {
+                                    Airline: ValidatingCarrier,
+                                    Allowance: bagAllowance?.Inf_Baggage || '',
+                                }
+                            ];
+                        }
+                        else if (flighDto.segments.length === 2) {
+                            Baggage = [
+                                {
+                                    Airline: ValidatingCarrier,
+                                    Allowance: bagAllowance?.Inf_Baggage || '',
+                                },
+                                {
+                                    Airline: ValidatingCarrier,
+                                    Allowance: bagAllowance?.Inf_Baggage || '',
+                                }
+                            ];
+                        }
                     }
                     const totalTaxAmount = allPassenger?.Tax;
                     const PaxequivalentAmount = allPassenger?.BaseFare;
                     const PaxtotalFare = PaxequivalentAmount + totalTaxAmount;
-                    const BaggageAllowance = flights?.FlightLegs;
-                    const Baggage = BaggageAllowance?.map(baggageAllowance => {
-                        const BagAirlineCode = baggageAllowance?.airlineCode;
-                        const AllowanceRef = '';
-                        let Allowance = '';
-                        if (AllowanceRef) {
-                            Allowance = AllowanceRef + ' Piece';
-                        }
-                        else {
-                            Allowance = AllowanceRef + ' KG';
-                        }
-                        return {
-                            Airline: BagAirlineCode,
-                            Allowance: Allowance,
-                        };
-                    });
-                    let i = 0;
                     return {
                         PaxType: PaxType,
                         BaseFare: PaxequivalentAmount,
                         Taxes: totalTaxAmount,
                         TotalFare: PaxtotalFare,
                         PaxCount: paxCount,
+                        Bag: Baggage,
+                        FareComponent: {}
                     };
                 });
-                const AllLegsInfo = [];
+                const AllSegmentInfo = [];
                 const AllLegsData = flights?.FlightLegs;
                 let i = 0;
                 for (const segment of AllLegsData) {
-                    i++;
-                    const LegDuration = '';
-                    const departureDate = flights[i - 1]?.depdate;
-                    const legInfo = {
-                        DepDate: '',
-                        DepFrom: '',
-                        ArrTo: '',
-                        Duration: LegDuration
-                    };
                     const SingleSegments = {
                         MarketingCarrier: segment?.AirlineCode,
                         MarketingCarrierName: await this.getAirlineName(segment?.AirlineCode),
@@ -278,18 +316,29 @@ let AlhindAPI = class AlhindAPI {
                         ArrivalGate: segment?.ArrivalTerminal || 'TBA',
                         HiddenStops: segment?.hiddenStops || [],
                         TotalMilesFlown: segment?.Distance || 0,
-                        SegmentCode: ''
+                        SegmentCode: {
+                            "bookingCode": segment.RBD,
+                            "cabinCode": cabinclass,
+                            "mealCode": segment.MealKey,
+                            "seatsAvailable": flights?.AvailableSeat
+                        },
                     };
-                    AllLegsInfo.push(SingleSegments);
+                    AllSegmentInfo.push(SingleSegments);
                 }
+                const LegDuration = '';
+                const departureDate = flighDto.segments[0].depdate;
+                const AllLegsInfo = [
+                    {
+                        DepDate: departureDate,
+                        DepFrom: flighDto.segments[0].depfrom,
+                        ArrTo: flighDto.segments[0].arrto,
+                        Duration: LegDuration,
+                        Segments: AllSegmentInfo
+                    }
+                ];
                 FlightItenary.push({
                     System: "AlHind",
-                    FarePolicy: farepolicy,
-                    InstantPayment: Instant_Payment,
-                    IssuePermit: IssuePermit,
-                    IsBookable: IsBookable,
                     TripType: TripType,
-                    FareType: FareType,
                     Carrier: ValidatingCarrier,
                     CarrierName: CarrierName,
                     Cabinclass: Class,
@@ -297,8 +346,6 @@ let AlhindAPI = class AlhindAPI {
                     Taxes: Taxes,
                     NetFare: NetFare,
                     GrossFare: TotalFare,
-                    PartialOption: partialoption,
-                    PartialFare: PartialAmount,
                     Comission: ComissionPolicy,
                     TimeLimit: TimeLimit,
                     Refundable: Refundable,

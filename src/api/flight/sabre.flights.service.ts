@@ -14,7 +14,6 @@ import { FareRulesDto } from './dto/farerules-flight.dto';
 import { SearchhistoryService } from '../searchhistory/searchhistory.service';
 dotenv.config()
 
-
 @Injectable()
 export class SabreService {
     constructor(

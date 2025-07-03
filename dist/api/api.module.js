@@ -34,7 +34,6 @@ const traveller_module_1 = require("./traveller/traveller.module");
 const activitylog_module_1 = require("./activitylog/activitylog.module");
 const markup_module_1 = require("./admin/markup/markup.module");
 const control_module_1 = require("./admin/control/control.module");
-const partialpayment_module_1 = require("./partialpayment/partialpayment.module");
 let ApiModule = class ApiModule {
 };
 exports.ApiModule = ApiModule;
@@ -44,7 +43,7 @@ exports.ApiModule = ApiModule = __decorate([
             refund_module_1.RefundModule, reissue_module_1.ReissueModule, traveller_module_1.TravellerModule, notice_module_1.NoticeModule, promotion_module_1.PromotionModule, airlines_module_1.AirlinesModule,
             passenger_module_1.PassengerModule, deposit_module_1.DepositModule, report_module_1.ReportModule, upload_module_1.UploadModule, staff_module_1.StaffModule, groupfare_module_1.GroupfareModule,
             notes_module_1.NotesModule, banklist_module_1.BanklistModule, airports_module_1.AirportsModule, searchhistory_module_1.SearchhistoryModule, markup_module_1.MarkupModule,
-            control_module_1.ControlModule, activitylog_module_1.ActivitylogModule, partialpayment_module_1.PartialpaymentModule]
+            control_module_1.ControlModule, activitylog_module_1.ActivitylogModule]
     })
 ], ApiModule);
 //# sourceMappingURL=api.module.js.map

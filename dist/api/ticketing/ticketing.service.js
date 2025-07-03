@@ -23,17 +23,15 @@ const auth_service_1 = require("../auth/auth.service");
 const axios_1 = require("axios");
 const passenger_model_1 = require("../passenger/passenger.model");
 const mail_service_1 = require("../../mail/mail.service");
-const partialpayment_service_1 = require("../partialpayment/partialpayment.service");
 const activitylog_service_1 = require("../activitylog/activitylog.service");
 let TicketingService = class TicketingService {
-    constructor(activityLogService, agentRepository, agentLedgerRepository, ticketingRepository, bookingRepository, passengerRepository, partialPaymentService, mailService, authService) {
+    constructor(activityLogService, agentRepository, agentLedgerRepository, ticketingRepository, bookingRepository, passengerRepository, mailService, authService) {
         this.activityLogService = activityLogService;
         this.agentRepository = agentRepository;
         this.agentLedgerRepository = agentLedgerRepository;
         this.ticketingRepository = ticketingRepository;
         this.bookingRepository = bookingRepository;
         this.passengerRepository = passengerRepository;
-        this.partialPaymentService = partialPaymentService;
         this.mailService = mailService;
         this.authService = authService;
     }
@@ -51,7 +49,7 @@ let TicketingService = class TicketingService {
         }
         if (payment === 'full') {
             const details = booking.carrier_name + ' ' + booking.depfrom + '-' + booking.arrto + ' Ticket Purchase ' +
-                booking.netfare + ' BDT. PNR : ' + booking.pnr + ' .';
+                booking.netfare + ' AED. PNR : ' + booking.pnr + ' .';
             const AgentLedgerData = {
                 agentId: booking.agentId,
                 trxtype: 'ticket',
@@ -148,7 +146,7 @@ let TicketingService = class TicketingService {
         if (!agent) {
             throw new common_1.HttpException(`Agnet not Found`, axios_1.HttpStatusCode.NotFound);
         }
-        const details = booking.carrier_name + ' ' + booking.depfrom + '-' + booking.arrto + ' Ticket Issue Rejected ' + booking.netfare + ' BDT (Revesal due to ' + remarks + '). PNR : ' + booking.pnr + ' .';
+        const details = booking.carrier_name + ' ' + booking.depfrom + '-' + booking.arrto + ' Ticket Issue Rejected ' + booking.netfare + ' AED (Revesal due to ' + remarks + '). PNR : ' + booking.pnr + ' .';
         const AgentLedgerData = {
             agentId: booking.agentId,
             trxtype: 'reversal',
@@ -186,7 +184,6 @@ exports.TicketingService = TicketingService = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        partialpayment_service_1.PartialpaymentService,
         mail_service_1.MailService,
         auth_service_1.AuthService])
 ], TicketingService);

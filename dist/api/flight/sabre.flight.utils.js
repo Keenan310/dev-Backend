@@ -278,12 +278,7 @@ let SabreUtils = class SabreUtils {
                     }
                     FlightItenary.push({
                         System: "Sabre",
-                        FarePolicy: farepolicy,
-                        InstantPayment: Instant_Payment,
-                        IssuePermit: IssuePermit,
-                        IsBookable: IsBookable,
                         TripType: TripType,
-                        FareType: FareType,
                         Carrier: ValidatingCarrier,
                         CarrierName: CarrierName,
                         Cabinclass: Class,
@@ -291,8 +286,6 @@ let SabreUtils = class SabreUtils {
                         Taxes: Taxes,
                         NetFare: NetFare,
                         GrossFare: TotalFare,
-                        PartialOption: partialoption,
-                        PartialFare: PartialAmount,
                         Comission: ComissionPolicy,
                         TimeLimit: TimeLimit,
                         Refundable: Refundable,

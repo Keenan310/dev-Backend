@@ -40,9 +40,6 @@ let PartialpaymentController = class PartialpaymentController {
             return this.partialpaymentService.findAllAgent(header, page, status, filter, limit);
         }
     }
-    payduePartialPayment(header, uid) {
-        return this.partialpaymentService.paydue(header, uid);
-    }
 };
 exports.PartialpaymentController = PartialpaymentController;
 __decorate([
@@ -83,15 +80,6 @@ __decorate([
     __metadata("design:paramtypes", [String, Number, String, String, Number]),
     __metadata("design:returntype", void 0)
 ], PartialpaymentController.prototype, "findAllAgent", null);
-__decorate([
-    (0, swagger_1.ApiBearerAuth)('access_token'),
-    (0, common_1.Get)('agent/partial/payment/pay/due/:uid'),
-    __param(0, (0, common_1.Headers)()),
-    __param(1, (0, common_1.Param)('uid')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", void 0)
-], PartialpaymentController.prototype, "payduePartialPayment", null);
 exports.PartialpaymentController = PartialpaymentController = __decorate([
     (0, swagger_1.ApiExcludeController)(),
     (0, swagger_1.ApiTags)('Partial Payment'),

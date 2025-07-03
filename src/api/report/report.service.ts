@@ -19,8 +19,6 @@ export class ReportService {
     private readonly agentRepository: Repository<AgentModel>,
     @InjectRepository(DepositModel)
     private readonly depositRepository: Repository<DepositModel>,
-    @InjectRepository(AgentLedgerModel)
-    private readonly agentledgerRepository: Repository<AgentLedgerModel>,
     @InjectRepository(SearchHistoryModel)
     private readonly searchHistoryRepository: Repository<SearchHistoryModel>,
     private readonly authService: AuthService
@@ -360,9 +358,7 @@ export class ReportService {
       },
       order: { id: 'DESC' },
     });
-    if (!ledger) {
-      throw new NotFoundException('Agent not found');
-    }
+
     return ledger;
   }
 
@@ -608,5 +604,4 @@ export class ReportService {
     return depositsData;
 
   }
-
 }

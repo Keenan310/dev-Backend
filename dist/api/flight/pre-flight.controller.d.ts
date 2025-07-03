@@ -83,7 +83,7 @@ export declare class PreFlightController {
         refunddata: import("../refund/refund.model").RefundModel;
         reissuedata: import("../reissue/reissue.model").ReissueModel[];
         ticketdetails: import("../booking/booking.model").TicketModel[];
-        partialpaymentdata: import("../partialpayment/entities/partialpayment.entity").PartialPaymentModel;
+        partialpaymentdata: string;
     } | {
         bookingdata: any;
         sabredata: any[];
@@ -94,15 +94,15 @@ export declare class PreFlightController {
         partialpaymentdata: {};
     }>;
     AirRetrieveAdmin(header: Headers, bookingUId: string): Promise<{
-        bookingdata: any;
+        bookingdata: import("../booking/booking.model").BookingModel;
         sabredata: any;
         passengerdata: import("../passenger/passenger.model").PassengerModel[];
         refunddata: import("../refund/refund.model").RefundModel;
         reissuedata: import("../reissue/reissue.model").ReissueModel[];
         ticketdetails: import("../booking/booking.model").TicketModel[];
-        partialpaymentdata: import("../partialpayment/entities/partialpayment.entity").PartialPaymentModel;
+        partialpaymentdata: string;
     } | {
-        bookingdata: any;
+        bookingdata: import("../booking/booking.model").BookingModel;
         sabredata: any[];
         passengerdata: import("../passenger/passenger.model").PassengerModel[];
         refunddata: any[];

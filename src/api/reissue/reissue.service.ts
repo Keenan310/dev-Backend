@@ -37,7 +37,8 @@ export class ReissueService {
 
     if(booking.status === 'Ticketed' || booking.status === 'Void Rejected' ||
         booking.status === 'Reissued' || booking.status === 'Refund Rejected' ||
-       booking.status === 'Reissue Quotation Rejected' ||  booking.status === 'Refund Quotation Rejected'){
+        booking.status === 'Reissue Quotation Rejected' ||
+        booking.status === 'Refund Quotation Rejected'){
       const RequestReissue = {
         agentId : booking.agentId,
         bookingId : booking.bookingId,
@@ -143,7 +144,7 @@ export class ReissueService {
 
         const details = booking.carrier_name+' ' + booking.depfrom+'-'+booking.arrto+
           ' Ticket Reissue Date: '+reissue.reissuedate+' Reissue Charge ' + reissue.quotationamount +
-          ' BDT. PNR : '+ booking.pnr+' .';
+          ' AED. PNR : '+ booking.pnr+' .';
 
         const AgentLedgerData = {
           agentId: booking.agentId,

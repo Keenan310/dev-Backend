@@ -9,7 +9,6 @@ import { HttpStatusCode } from 'axios';
 import { MakeTicketModel } from './ticketing.model';
 import { PassengerModel } from '../passenger/passenger.model';
 import { MailService } from '../../mail/mail.service';
-import { PartialpaymentService } from '../partialpayment/partialpayment.service';
 import { ActivitylogService } from '../activitylog/activitylog.service';
 
 @Injectable()
@@ -27,7 +26,6 @@ export class TicketingService {
     private readonly bookingRepository: Repository<BookingModel>,
     @InjectRepository(PassengerModel)
     private readonly passengerRepository: Repository<PassengerModel>,
-    private readonly partialPaymentService: PartialpaymentService,
     private readonly mailService: MailService,
     private readonly authService: AuthService
   ){}
@@ -61,7 +59,7 @@ export class TicketingService {
       // if(agentLedgerValue >= booking.netfare){
 
         const details = booking.carrier_name+' ' + booking.depfrom+'-'+booking.arrto+' Ticket Purchase '+
-                        booking.netfare + ' BDT. PNR : '+ booking.pnr+' .';
+                        booking.netfare + ' AED. PNR : '+ booking.pnr+' .';
         const AgentLedgerData = {
           agentId: booking.agentId,
           trxtype: 'ticket',
@@ -81,41 +79,6 @@ export class TicketingService {
         }else{
           return { message: 'Something error'};
         }
-      // }else if((agentLedgerValue + agent.credit) >= booking.netfare){
-
-      //   const TotalCredit  = agent.credit;
-      //   const creditUse = booking.netfare - agentLedgerValue;
-      //   const creditleft = TotalCredit - creditUse;
-
-      //   const details = booking.carrier_name+' ' + booking.depfrom+'-'+booking.arrto+' Ticket Purchase '+ booking.netfare + ' BDT. PNR : '
-      //                 + booking.pnr+' Using '+creditUse+' BDT From Credit Wallet';
-
-      //   const AgentLedgerData = {
-      //     agentId: booking.agentId,
-      //     trxtype: 'ticket',
-      //     amount: -booking.netfare,
-      //     refId: booking.bookingId,
-      //     details: details,
-      //     companyname: booking.companyname
-      //   }
-
-      //   await this.agentLedgerRepository.save(AgentLedgerData);
-      //   agent['credit'] = creditleft;
-      //   await this.agentRepository.save(agent);
-
-      //   booking.status = 'Issue In Process';
-      //   booking.payment_status = 'full';
-      //   const bookingResponse = await this.bookingRepository.update(booking.id, booking);
-
-      //   if(bookingResponse.affected === 1){
-      //     await this.mailService.IssueRequestMail(booking);
-      //     await this.activityLogService.create({agentId: booking.agentId, status: booking.status, platform: 'Admin',
-      //     refId: booking.bookingId, module: 'Booking', action_by: agent.name  });
-      //     return { message: "Issue Request Send"};
-      //   }else{
-      //     return { message: 'Something error'};
-      //   }
-      // }
     }else{
       throw new NotAcceptableException("Invalid paymnet type");
     }
@@ -207,7 +170,7 @@ export class TicketingService {
       throw new HttpException(`Agnet not Found`, HttpStatusCode.NotFound);
     }
 
-    const details = booking.carrier_name+' ' + booking.depfrom+ '-'+booking.arrto+' Ticket Issue Rejected '+ booking.netfare + ' BDT (Revesal due to '+ remarks+'). PNR : '+ booking.pnr+' .';
+    const details = booking.carrier_name+' ' + booking.depfrom+ '-'+booking.arrto+' Ticket Issue Rejected '+ booking.netfare + ' AED (Revesal due to '+ remarks+'). PNR : '+ booking.pnr+' .';
 
     const AgentLedgerData = {
       agentId: booking.agentId,

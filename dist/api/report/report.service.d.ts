@@ -10,10 +10,9 @@ export declare class ReportService {
     private readonly bookingRepository;
     private readonly agentRepository;
     private readonly depositRepository;
-    private readonly agentledgerRepository;
     private readonly searchHistoryRepository;
     private readonly authService;
-    constructor(ledgerRepository: Repository<AgentLedgerModel>, bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, depositRepository: Repository<DepositModel>, agentledgerRepository: Repository<AgentLedgerModel>, searchHistoryRepository: Repository<SearchHistoryModel>, authService: AuthService);
+    constructor(ledgerRepository: Repository<AgentLedgerModel>, bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, depositRepository: Repository<DepositModel>, searchHistoryRepository: Repository<SearchHistoryModel>, authService: AuthService);
     findAllReportAdmin(header: any, startDate: Date, endDate: Date): Promise<{
         name: string;
         value: any;

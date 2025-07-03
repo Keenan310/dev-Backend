@@ -3,7 +3,6 @@ import * as dotenv from "dotenv";
 import { AirlinesService } from '../airlines/airlines.service';
 import { AirportsService } from '../airports/airports.service';
 import { AgentModel } from '../agent/agent.model';
-import { v4 as uuidv4 } from 'uuid';
 import { parseString } from "xml2js";  
 import { airportsData } from './data/airports.data';
 import { airlinesData } from './data/airlines.data';
@@ -297,15 +296,8 @@ export class SabreUtils {
                     }
 
                     FlightItenary.push({
-                        //ResultId: '',
-                        //OfferId: uuidv4(),
                         System: "Sabre",
-                        FarePolicy: farepolicy,
-                        InstantPayment: Instant_Payment,
-                        IssuePermit: IssuePermit,
-                        IsBookable: IsBookable,
                         TripType: TripType,
-                        FareType: FareType,
                         Carrier: ValidatingCarrier,
                         CarrierName: CarrierName,
                         Cabinclass: Class,
@@ -313,8 +305,6 @@ export class SabreUtils {
                         Taxes: Taxes,
                         NetFare: NetFare,
                         GrossFare: TotalFare,
-                        PartialOption: partialoption,
-                        PartialFare: PartialAmount,
                         Comission: ComissionPolicy,
                         TimeLimit: TimeLimit,
                         Refundable: Refundable,

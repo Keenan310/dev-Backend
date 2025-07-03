@@ -18,7 +18,6 @@ const typeorm_1 = require("@nestjs/typeorm");
 const partialpayment_entity_1 = require("./entities/partialpayment.entity");
 const typeorm_2 = require("typeorm");
 const auth_service_1 = require("../auth/auth.service");
-const axios_1 = require("axios");
 const mail_service_1 = require("../../mail/mail.service");
 const booking_model_1 = require("../booking/booking.model");
 const report_model_1 = require("../report/report.model");
@@ -101,59 +100,6 @@ let PartialpaymentService = class PartialpaymentService {
             data: bookings
         };
         return bookingData;
-    }
-    async paydue(header, uid) {
-        const agent = await this.authService.verifyAgentToken(header);
-        if (!agent) {
-            throw new common_1.UnauthorizedException();
-        }
-        const booking = await this.bookingRepository.findOne({ where: { uid: uid } });
-        if (!booking) {
-            throw new common_1.HttpException(`Booking not Found`, axios_1.HttpStatusCode.NotFound);
-        }
-        const partial = await this.partialPaymentRepository.findOne({ where: { bookingId: booking.bookingId } });
-        if (!partial) {
-            throw new common_1.NotFoundException("Not Found");
-        }
-        const payableamount = partial?.dueamount;
-        if (booking?.payment_status != 'partial') {
-            throw new common_1.HttpException(`Booking already ${booking.status}`, axios_1.HttpStatusCode.AlreadyReported);
-        }
-        if (booking.payment_status === 'partial') {
-            const agentLedger = await this.agentLedgerRepository
-                .createQueryBuilder()
-                .select('SUM(amount)', 'sum')
-                .where('agentId = :agentId', { agentId: agent.agentId })
-                .getRawOne();
-            const agentLedgerValue = agentLedger.sum != null ? agentLedger.sum : 0;
-            if (agentLedgerValue <= payableamount) {
-                throw new common_1.HttpException("Insufficient Amount. Please Top Up", axios_1.HttpStatusCode.NotAcceptable);
-            }
-            else if (agentLedgerValue >= payableamount) {
-                const details = partial.bookingId + ' paid due amount ' + payableamount + ' BDT' + booking.depfrom + '-' + booking.arrto + ' Ticket Purchase: ' +
-                    booking.netfare + ' BDT. PNR : ' + booking.pnr;
-                const AgentLedgerData = {
-                    agentId: booking.agentId,
-                    trxtype: 'partial',
-                    amount: -payableamount,
-                    refId: booking.bookingId,
-                    details: details,
-                    companyname: booking.companyname
-                };
-                await this.agentLedgerRepository.save(AgentLedgerData);
-                partial.status = 'paid';
-                await this.partialPaymentRepository.update(partial.id, partial);
-                booking.payment_status = 'full';
-                const bookingres = await this.bookingRepository.update(booking.id, booking);
-                if (bookingres.affected === 1) {
-                    await this.mailService.partialPaymentMail(booking, partial);
-                    return { message: "Complete full paymnet" };
-                }
-                else {
-                    return { message: 'Something error' };
-                }
-            }
-        }
     }
 };
 exports.PartialpaymentService = PartialpaymentService;
