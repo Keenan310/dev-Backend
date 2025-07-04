@@ -106,7 +106,7 @@ export class VoidService {
       const agentLedgerData2 = {
         agentId: booking.agentId,
         trxtype: 'void',
-        amount: voidedAmount,
+        credit: voidedAmount,
         refId: booking.bookingId,
         details: details,
         

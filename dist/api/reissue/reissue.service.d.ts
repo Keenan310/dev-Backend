@@ -15,7 +15,7 @@ export declare class ReissueService {
     sendQuotation(header: any, bookingUId: string, quotationReissueDto: ReissueQuotation): Promise<{
         message: string;
     }>;
-    reissueTicketRequest(header: any, status: string, bookingUId: string): Promise<"Unknown error" | {
+    reissueTicketRequest(header: any, status: string, bookingUId: string): Promise<{
         message: string;
     }>;
     reissueDecisionAdmin(header: any, status: string, bookingUId: string): Promise<{

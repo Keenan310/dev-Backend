@@ -113,39 +113,25 @@ let ReissueService = class ReissueService {
         }
         if (status === 'accept') {
             const bookingstatus = 'Reissue Quotation Accepted';
-            const agentLedger = await this.agentLedgerRepository
-                .createQueryBuilder()
-                .select('SUM(amount)', 'sum')
-                .where('agentId = :agentId', { agentId: booking.agentId })
-                .getRawOne();
-            const agentLedgerValue = agentLedger.sum != null ? agentLedger.sum : 0;
-            if (agentLedgerValue < reissue.quotationamount) {
-                throw new common_1.HttpException("Insufficient Amount. Please Top Up", axios_1.HttpStatusCode.NotAcceptable);
-            }
-            else if (agentLedgerValue >= reissue.quotationamount) {
-                const details = booking.carrier_name + ' ' + booking.depfrom + '-' + booking.arrto +
-                    ' Ticket Reissue Date: ' + reissue.reissuedate + ' Reissue Charge ' + reissue.quotationamount +
-                    ' AED. PNR : ' + booking.pnr + ' .';
-                const AgentLedgerData = {
-                    agentId: booking.agentId,
-                    trxtype: 'reissue',
-                    amount: -reissue.quotationamount,
-                    refId: booking.bookingId,
-                    details: details,
-                    companyname: booking.companyname,
-                };
-                await this.agentLedgerRepository.save(AgentLedgerData);
-                booking.status = bookingstatus;
-                const bookingResponse = await this.bookingRepository.update(booking.id, booking);
-                if (bookingResponse.affected === 1) {
-                    return { message: booking.status + ' . wait for a while' };
-                }
-                else {
-                    return { message: 'Something error' };
-                }
+            const details = booking.carrier_name + ' ' + booking.depfrom + '-' + booking.arrto +
+                ' Ticket Reissue Date: ' + reissue.reissuedate + ' Reissue Charge ' + reissue.quotationamount +
+                ' AED. PNR : ' + booking.pnr + ' .';
+            const AgentLedgerData = {
+                agentId: booking.agentId,
+                trxtype: 'reissue',
+                debit: reissue.quotationamount,
+                refId: booking.bookingId,
+                details: details,
+                companyname: booking.companyname,
+            };
+            await this.agentLedgerRepository.save(AgentLedgerData);
+            booking.status = bookingstatus;
+            const bookingResponse = await this.bookingRepository.update(booking.id, booking);
+            if (bookingResponse.affected === 1) {
+                return { message: booking.status + ' . wait for a while' };
             }
             else {
-                return 'Unknown error';
+                return { message: 'Something error' };
             }
         }
         else if (status === 'reject') {

@@ -13,7 +13,10 @@ export class AgentLedgerModel {
   trxtype: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0.0 })
-  amount: number;
+  debit: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0.0 })
+  credit: number;
 
   @Column()
   refId: string;

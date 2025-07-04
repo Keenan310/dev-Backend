@@ -188,7 +188,7 @@ export class RefundService {
       const AgentLedgerData = {
         agentId: booking.agentId,
         trxtype: 'refund',
-        amount: Number(refund.quotationamount),
+        credit: Number(refund.quotationamount),
         refId: booking.bookingId,
         details: details,
         companyname: booking.companyname

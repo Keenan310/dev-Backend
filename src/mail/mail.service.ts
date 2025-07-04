@@ -423,7 +423,7 @@ export class MailService {
             <h3 style="color: #333333;">Despoit Bonus!</h3>
             <p style="color: #666666;">After reviewing your deposit request.</p>
             <p style="color: #666666;">We saw you meet our bonus policy.</p>
-            <p style="color: #666666;"><strong>Your bonus amount ${depositBonus.amount} Added To your wallet.</strong></p>
+            <p style="color: #666666;"><strong>Your bonus amount ${depositBonus.credit} Added To your wallet.</strong></p>
             <p style="color: #666666;">Thanks for staying with eTrip Zone. </p>
             <p style="color: #666666;">Thank you, <br/>${agentData.company}</p>
           </td>

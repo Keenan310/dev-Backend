@@ -29,7 +29,11 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2, default: 0.0 }),
     __metadata("design:type", Number)
-], AgentLedgerModel.prototype, "amount", void 0);
+], AgentLedgerModel.prototype, "debit", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2, default: 0.0 }),
+    __metadata("design:type", Number)
+], AgentLedgerModel.prototype, "credit", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)

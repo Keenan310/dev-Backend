@@ -1,5 +1,6 @@
 import { AgentLedgerModel } from './report.model';
 import { Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { AgentModel } from '../agent/agent.model';
 import { BookingModel } from '../booking/booking.model';
 import { DepositModel } from '../deposit/deposit.model';
@@ -12,7 +13,8 @@ export declare class ReportService {
     private readonly depositRepository;
     private readonly searchHistoryRepository;
     private readonly authService;
-    constructor(ledgerRepository: Repository<AgentLedgerModel>, bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, depositRepository: Repository<DepositModel>, searchHistoryRepository: Repository<SearchHistoryModel>, authService: AuthService);
+    private dataSource;
+    constructor(ledgerRepository: Repository<AgentLedgerModel>, bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, depositRepository: Repository<DepositModel>, searchHistoryRepository: Repository<SearchHistoryModel>, authService: AuthService, dataSource: DataSource);
     findAllReportAdmin(header: any, startDate: Date, endDate: Date): Promise<{
         name: string;
         value: any;
@@ -39,7 +41,7 @@ export declare class ReportService {
         totalsell: any;
         totaldeposit: any;
     }>;
-    findAllByDateRangeAgentId(header: any, startDate: Date, endDate: Date): Promise<AgentLedgerModel[]>;
+    findAllByDateRangeAgentId(header: any, startDate: Date, endDate: Date): Promise<any>;
     findDashboard(header: any): Promise<{
         AgentData: AgentModel[];
         SearchData: SearchHistoryModel[];
@@ -72,20 +74,6 @@ export declare class ReportService {
             voidCount: any;
             voidAmount: any;
         };
-        data: AgentLedgerModel[];
-    }>;
-    findAllLedgerBySales(header: any, page: number, type: string, filter: string, limit: number): Promise<{
-        limit: number;
-        page: number;
-        totalpage: number;
-        totaldata: number;
-        data: AgentLedgerModel[];
-    }>;
-    findAllLedgerBySalesAgent(header: any, page: number, type: string, filter: string, limit: number): Promise<{
-        limit: number;
-        page: number;
-        totalpage: number;
-        totaldata: number;
         data: AgentLedgerModel[];
     }>;
 }

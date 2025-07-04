@@ -2,7 +2,8 @@ export declare class AgentLedgerModel {
     id: number;
     agentId: string;
     trxtype: string;
-    amount: number;
+    debit: number;
+    credit: number;
     refId: string;
     details: string;
     remarks: string;

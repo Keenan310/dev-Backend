@@ -19,7 +19,7 @@ export declare class ReportController {
         voidAmount: any;
         data: any;
     }>;
-    findAllBydate(header: string, startDate: Date, endDate: Date): Promise<import("./report.model").AgentLedgerModel[]>;
+    findAllBydate(header: string, startDate: Date, endDate: Date): Promise<any>;
     findDashboard(header: Headers): Promise<{
         AgentData: import("../agent/agent.model").AgentModel[];
         SearchData: import("../searchhistory/searchhistory.model").SearchHistoryModel[];
@@ -61,20 +61,6 @@ export declare class ReportController {
             voidCount: any;
             voidAmount: any;
         };
-        data: import("./report.model").AgentLedgerModel[];
-    }>;
-    findAllSales(header: Headers, page?: number, type?: string, filter?: string, limit?: number): Promise<{
-        limit: number;
-        page: number;
-        totalpage: number;
-        totaldata: number;
-        data: import("./report.model").AgentLedgerModel[];
-    }>;
-    findAllSalesAgent(header: Headers, page?: number, type?: string, filter?: string, limit?: number): Promise<{
-        limit: number;
-        page: number;
-        totalpage: number;
-        totaldata: number;
         data: import("./report.model").AgentLedgerModel[];
     }>;
 }

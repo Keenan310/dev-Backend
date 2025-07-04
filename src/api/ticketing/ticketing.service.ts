@@ -46,42 +46,15 @@ export class TicketingService {
     if(booking?.status != 'Hold'){
       throw new HttpException(`Booking already ${booking.status}`, HttpStatusCode.AlreadyReported);
     }
+      booking.status = 'Issue In Process';
+      const bookingResponse = await this.bookingRepository.update(booking.id, booking);
 
-    // const agentLedger = await this.agentLedgerRepository
-    //   .createQueryBuilder()
-    //   .select('SUM(amount)', 'sum')
-    //   .where('agentId = :agentId', { agentId: agent.agentId })
-    //   .getRawOne();
-
-    //const agentLedgerValue =  agentLedger.sum != null ? agentLedger.sum : 0;
-
-    if(payment === 'full'){
-      // if(agentLedgerValue >= booking.netfare){
-
-        const details = booking.carrier_name+' ' + booking.depfrom+'-'+booking.arrto+' Ticket Purchase '+
-                        booking.netfare + ' AED. PNR : '+ booking.pnr+' .';
-        const AgentLedgerData = {
-          agentId: booking.agentId,
-          trxtype: 'ticket',
-          amount: -booking.netfare,
-          refId: booking.bookingId,
-          details: details,
-          companyname: booking.companyname
-        }
-
-        await this.agentLedgerRepository.save(AgentLedgerData);
-        booking.status = 'Issue In Process';
-        const bookingResponse = await this.bookingRepository.update(booking.id, booking);
-
-        if(bookingResponse.affected === 1){
-          await this.mailService.IssueRequestMail(booking);
-          return { message: "Issue Request Send"};
-        }else{
-          return { message: 'Something error'};
-        }
-    }else{
-      throw new NotAcceptableException("Invalid paymnet type");
-    }
+      if(bookingResponse.affected === 1){
+        await this.mailService.IssueRequestMail(booking);
+        return { message: "Issue Request Send"};
+      }else{
+        return { message: 'Something error'};
+      }
   }
 
   async createTicket(header: any, bookingUId: string, makeTicketModel: MakeTicketModel) {
@@ -102,6 +75,7 @@ export class TicketingService {
 
     const passengerData = makeTicketModel?.passengerInfo;
     const paxData=[];
+    const paxTicketData=[]
     for (const item of passengerData){
       const ticketedData = {
         agentId: booking.agentId,
@@ -113,10 +87,15 @@ export class TicketingService {
         airlinespnr: makeTicketModel.airlinespnr,
         givenname: item.givenname,
         surname: item.surname,
-        ticketnumber: item.ticketnumber,
-        issuetype: makeTicketModel.issuetype,
+        ticketnumber: item.ticketnumber
       };
       paxData.push(ticketedData);
+      paxTicketData.push({
+        airlines: booking.carrier_name,
+        surname: item.surname,
+        givenName: item.givenname,
+        ticketNumber: item.ticketnumber
+      });
 
       const passenger = await this.passengerRepository.findOne({
          where: {
@@ -131,12 +110,29 @@ export class TicketingService {
       passenger.ticketstatus = 'unused';
       await this.passengerRepository.update(passenger.id, passenger);
     }
+
     await this.ticketingRepository.save(paxData);
     booking.status = 'Ticketed';
     booking.airlinespnr = makeTicketModel.airlinespnr;
     booking.sellprice = makeTicketModel.sellprice;
     booking.purchaseprice = makeTicketModel.purchaseprice;
     booking.ticketed_at = new Date();
+
+    const ticketInfo = paxTicketData.map(p => `${p.surname}/${p.givenName}/${p.ticketNumber}`)
+    .join(', ');
+
+    const details = booking.carrier_name+'/' + booking.depfrom+'-'+booking.arrto+'/'+ booking.pnr+'/'+ticketInfo;
+    const AgentLedgerData = {
+      agentId: booking.agentId,
+      trxtype: 'ticket',
+      debit: booking.netfare,
+      refId: booking.bookingId,
+      details: details,
+      remarks: '',
+      companyname: booking.companyname
+    }
+
+    await this.agentLedgerRepository.save(AgentLedgerData);
 
     const bookingResponse = await this.bookingRepository.update(booking.id, booking);
     if(bookingResponse.affected === 1){

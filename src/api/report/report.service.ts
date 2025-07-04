@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { AgentLedgerModel } from './report.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { AgentModel } from '../agent/agent.model';
 import { BookingModel } from '../booking/booking.model';
 import { DepositModel } from '../deposit/deposit.model';
@@ -21,7 +22,8 @@ export class ReportService {
     private readonly depositRepository: Repository<DepositModel>,
     @InjectRepository(SearchHistoryModel)
     private readonly searchHistoryRepository: Repository<SearchHistoryModel>,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private dataSource: DataSource
   ) {}
   
   async findAllReportAdmin(header: any, startDate: Date, endDate: Date) {
@@ -78,7 +80,7 @@ export class ReportService {
     const deposit = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('COUNT(ledger.id)', 'rowCount')
-    .addSelect('SUM(ledger.amount)', 'totalAmount')
+    .addSelect('SUM(ledger.credit)', 'totalAmount')
     .where('ledger.trxtype = :trxtype', { trxtype: 'deposit' })
     .andWhere('ledger.created_at BETWEEN :startDate AND :endDate', {
       startDate: startDate, 
@@ -89,7 +91,7 @@ export class ReportService {
     const refund = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.amount)', 'totalAmount')
+    .addSelect('SUM(ledger.credit)', 'totalAmount')
     .where('ledger.trxtype = :trxtype', { trxtype: 'refund' })
     .andWhere('ledger.created_at BETWEEN :startDate AND :endDate', {
       startDate: startDate, 
@@ -100,7 +102,7 @@ export class ReportService {
     const reissue = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.amount)', 'totalAmount')
+    .addSelect('SUM(ledger.debit)', 'totalAmount')
     .where('ledger.trxtype = :trxtype', { trxtype: 'reissue' })
     .andWhere('ledger.created_at BETWEEN :startDate AND :endDate', {
       startDate: startDate, 
@@ -111,7 +113,7 @@ export class ReportService {
     const voided = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.amount)', 'totalAmount')
+    .addSelect('SUM(ledger.credit)', 'totalAmount')
     .where('ledger.trxtype = :trxtype', { trxtype: 'void' })
     .andWhere('ledger.created_at BETWEEN :startDate AND :endDate', {
       startDate: startDate, 
@@ -204,7 +206,7 @@ export class ReportService {
     const deposit = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.amount)', 'totalAmount')
+    .addSelect('SUM(ledger.credit)', 'totalAmount')
     .where('ledger.agentId = :agentId', { agentId: agent.agentId })
     .andWhere('ledger.trxtype = :trxtype', { trxtype: 'deposit' })
     .getRawOne(); 
@@ -212,7 +214,7 @@ export class ReportService {
     const refund = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.amount)', 'totalAmount')
+    .addSelect('SUM(ledger.credit)', 'totalAmount')
     .where('ledger.agentId = :agentId', { agentId: agent.agentId })
     .andWhere('ledger.trxtype = :trxtype', { trxtype: 'refund' })
     .getRawOne();
@@ -220,7 +222,7 @@ export class ReportService {
     const reissue = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.amount)', 'totalAmount')
+    .addSelect('SUM(ledger.debit)', 'totalAmount')
     .where('ledger.agentId = :agentId', { agentId: agent.agentId })
     .andWhere('ledger.trxtype = :trxtype', { trxtype: 'reissue' })
     .getRawOne(); 
@@ -228,7 +230,7 @@ export class ReportService {
     const voided = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.amount)', 'totalAmount')
+    .addSelect('SUM(ledger.credit)', 'totalAmount')
     .where('ledger.agentId = :agentId', { agentId: agent.agentId })
     .andWhere('ledger.trxtype = :trxtype', { trxtype: 'void' })
     .getRawOne();
@@ -236,7 +238,7 @@ export class ReportService {
     const ticket = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.amount)', 'totalAmount')
+    .addSelect('SUM(ledger.credit)', 'totalAmount')
     .where('ledger.agentId = :agentId', { agentId: agent.agentId })
     .andWhere('ledger.trxtype = :trxtype', { trxtype: 'ticket' })
     .getRawOne();
@@ -297,7 +299,7 @@ export class ReportService {
 
     const deposit = await this.ledgerRepository
     .createQueryBuilder('ledger')
-    .select('SUM(ledger.amount)', 'totalAmount')
+    .select('SUM(ledger.credit)', 'totalAmount')
     .where('ledger.agentId = :agentId', { agentId: agent.agentId })
     .andWhere('ledger.trxtype = :trxtype', { trxtype: 'deposit' })
     .andWhere(`DATE(created_at) = CURDATE()`)
@@ -306,7 +308,7 @@ export class ReportService {
 
     const totaldeposit = await this.ledgerRepository
     .createQueryBuilder('ledger')
-    .select('SUM(ledger.amount)', 'totalAmount')
+    .select('SUM(ledger.credit)', 'totalAmount')
     .where('ledger.trxtype = :trxtype', { trxtype: 'deposit' })
     .andWhere('ledger.agentId = :agentId', { agentId: agent.agentId })
     .getRawOne();
@@ -351,13 +353,31 @@ export class ReportService {
         throw new UnauthorizedException();
     }
 
-    const ledger = await this.ledgerRepository.find({
-      where: {
-        agentId: agent.agentId,
-        created_at: Between(startDate, endDate),
-      },
-      order: { id: 'DESC' },
-    });
+    const ledger = await this.dataSource.query(
+      `SELECT 
+        id,
+        agentId,
+        trxtype,
+        debit,
+        credit,
+        refId,
+        details,
+        remarks,
+        companyname,
+        created_at,
+        updated_at,
+        uid,
+        SUM(credit - debit) OVER (
+          PARTITION BY agentId
+          ORDER BY id
+          ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS remaining_balance
+      FROM agent_ledger
+      WHERE agentId = ? AND created_at BETWEEN ? AND ?
+      ORDER BY id DESC
+      `,
+      [agent.agentId, startDate, endDate]
+    );
 
     return ledger;
   }
@@ -439,35 +459,35 @@ export class ReportService {
     const deposit = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('COUNT(ledger.id)', 'rowCount')
-    .addSelect('SUM(ledger.amount)', 'totalAmount')
+    .addSelect('SUM(ledger.credit)', 'totalAmount')
     .where('ledger.trxtype = :trxtype', { trxtype: 'deposit' })
     .getRawOne();
 
     const refund = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.amount)', 'totalAmount')
+    .addSelect('SUM(ledger.credit)', 'totalAmount')
     .where('ledger.trxtype = :trxtype', { trxtype: 'refund' })
     .getRawOne();
     
     const reissue = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.amount)', 'totalAmount')
+    .addSelect('SUM(ledger.debit)', 'totalAmount')
     .where('ledger.trxtype = :trxtype', { trxtype: 'reissue' })
     .getRawOne(); 
 
     const voided = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.amount)', 'totalAmount')
+    .addSelect('SUM(ledger.credit)', 'totalAmount')
     .where('ledger.trxtype = :trxtype', { trxtype: 'void' })
     .getRawOne();
     
     const ticket = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.amount)', 'totalAmount')
+    .addSelect('SUM(ledger.debit)', 'totalAmount')
     .where('ledger.trxtype = :trxtype', { trxtype: 'ticket' })
     .getRawOne();
 
@@ -518,90 +538,4 @@ export class ReportService {
     return ledgerData;
   }
 
-  async findAllLedgerBySales(header: any, page: number, type: string, filter: string, limit: number){
-
-    const agent = await this.authService.verifyAgentToken(header);
-
-    if(!agent){
-        throw new UnauthorizedException();
-    }
-
-    const skip = (page - 1) * limit;
-    const take = limit;
-
-    let queryBuilder = this.ledgerRepository.createQueryBuilder("ledger");
-
-    queryBuilder.where('ledger.agentId = :agentId', { agentId: agent.agentId })
-    queryBuilder.andWhere('ledger.amount < 0')
-    
-    if (type) {
-        queryBuilder = queryBuilder.andWhere("ledger.amount < :trxtype", { trxtype: type });
-    }
-
-    if (filter) {
-        queryBuilder = queryBuilder.andWhere("(ledger.agentId LIKE :filter OR ledger.companyname LIKE :filter)", { filter: `%${filter}%` });
-    }
-
-    const totaldata = await queryBuilder.getCount();
-
-    const deposits = await queryBuilder
-        .orderBy("ledger.id", "DESC")
-        .skip(skip)
-        .take(take)
-        .getMany();
-
-
-    const depositsData = {
-      limit: Number(limit),
-      page: Number(page),
-      totalpage: Math.ceil(totaldata / limit),
-      totaldata: totaldata,
-      data: deposits
-    }
-
-    return depositsData;
-
-  }
-
-  async findAllLedgerBySalesAgent(header: any, page: number, type: string, filter: string, limit: number){
-
-    const agent = await this.authService.verifyAgentToken(header);
-
-    if(!agent){
-      throw new UnauthorizedException();
-    }
-
-    const skip = (page - 1) * limit;
-    const take = limit;
-
-    let queryBuilder = this.ledgerRepository.createQueryBuilder("ledger");
-
-    if (type) {
-        queryBuilder = queryBuilder.where("ledger.trxtype = :trxtype", { trxtype: type });
-    }
-
-    if (filter) {
-        queryBuilder = queryBuilder.andWhere("(ledger.agentId LIKE :filter OR ledger.companyname LIKE :filter)", { filter: `%${filter}%` });
-    }
-
-    const totaldata = await queryBuilder.getCount();
-
-    const deposits = await queryBuilder
-        .orderBy("ledger.id", "DESC")
-        .skip(skip)
-        .take(take)
-        .getMany();
-
-
-    const depositsData = {
-      limit: Number(limit),
-      page: Number(page),
-      totalpage: Math.ceil(totaldata / limit),
-      totaldata: totaldata,
-      data: deposits
-    }
-
-    return depositsData;
-
-  }
 }

@@ -9,7 +9,7 @@ export declare class ReissueController {
     sendquatation(header: Headers, bookingUId: string, quotationReissueDto: ReissueQuotation): Promise<{
         message: string;
     }>;
-    quatationDecision(header: string, status: string, bookingUId: string): Promise<"Unknown error" | {
+    quatationDecision(header: string, status: string, bookingUId: string): Promise<{
         message: string;
     }>;
     reissueDecision(header: Headers, status: string, bookingUId: string): Promise<{

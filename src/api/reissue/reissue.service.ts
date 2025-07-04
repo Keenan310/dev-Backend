@@ -105,7 +105,6 @@ export class ReissueService {
     }
   }
 
-
   async reissueTicketRequest(header: any, status: string, bookingUId: string) {
 
     const agent = await this.authService.verifyAgentToken(header);
@@ -131,17 +130,6 @@ export class ReissueService {
     if(status === 'accept'){
       const bookingstatus='Reissue Quotation Accepted';
 
-      const agentLedger = await this.agentLedgerRepository
-      .createQueryBuilder()
-      .select('SUM(amount)', 'sum')
-      .where('agentId = :agentId', { agentId: booking.agentId })
-      .getRawOne();
-
-      const agentLedgerValue =  agentLedger.sum != null ? agentLedger.sum : 0;
-      if(agentLedgerValue < reissue.quotationamount){
-          throw new HttpException("Insufficient Amount. Please Top Up", HttpStatusCode.NotAcceptable);
-      }else if(agentLedgerValue >= reissue.quotationamount){
-
         const details = booking.carrier_name+' ' + booking.depfrom+'-'+booking.arrto+
           ' Ticket Reissue Date: '+reissue.reissuedate+' Reissue Charge ' + reissue.quotationamount +
           ' AED. PNR : '+ booking.pnr+' .';
@@ -149,7 +137,7 @@ export class ReissueService {
         const AgentLedgerData = {
           agentId: booking.agentId,
           trxtype: 'reissue',
-          amount: -reissue.quotationamount,
+          debit: reissue.quotationamount,
           refId: booking.bookingId,
           details: details,
           companyname: booking.companyname,
@@ -162,9 +150,6 @@ export class ReissueService {
         }else{
           return { message: 'Something error'};
         }
-      }else{
-        return 'Unknown error';
-      }
     }else if(status === 'reject'){
       booking.status = 'Reissue Quotation Rejected';
       const bookingResponse = await this.bookingRepository.update(booking.id, booking);

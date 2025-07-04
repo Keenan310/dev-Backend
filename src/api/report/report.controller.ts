@@ -65,37 +65,4 @@ export class ReportController {
   }
     return this.reportService.findAllLedger(header, page, type, filter, limit);
   }
-
-  @ApiBearerAuth('access_token')
-  @Get('admin/report/sales')
-  @ApiQuery({ name: 'type', required: false })
-  @ApiQuery({ name: 'filter', required: false })
-  findAllSales(
-    @Headers() header: Headers,
-    @Query('page') page?: number,
-    @Query('type') type?: string,
-    @Query('filter') filter?: string,
-    @Query('limit') limit?: number) {
-    if(limit > 100 || limit < 10){
-      throw new NotAcceptableException("Limit Range must be 10-100");
-    }
-    return this.reportService.findAllLedgerBySales(header, page, type, filter, limit);
-  }
-
-  @ApiBearerAuth('access_token')
-  @Get('agent/report/sales')
-  @ApiQuery({ name: 'type', required: false })
-  @ApiQuery({ name: 'filter', required: false })
-  findAllSalesAgent(
-    @Headers() header: Headers,
-    @Query('page') page?: number,
-    @Query('type') type?: string,
-    @Query('filter') filter?: string,
-    @Query('limit') limit?: number) {
-    if(limit > 100 || limit < 10){
-      throw new NotAcceptableException("Limit Range must be 10-100");
-    }
-    return this.reportService.findAllLedgerBySales(header, page, type, filter, limit);
-  }
-
 }
