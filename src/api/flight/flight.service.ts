@@ -58,17 +58,18 @@ export class FlightService {
     // if(search > agent.searchlimit){
     //   throw new NotFoundException(" Daily Search Limit Exceed");
     // }else{
-     //const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
 
-      // let Groupdata: any[] = [];
-      // if (flightDto.segments.length === 1 && flightDto.adultcount === 1) {
-      //   Groupdata = await this.groupFareService.findBySearchFlight(flightDto);
-      // }
+    const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
+
+    // let Groupdata: any[] = [];
+    // if (flightDto.segments.length === 1 && flightDto.adultcount === 1) {
+    //   Groupdata = await this.groupFareService.findBySearchFlight(flightDto);
+    // }
 
       const AlhindData = await this.alhindAPI.flights(agent, flightDto);
 
-      //const combinedArray = Sabre_FlightData.concat(AlhindData);
-      AlhindData.sort((a, b) => a.NetFare - b.NetFare);
+      const combinedArray = Sabre_FlightData.concat(AlhindData);
+      combinedArray.sort((a, b) => a.NetFare - b.NetFare);
       
       return AlhindData;
 
