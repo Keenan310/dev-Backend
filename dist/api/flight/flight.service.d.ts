@@ -1,7 +1,6 @@
 import { SabreService } from './sabre.flights.service';
 import { BookingModel, TicketModel } from '../booking/booking.model';
 import { Repository } from 'typeorm';
-import { SeapMapDto } from './dto/seatmap-flight.dto';
 import { PassengerModel } from '../passenger/passenger.model';
 import { ReissueModel } from '../reissue/reissue.model';
 import { RefundModel } from '../refund/refund.model';
@@ -10,9 +9,7 @@ import { GroupfareService } from '../groupfare/groupfare.service';
 import { BookingService } from '../booking/booking.service';
 import { AirBookingModel } from './dto/booking-flight.dto';
 import { FlightSearchModel } from './dto/search-flight.dto';
-import { FareRulesDto } from './dto/farerules-flight.dto';
 import { AuthService } from '../auth/auth.service';
-import { SearchHistoryModel } from '../searchhistory/searchhistory.model';
 import { AlhindAPI } from './alhind.flights.service';
 export declare class FlightService {
     private readonly bookingRepository;
@@ -21,13 +18,12 @@ export declare class FlightService {
     private readonly reissueRepository;
     private readonly refundRepository;
     private readonly ticketingRepository;
-    private readonly searchHistoryRepository;
     private readonly authService;
     private readonly sabreService;
     private readonly bookingService;
     private readonly groupFareService;
     private readonly alhindAPI;
-    constructor(bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, reissueRepository: Repository<ReissueModel>, refundRepository: Repository<RefundModel>, ticketingRepository: Repository<TicketModel>, searchHistoryRepository: Repository<SearchHistoryModel>, authService: AuthService, sabreService: SabreService, bookingService: BookingService, groupFareService: GroupfareService, alhindAPI: AlhindAPI);
+    constructor(bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, reissueRepository: Repository<ReissueModel>, refundRepository: Repository<RefundModel>, ticketingRepository: Repository<TicketModel>, authService: AuthService, sabreService: SabreService, bookingService: BookingService, groupFareService: GroupfareService, alhindAPI: AlhindAPI);
     airsearch(header: any, flightDto: FlightSearchModel): Promise<any>;
     airrevalidation(header: any, revalidationDto: any): Promise<any>;
     pricecheck(agentUId: string, revalidationDto: any): Promise<any[] | "Other System">;
@@ -95,8 +91,6 @@ export declare class FlightService {
         companyname: string;
     } & BookingModel) | "Invalid System">;
     airimportpnr(header: any, system: string, pnr: string): Promise<any>;
-    airseatmapagent(header: any, seatMapDto: SeapMapDto): Promise<any>;
-    airseatmapadmin(header: any, seatMapDto: SeapMapDto): Promise<void | any[]>;
     aircancelagent(header: any, bookingUId: string): Promise<{
         status: string;
         message: string;
@@ -140,6 +134,4 @@ export declare class FlightService {
         partialpaymentdata: {};
     }>;
     aircheckpnr(header: any, system: string, pnr: string): Promise<any>;
-    airfarerulesagent(header: any, farerulesDto: FareRulesDto): Promise<any>;
-    airfarerulesadmin(header: any, farerulesDto: FareRulesDto): Promise<any>;
 }

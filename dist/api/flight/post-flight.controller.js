@@ -15,24 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostFlightController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
-const seatmap_flight_dto_1 = require("./dto/seatmap-flight.dto");
 const flight_service_1 = require("./flight.service");
-const farerules_flight_dto_1 = require("./dto/farerules-flight.dto");
 let PostFlightController = class PostFlightController {
     constructor(flightService) {
         this.flightService = flightService;
-    }
-    AirFareRulesAgent(header, farerulesDto) {
-        return this.flightService.airfarerulesagent(header, farerulesDto);
-    }
-    AirFareRulesAdmin(header, farerulesDto) {
-        return this.flightService.airfarerulesadmin(header, farerulesDto);
-    }
-    AirSeatMapAgent(header, seatMapDto) {
-        return this.flightService.airseatmapagent(header, seatMapDto);
-    }
-    AirSeatMapAdmin(header, seatMapDto) {
-        return this.flightService.airseatmapadmin(header, seatMapDto);
     }
     AirRetrieveAgent(header, bookingUId) {
         return this.flightService.airretrieveagent(header, bookingUId);
@@ -54,42 +40,6 @@ let PostFlightController = class PostFlightController {
     }
 };
 exports.PostFlightController = PostFlightController;
-__decorate([
-    (0, swagger_1.ApiBearerAuth)('access_token'),
-    (0, common_1.Post)("agent/flight/fare/rules"),
-    __param(0, (0, common_1.Headers)()),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, farerules_flight_dto_1.FareRulesDto]),
-    __metadata("design:returntype", void 0)
-], PostFlightController.prototype, "AirFareRulesAgent", null);
-__decorate([
-    (0, swagger_1.ApiBearerAuth)('access_token'),
-    (0, common_1.Post)("admin/flight/fare/rules"),
-    __param(0, (0, common_1.Headers)()),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, farerules_flight_dto_1.FareRulesDto]),
-    __metadata("design:returntype", void 0)
-], PostFlightController.prototype, "AirFareRulesAdmin", null);
-__decorate([
-    (0, swagger_1.ApiBearerAuth)('access_token'),
-    (0, common_1.Post)("agent/flight/seatmap"),
-    __param(0, (0, common_1.Headers)()),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, seatmap_flight_dto_1.SeapMapDto]),
-    __metadata("design:returntype", void 0)
-], PostFlightController.prototype, "AirSeatMapAgent", null);
-__decorate([
-    (0, swagger_1.ApiBearerAuth)('access_token'),
-    (0, common_1.Post)("admin/flight/seatmap"),
-    __param(0, (0, common_1.Headers)()),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, seatmap_flight_dto_1.SeapMapDto]),
-    __metadata("design:returntype", void 0)
-], PostFlightController.prototype, "AirSeatMapAdmin", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Get)("agent/flight/booking/details/:bookingUId"),

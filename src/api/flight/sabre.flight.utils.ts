@@ -15,11 +15,6 @@ export class SabreUtils {
         private readonly airportsService: AirportsService,
     ){}
 
-    async tokenParser(data: any): Promise<any>{
-        const xmlTokenData = await this.xmlParser(data);
-        const securitytoken = xmlTokenData?.Envelope?.Header?.[0]['wsse:Security'][0]['wsse:BinarySecurityToken'][0]['_'];
-        return securitytoken;
-    }
 
     async restBFMParser(agentdata : AgentModel, SearchResponse: any) {
 
@@ -73,12 +68,8 @@ export class SabreUtils {
                 for (const flights of GroupAllFlights.flat()) {
                     const ValidatingCarrier : string = flights.pricingInformation[0].fare.validatingCarrierCode;
                     const airlineData : any = await this.airlinesService.getAirlines(ValidatingCarrier);
-                    const FareType: string = "Regular";
                     const AllPassenger : any[] = flights.pricingInformation[0].fare.passengerInfoList;
                     const CarrierName: string = airlineData?.marketing_name || 'N/F';
-                    const Instant_Payment : boolean = airlineData?.instantPayment;
-                    const IssuePermit : boolean = airlineData?.issuePermit;
-                    const IsBookable : boolean = airlineData?.bookable;
                     const equivalentAmount : number = flights.pricingInformation[0].fare.totalFare.equivalentAmount;
                     const Taxes : number = flights.pricingInformation[0].fare.totalFare.totalTaxAmount;
                     let TotalFare: number = flights.pricingInformation[0].fare.totalFare.totalPrice;
@@ -121,8 +112,6 @@ export class SabreUtils {
                     if(NetFare > TotalFare){
                         TotalFare = NetFare;
                     }
-
-                    const PartialAmount: number = NetFare * 0.30;
 
                     const Refundable : boolean = !flights.pricingInformation?.[0].fare.passengerInfoList?.[0].passengerInfo.nonRefundable;
                     let TimeLimit : string;
@@ -177,19 +166,6 @@ export class SabreUtils {
                             };
                         });
 
-                        let i=0;
-                        const FareBasis = allPassenger?.passengerInfo?.fareComponents?.map(fareComponent =>{
-                            i++;
-                            const farecompoRef = fareComponent?.ref;
-                            const fareCompo = AllFareCompoDescs[farecompoRef-1];
-                            return {
-                                Origin : fareComponent?.beginAirport,
-                                Destination: fareComponent?.endAirport,
-                                DepDate: GroupLegDescs[i-1]?.departureDate || GroupLegDescs[0]?.departureDate,
-                                FareBasisCode: fareCompo.fareBasisCode,
-                                Carrier: fareCompo.governingCarrier
-                            }
-                        });
 
                         return {
                             PaxType: PaxType,
@@ -198,7 +174,7 @@ export class SabreUtils {
                             TotalFare: PaxtotalFare,
                             PaxCount: paxCount,
                             Bag: Baggage,
-                            FareComponent: FareBasis
+                            FareComponent: {}
                         };
                     });
 
@@ -311,7 +287,6 @@ export class SabreUtils {
                         PriceBreakDown: PriceBreakDown,
                         AllLegsInfo : AllLegsInfo
                     });
-                
                 }
             }
 
@@ -319,181 +294,6 @@ export class SabreUtils {
         }else{
             return [];
         }
-    }
-
-    async restGetBooking(agentdata: AgentModel, getBookingResponse: any){
-
-    }
-
-    
-    async soapBFMParser(agentdata : AgentModel, SearchResponse: any){
-        // if(soapEnvelope['SOAP-ENV:Envelope']['SOAP-ENV:Body']['OTA_AirLowFareSearchRS']['_attributes']['PricedItinCount'] > 0){
-
-        //     const AirLowFareSearchRS = soapEnvelope['SOAP-ENV:Envelope']['SOAP-ENV:Body']['OTA_AirLowFareSearchRS'];
-        //     const AllFlights = AirLowFareSearchRS['PricedItineraries']['PricedItinerary'];
-  
-        //     const FlightItenary = [];
-        //     for (const flights of AllFlights) {
-        //       const ValidatingCarrier = flights['TPA_Extensions']['ValidatingCarrier']['_attributes']['Code'];
-        //       const TripType = flights['AirItinerary']['_attributes']['DirectionInd'];
-        //       const BaseFare = flights['AirItineraryPricingInfo']['ItinTotalFare']['EquivFare']['_attributes']['Amount'];
-        //       const Taxes = flights['AirItineraryPricingInfo']['ItinTotalFare']['Taxes']['Tax']['_attributes']['Amount'];
-        //       const TotalFare = flights['AirItineraryPricingInfo']['ItinTotalFare']['TotalFare']['_attributes']['Amount'];
-        //       const CurrencyCode= flights['AirItineraryPricingInfo']['ItinTotalFare']['TotalFare']['_attributes']['CurrencyCode'];;
-        //       const NonRefundable = flights['AirItineraryPricingInfo']['PTC_FareBreakdowns']['PTC_FareBreakdown'][0]['Endorsements']['_attributes']['NonRefundableIndicator'];
-        //       let PTC_FareBreakdowns = flights['AirItineraryPricingInfo']['PTC_FareBreakdowns']['PTC_FareBreakdown'];
-  
-        //       if(PTC_FareBreakdowns.length < 0) {
-        //         PTC_FareBreakdowns = [PTC_FareBreakdowns];
-        //       }
-  
-        //       const PriceBreakDown = [];
-        //       for(const PTC_Fare of PTC_FareBreakdowns){
-        //         const PaxType = PTC_Fare['PassengerTypeQuantity']['_attributes']['Code'];
-        //         const PaxCount = PTC_Fare['PassengerTypeQuantity']['_attributes']['Quantity'];
-        //         const PaxBaseFare = PTC_Fare['PassengerFare']['EquivFare']['_attributes']['Amount'];
-        //         const PaxTaxes = PTC_Fare['PassengerFare']['Taxes']['TotalTax']['_attributes']['Amount'];
-        //         const PaxTotalFare = PTC_Fare['PassengerFare']['TotalFare']['_attributes']['Amount'];
-      
-  
-        //         let BaggageAllowance = PTC_Fare['PassengerFare']['TPA_Extensions']['BaggageInformationList']['BaggageInformation'];
-  
-        //         if(BaggageAllowance.length < 0){
-        //           BaggageAllowance = [BaggageAllowance]
-        //         }
-  
-        //         const Baggage = [];
-        //         for(const Bag of BaggageAllowance){
-        //           const AirlineCode = Bag['_attributes']['AirlineCode'];
-        //           const BagAllowance = Bag['Allowance']['_attributes'];
-                  
-        //           let Allowance: string = '';
-        //           if(BagAllowance['Pieces']){
-        //             Allowance = BagAllowance['Pieces'] + 'Pieces';
-        //           }else{
-        //             Allowance = BagAllowance['Weight']+ BagAllowance['Unit'];
-        //           }
-        
-        //           const  singleBag = {
-        //             Airline: AirlineCode,
-        //             Allowance: Allowance,
-        //           };
-  
-        //           Baggage.push(singleBag);
-        //         }
-          
-        //         const singlepax = {
-        //           PaxType: PaxType,
-        //           BaseFare: PaxBaseFare,
-        //           Taxes: PaxTaxes,
-        //           TotalFare: PaxTotalFare,
-        //           PaxCount: PaxCount,
-        //           Bag: Baggage,
-        //         };
-  
-        //         PriceBreakDown.push(singlepax);
-  
-        //       }
-  
-  
-        //       const AllLegsData = (flights['AirItinerary']['OriginDestinationOptions']['OriginDestinationOption']).length > 0 ?
-        //                   flights['AirItinerary']['OriginDestinationOptions']['OriginDestinationOption'] :
-        //                   [flights['AirItinerary']['OriginDestinationOptions']['OriginDestinationOption']];
-  
-        //       const AllLegsInfo = [];
-        //       for (const singleLeg of AllLegsData) {
-        //         const DepartureCountry = singleLeg['_attributes']['DepartureCountry'];
-        //         const ArrivalCountry = singleLeg['_attributes']['ArrivalCountry'];
-        //         const ElapsedTime = singleLeg['_attributes']['ElapsedTime'];
-  
-        //         const SingleLegData = (singleLeg['FlightSegment']).length > 0 ? singleLeg['FlightSegment'] : [singleLeg['FlightSegment']];
-  
-        //         const singleLegInfo = {
-        //           DepartureCountry: DepartureCountry,
-        //           ArrivalCountry: ArrivalCountry,
-        //           ElapsedTime: ElapsedTime,
-        //         };
-  
-        //         const AllSegmentsInfo =[];
-        //         for (const singleSegments of SingleLegData) {
-        //           const OperatedBy= singleSegments['DisclosureAirline'] &&
-        //                             singleSegments['DisclosureAirline']['_attributes'] ?
-        //                             singleSegments['DisclosureAirline']['_attributes']['Code'] :
-        //                             singleSegments['OperatingAirline']['_attributes']['Code'];
-  
-        //           const SingleSegmentsInfo = {
-        //             MarketingAirline: singleSegments['MarketingAirline']['_attributes']['Code'],
-        //             MarketingFlightNumber: singleSegments['_attributes']['FlightNumber'],
-        //             OperatingAirline: singleSegments['OperatingAirline']['_attributes']['Code'],
-        //             OperatingFlightNumber: singleSegments['OperatingAirline']['_attributes']['FlightNumber'],
-        //             DepartureAirPort: singleSegments['DepartureAirport']['_attributes']['LocationCode'],
-        //             DepartureDateTime: singleSegments['_attributes']['DepartureDateTime'],
-        //             ArrivalAirPort: singleSegments['ArrivalAirport']['_attributes']['LocationCode'],
-        //             ArrivalDateTime: singleSegments['_attributes']['ArrivalDateTime'],
-        //             OperatedBy: OperatedBy,
-        //             StopCount: singleSegments['_attributes']['StopQuantity'],
-        //             ElapsedTime: singleSegments['_attributes']['ElapsedTime'],
-        //             BookingCode: singleSegments['_attributes']['ResBookDesigCode'],
-        //             MarriageGrp: singleSegments['MarriageGrp']['_text'],
-        //             Mileage : singleSegments['TPA_Extensions']['Mileage']['_attributes']['Amount']
-        //           };
-            
-        //           AllSegmentsInfo.push(SingleSegmentsInfo);
-  
-        //         }
-        //         singleLegInfo['Segments'] = AllSegmentsInfo;
-        //         AllLegsInfo.push(singleLegInfo);
-        //       }
-  
-        //       FlightItenary.push({
-        //         TripType: TripType,
-        //         Carrier: ValidatingCarrier,
-        //         BaseFare: BaseFare,
-        //         Taxes: Taxes,
-        //         TotalFare: TotalFare,
-        //         CurrencyCode: CurrencyCode,
-        //         NonRefundable: !NonRefundable,
-        //         PriceBreakDown: PriceBreakDown,
-        //         AllLegs: AllLegsInfo
-        //       });
-        //     }
-  
-        //     return FlightItenary;
-  
-        // }else{
-        // return soapEnvelope;
-        // }
-    }
-
-    async seatMapParser(data: any): Promise<void> {
-        const seatmap = await this.xmlParser(data);
-        const seatdata = seatmap?.Envelope?.Body[0]?.EnhancedSeatMapRS[0]?.SeatMap[0];
-        return seatdata;
-    }
-
-    async fareRulesParser(data: any): Promise<{}> {
-        const farerules = await this.xmlParser(data);
-        const farerulesdata = farerules.Envelope?.Body[0]?.OTA_AirRulesRS[0]?.FareRuleInfo[0]?.Rules[0];
-        const refundpolicy = farerulesdata.Paragraph[0].Text;
-        const reissuepolicy = farerulesdata.Paragraph[1].Text;
-
-        const finalresult = {
-          refundpolicy: refundpolicy,
-          reissuepolicy: reissuepolicy
-        }
-
-        return finalresult;
-    }
-
-    async xmlParser(data: any){
-        let convertedData: any;
-        parseString(data, function (err, results) { 
-            const removeSoap = JSON.stringify(results)?.replaceAll('soap-env:','');
-            const replace = removeSoap?.replaceAll('$','data');
-            convertedData = JSON.parse(replace);
-        });
-
-        return convertedData;
     }
 
     async getAirports(code: string) {

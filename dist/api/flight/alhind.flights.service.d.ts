@@ -7,6 +7,7 @@ import { FlightSearchModel } from './dto/search-flight.dto';
 import { AgentModel } from '../agent/agent.model';
 import { AirlinesService } from '../airlines/airlines.service';
 import { AirportsService } from '../airports/airports.service';
+import { Revalidation } from './dto/revalidation-flight.dto';
 export declare class AlhindAPI {
     private readonly bookingRepository;
     private readonly passengerService;
@@ -15,8 +16,9 @@ export declare class AlhindAPI {
     private readonly airlinesService;
     private readonly airportsService;
     constructor(bookingRepository: Repository<BookingModel>, passengerService: PassengerService, bookingService: BookingService, searchHistoryService: SearchhistoryService, airlinesService: AirlinesService, airportsService: AirportsService);
-    flights(agent: AgentModel, flightDto: FlightSearchModel): Promise<any>;
+    flights(agent: AgentModel, flightDto: FlightSearchModel): Promise<any[]>;
     flightUtils(result: any, agentdata: AgentModel, flighDto: FlightSearchModel): Promise<any[]>;
+    priceCheck(agent: AgentModel, revalidation: Revalidation): Promise<Revalidation>;
     getAirports(code: string): Promise<{
         code: string;
         name: string;

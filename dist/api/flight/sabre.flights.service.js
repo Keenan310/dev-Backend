@@ -53,138 +53,6 @@ let SabreService = class SabreService {
             console.log(err);
         }
     }
-    async sabreCreateSessionSoap() {
-        const payload = `<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-      <SOAP-ENV:Header>
-          <MessageHeader xmlns="http://www.ebxml.org/namespaces/messageHeader">
-              <From>
-                  <PartyId>${process.env.AGENCY_NAME}</PartyId>
-              </From>
-              <To>
-                  <PartyId>Sabre_API</PartyId>
-              </To>
-              <ConversationId>2021.01.DevStudio</ConversationId>
-              <Action>SessionCreateRQ</Action>
-          </MessageHeader>
-          <Security xmlns="http://schemas.xmlsoap.org/ws/2002/12/secext">
-              <UsernameToken>
-                  <Username>${process.env.SABRE_ID}</Username>
-                  <Password>${process.env.SABRE_PASSWORD}</Password>
-                  <Organization>${process.env.SABRE_PCC}</Organization>
-                  <Domain>DEFAULT</Domain>
-              </UsernameToken>
-          </Security>
-      </SOAP-ENV:Header>
-      <SOAP-ENV:Body>
-        <SessionCreateRQ returnContextID="true" Version="1.0.0" xmlns="http://www.opentravel.org/OTA/2002/11"/>
-      </SOAP-ENV:Body>
-      </SOAP-ENV:Envelope>`;
-        let sabretokenRq = {
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: process.env.SABRE_WEBSERVICES_ENDPOINT,
-            headers: {
-                'Content-Type': 'text/xml',
-                'Conversation-ID': '2021.01.DevStudio',
-            },
-            data: payload
-        };
-        try {
-            const response = await axios_1.default.request(sabretokenRq);
-            return await this.sabreUtils.tokenParser(response?.data);
-        }
-        catch (error) {
-            return 'Token error';
-        }
-    }
-    async sabreSessionLessTokenSoap() {
-        const payload = `<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-      <SOAP-ENV:Header>
-          <MessageHeader xmlns="http://www.ebxml.org/namespaces/messageHeader">
-              <From>
-                  <PartyId>${process.env.AGENCY_NAME}</PartyId>
-              </From>
-              <To>
-                  <PartyId>Sabre_API</PartyId>
-              </To>
-              <ConversationId>2021.01.DevStudio</ConversationId>
-              <Action>TokenCreateRQ</Action>
-          </MessageHeader>
-          <Security xmlns="http://schemas.xmlsoap.org/ws/2002/12/secext">
-              <UsernameToken>
-                  <Username>${process.env.SABRE_ID}</Username>
-                  <Password>${process.env.SABRE_PASSWORD}</Password>
-                  <Organization>${process.env.SABRE_PCC}</Organization>
-                  <Domain>DEFAULT</Domain>
-              </UsernameToken>
-          </Security>
-      </SOAP-ENV:Header>
-      <SOAP-ENV:Body>
-        <TokenCreateRQ Version="1.0.0" xmlns="http://webservices.sabre.com"/>
-      </SOAP-ENV:Body>
-      </SOAP-ENV:Envelope>`;
-        let sabretokenRq = {
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: process.env.SABRE_WEBSERVICES_ENDPOINT,
-            headers: {
-                'Content-Type': 'text/xml',
-                'Conversation-ID': '2021.01.DevStudio',
-            },
-            data: payload
-        };
-        try {
-            const response = await axios_1.default.request(sabretokenRq);
-            return await this.sabreUtils.tokenParser(response?.data);
-        }
-        catch (error) {
-            return 'Token error';
-        }
-    }
-    async closeSession() {
-        const payload = `<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-      <SOAP-ENV:Header>
-          <MessageHeader xmlns="http://www.ebxml.org/namespaces/messageHeader">
-              <From>
-                  <PartyId>${process.env.AGENCY_NAME}</PartyId>
-              </From>
-              <To>
-                  <PartyId>Sabre_API</PartyId>
-              </To>
-              <ConversationId>2021.01.DevStudio</ConversationId>
-              <Action>SessionCreateRQ</Action>
-          </MessageHeader>
-          <Security xmlns="http://schemas.xmlsoap.org/ws/2002/12/secext">
-              <UsernameToken>
-                  <Username>${process.env.SABRE_ID}</Username>
-                  <Password>${process.env.SABRE_PASSWORD}</Password>
-                  <Organization>${process.env.SABRE_PCC}</Organization>
-                  <Domain>DEFAULT</Domain>
-              </UsernameToken>
-          </Security>
-      </SOAP-ENV:Header>
-      <SOAP-ENV:Body>
-        <SessionCloseRQ Version="1.0.0" xmlns="http://www.opentravel.org/OTA/2002/11"/>
-      </SOAP-ENV:Body>
-      </SOAP-ENV:Envelope>`;
-        let sabretokenRq = {
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: process.env.SABRE_WEBSERVICES_ENDPOINT,
-            headers: {
-                'Content-Type': 'text/xml',
-                'Conversation-ID': '2021.01.DevStudio',
-            },
-            data: payload
-        };
-        try {
-            const response = await axios_1.default.request(sabretokenRq);
-            return await this.sabreUtils.tokenParser(response?.data);
-        }
-        catch (error) {
-            return 'Token error';
-        }
-    }
     async shopping(agentdata, flightDto) {
         let adultCount = flightDto?.adultcount || 1;
         let childCount = flightDto?.childcount || 0;
@@ -312,10 +180,10 @@ let SabreService = class SabreService {
         };
         try {
             const response = await axios_1.default.request(shoppingrequest);
-            return this.sabreUtils.restBFMParser(agentdata, response?.data);
+            return await this.sabreUtils.restBFMParser(agentdata, response?.data);
         }
         catch (error) {
-            throw error?.response?.data;
+            return error?.response?.data;
         }
     }
     async revalidation(agentdata, revalidationDto) {
@@ -475,7 +343,7 @@ let SabreService = class SabreService {
         let AdultCount = 0;
         let ChildCount = 0;
         let InfantCount = 0;
-        const PriceBreakDown = revalidationDto.PriceBreakDown;
+        const PriceBreakDown = revalidationDto?.PriceBreakDown;
         for (const pricebreakdown of PriceBreakDown) {
             if (pricebreakdown.PaxType === 'ADT') {
                 AdultCount = pricebreakdown.PaxCount;
@@ -619,7 +487,6 @@ let SabreService = class SabreService {
             return await this.sabreUtils.restBFMParser(agentdata, response?.data);
         }
         catch (error) {
-            console.error(error);
             throw error;
         }
     }
@@ -1831,119 +1698,6 @@ let SabreService = class SabreService {
             const void_response = await axios_1.default.request(sabrevoidrequest);
             const voidreponse = void_response.data;
             return voidreponse;
-        }
-        catch (error) {
-            console.error(error);
-            throw error;
-        }
-    }
-    async airfarerules(farerulesDto) {
-        const depdate = farerulesDto.DepDate;
-        const origin = farerulesDto.Origin;
-        const destination = farerulesDto.Destination;
-        const carrier = farerulesDto.Carrier;
-        const farebasiscode = farerulesDto.FareBasisCode;
-        const sabreToken = await this.sabreCreateSessionSoap();
-        const payload = `<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-      <SOAP-ENV:Header>
-          <MessageHeader xmlns="http://www.ebxml.org/namespaces/messageHeader">
-              <From>
-                  <PartyId>${process.env.AGENCY_NAME}</PartyId>
-              </From>
-              <To>
-                  <PartyId>Sabre_API</PartyId>
-              </To>
-              <ConversationId>2021.01.DevStudio</ConversationId>
-              <Action>OTA_AirRulesLLSRQ</Action>
-          </MessageHeader>
-          <wsse:Security xmlns:wsse="http://schemas.xmlsoap.org/ws/2002/12/secext">
-              <wsse:BinarySecurityToken valueType="String" EncodingType="wsse:Base64Binary">${sabreToken}</wsse:BinarySecurityToken>
-          </wsse:Security>
-      </SOAP-ENV:Header>
-      <SOAP-ENV:Body>
-          <OTA_AirRulesRQ ReturnHostCommand="true" Version="2.3.0" xmlns="http://webservices.sabre.com/sabreXML/2011/10">
-          <OriginDestinationInformation>
-              <FlightSegment DepartureDateTime="${depdate}">
-                  <DestinationLocation LocationCode="${destination}"/>
-                  <MarketingCarrier Code="${carrier}"/>
-                  <OriginLocation LocationCode="${origin}"/>
-              </FlightSegment>
-          </OriginDestinationInformation>
-          <RuleReqInfo>
-              <Category>16</Category>
-              <Category>31</Category>
-              <FareBasis Code="${farebasiscode}"/>
-          </RuleReqInfo>
-          </OTA_AirRulesRQ>
-      </SOAP-ENV:Body>
-  </SOAP-ENV:Envelope>`;
-        let farerulesrequest = {
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: process.env.SABRE_WEBSERVICES_ENDPOINT,
-            headers: {
-                'Content-Type': 'text/xml',
-                'Conversation-ID': '2021.01.DevStudio',
-            },
-            data: payload
-        };
-        try {
-            const response = await axios_1.default.request(farerulesrequest);
-            return await this.sabreUtils.fareRulesParser(response?.data);
-        }
-        catch (error) {
-            return error.response?.data;
-        }
-    }
-    async seat_map(seatMapDto) {
-        const sabreToken = await this.sabreCreateSessionSoap();
-        const EnhancedSeatMapRQ = `<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-      <SOAP-ENV:Header>
-          <MessageHeader xmlns="http://www.ebxml.org/namespaces/messageHeader">
-              <From>
-                  <PartyId>${process.env.AGENCY_NAME}</PartyId>
-              </From>
-              <To>
-                  <PartyId>Sabre_API</PartyId>
-              </To>
-              <ConversationId>2021.01.DevStudio</ConversationId>
-              <Action>EnhancedSeatMapRQ</Action>
-          </MessageHeader>
-          <wsse:Security xmlns:wsse="http://schemas.xmlsoap.org/ws/2002/12/secext">
-              <wsse:BinarySecurityToken valueType="String" EncodingType="wsse:Base64Binary">${sabreToken}</wsse:BinarySecurityToken>
-          </wsse:Security>
-          </SOAP-ENV:Header>
-          <SOAP-ENV:Body>
-          <EnhancedSeatMapRQ version="6.0.0" xmlns="http://stl.sabre.com/Merchandising/v5">
-              <SeatMapQueryEnhanced>
-                  <RequestType>Payload</RequestType>
-                  <Flight destination="${seatMapDto.Destination}" origin="${seatMapDto.Origin}">
-                      <DepartureDate>${seatMapDto.DepDate}</DepartureDate>
-                      <Marketing carrier="${seatMapDto.Carrier}">${seatMapDto.FlightNumber}</Marketing>
-                  </Flight>
-                  <CabinDefinition>
-                      <RBD>${seatMapDto.CabinClass}</RBD>
-                  </CabinDefinition>
-                  <POS>
-                      <PCC>${process.env.SABRE_PCC}</PCC>
-                  </POS>
-              </SeatMapQueryEnhanced>
-          </EnhancedSeatMapRQ>
-          </SOAP-ENV:Body>
-      </SOAP-ENV:Envelope>`;
-        let seatmaprequest = {
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: process.env.SABRE_WEBSERVICES_ENDPOINT,
-            headers: {
-                'Content-Type': 'text/xml',
-                'Conversation-ID': '2021.01.DevStudio',
-            },
-            data: EnhancedSeatMapRQ
-        };
-        try {
-            const response = await axios_1.default.request(seatmaprequest);
-            return await this.sabreUtils.seatMapParser(response?.data);
         }
         catch (error) {
             console.error(error);

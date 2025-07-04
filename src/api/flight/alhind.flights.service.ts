@@ -13,6 +13,7 @@ import { AirlinesService } from '../airlines/airlines.service';
 import { AirportsService } from '../airports/airports.service';
 import { airportsData } from './data/airports.data';
 import { airlinesData } from './data/airlines.data';
+import { Revalidation } from './dto/revalidation-flight.dto';
 dotenv.config()
 
 
@@ -95,7 +96,7 @@ export class AlhindAPI {
         return this.flightUtils(result, agent, flightDto);
     }catch (err) {
       console.log(err.response.data);
-      return err.response.data;
+      return [];
     }
   }
 
@@ -364,6 +365,10 @@ export class AlhindAPI {
         }else{
             return [];
         }
+  }
+
+  async priceCheck(agent : AgentModel, revalidation: Revalidation){
+    return revalidation;
   }
   async getAirports(code: string) {
         const foundItem = airportsData.find(item => item.code === code);

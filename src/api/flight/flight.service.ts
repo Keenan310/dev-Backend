@@ -3,7 +3,6 @@ import { SabreService } from './sabre.flights.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookingModel, TicketModel } from '../booking/booking.model';
 import { Repository } from 'typeorm';
-import { SeapMapDto } from './dto/seatmap-flight.dto';
 import { PassengerModel } from '../passenger/passenger.model';
 import { HttpStatusCode } from 'axios';
 import { ReissueModel } from '../reissue/reissue.model';
@@ -13,7 +12,6 @@ import { GroupfareService } from '../groupfare/groupfare.service';
 import { BookingService } from '../booking/booking.service';
 import { AirBookingModel } from './dto/booking-flight.dto';
 import { FlightSearchModel } from './dto/search-flight.dto';
-import { FareRulesDto } from './dto/farerules-flight.dto';
 import { AuthService } from '../auth/auth.service';
 import { SearchHistoryModel } from '../searchhistory/searchhistory.model';
 import { AlhindAPI } from './alhind.flights.service';
@@ -33,8 +31,6 @@ export class FlightService {
       private readonly refundRepository: Repository<RefundModel>,
       @InjectRepository(TicketModel)
       private readonly ticketingRepository: Repository<TicketModel>,
-      @InjectRepository(SearchHistoryModel)
-      private readonly searchHistoryRepository: Repository<SearchHistoryModel>,
       private readonly authService: AuthService,
       private readonly sabreService: SabreService,
       private readonly bookingService: BookingService,
@@ -49,29 +45,20 @@ export class FlightService {
       throw new UnauthorizedException();
     }
 
-    // const search = await this.searchHistoryRepository
-    // .createQueryBuilder('search')
-    // .where(`DATE(created_at) = CURDATE()`)
-    // .andWhere('search.agentId = :agentId', { agentId: agent.agentId })
-    // .getCount();
-
-    // if(search > agent.searchlimit){
-    //   throw new NotFoundException(" Daily Search Limit Exceed");
-    // }else{
-
     const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
+    return Sabre_FlightData;
 
     // let Groupdata: any[] = [];
     // if (flightDto.segments.length === 1 && flightDto.adultcount === 1) {
     //   Groupdata = await this.groupFareService.findBySearchFlight(flightDto);
     // }
 
-      const AlhindData = await this.alhindAPI.flights(agent, flightDto);
+      // const AlhindData = await this.alhindAPI.flights(agent, flightDto);
 
-      const combinedArray = Sabre_FlightData.concat(AlhindData);
-      combinedArray.sort((a, b) => a.NetFare - b.NetFare);
+      // const combinedArray = Sabre_FlightData.concat(AlhindData);
+      // combinedArray.sort((a, b) => a.NetFare - b.NetFare);
       
-      return AlhindData;
+      // return combinedArray;
 
     //}
 
@@ -92,6 +79,8 @@ export class FlightService {
        RevalidationData = await this.sabreService.revalidation(agent, revalidationDto);
     }else if(System === 'GroupFare'){
        RevalidationData =  await this.groupFareService.findOne(revalidationDto.OfferId);
+    }else if(System === 'AlHind'){
+       RevalidationData =  await this.alhindAPI.priceCheck(agent, revalidationDto);
     }else{
       RevalidationData ='Other System';
     }
@@ -154,47 +143,6 @@ export class FlightService {
       BookingResponse ='Other System';
     }
     return BookingResponse;
-
-  }
-
-  async airseatmapagent(header: any, seatMapDto: SeapMapDto){
-
-    const agent = await this.authService.verifyAgentToken(header);
-
-    if(!agent){
-      throw new UnauthorizedException();
-    }
-
-    let SeatMapData: any;
-    if(seatMapDto?.System === 'Sabre'){
-      SeatMapData = await this.sabreService.seat_map(seatMapDto);
-    }else if(seatMapDto?.System === 'GroupFare'){
-      SeatMapData = await this.sabreService.seat_map(seatMapDto);
-    }else if(seatMapDto?.System === 'Portal'){
-      SeatMapData = await this.sabreService.seat_map(seatMapDto);
-    }
-    return SeatMapData;
-
-  }
-
-  async airseatmapadmin(header: any, seatMapDto: SeapMapDto){
-
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
-
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
-    
-    
-    if(seatMapDto.System == 'Sabre'){
-      return await this.sabreService.seat_map(seatMapDto);
-    }else if(seatMapDto.System == 'Portal'){
-      return await this.sabreService.seat_map(seatMapDto);
-    }else if(seatMapDto.System == 'GroupFare'){
-      return await this.sabreService.seat_map(seatMapDto);
-    }else{
-      return []
-    }
 
   }
 
@@ -497,38 +445,6 @@ export class FlightService {
 
     return await this.sabreService.checkpnr(pnr);;
 
-  }
-
-  async airfarerulesagent(header: any, farerulesDto : FareRulesDto){
-    const agent = await this.authService.verifyAgentToken(header);
-
-    if(!agent){
-      throw new UnauthorizedException();
-    }
-
-    if(farerulesDto.System === 'Sabre'){
-      return await this.sabreService.airfarerules(farerulesDto);
-    }else if(farerulesDto.System === 'Portal'){
-      return await this.sabreService.airfarerules(farerulesDto);
-    }else{
-      throw new HttpException("System not found", HttpStatusCode.NotFound);
-    }
-  }
-
-  async airfarerulesadmin(header: any, farerulesDto : FareRulesDto){
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
-
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
-
-    if(farerulesDto.System === 'Sabre'){
-      return await this.sabreService.airfarerules(farerulesDto);
-    }else if(farerulesDto.System === 'Portal'){
-      return await this.sabreService.airfarerules(farerulesDto);
-    }else{
-      throw new HttpException("System not found", HttpStatusCode.NotFound);
-    }
   }
 }
 

@@ -5,7 +5,6 @@ import { AgentModel } from '../agent/agent.model';
 import { BookingService } from '../booking/booking.service';
 import { SabreUtils } from './sabre.flight.utils';
 import { FlightSearchModel } from './dto/search-flight.dto';
-import { FareRulesDto } from './dto/farerules-flight.dto';
 import { SearchhistoryService } from '../searchhistory/searchhistory.service';
 export declare class SabreService {
     private readonly bookingRepository;
@@ -15,10 +14,7 @@ export declare class SabreService {
     private readonly searchHistoryService;
     constructor(bookingRepository: Repository<BookingModel>, passengerService: PassengerService, bookingService: BookingService, sabreUtils: SabreUtils, searchHistoryService: SearchhistoryService);
     restToken(): Promise<string>;
-    sabreCreateSessionSoap(): Promise<any>;
-    sabreSessionLessTokenSoap(): Promise<any>;
-    closeSession(): Promise<any>;
-    shopping(agentdata: AgentModel, flightDto: FlightSearchModel): Promise<any[]>;
+    shopping(agentdata: AgentModel, flightDto: FlightSearchModel): Promise<any>;
     revalidation(agentdata: AgentModel, revalidationDto: any): Promise<any>;
     price_check(agentdata: AgentModel, revalidationDto: any): Promise<any[]>;
     booking(agentdata: AgentModel, bookingDto: any): Promise<({
@@ -67,6 +63,4 @@ export declare class SabreService {
     checkpnr(pnr: string): Promise<any>;
     airticketing(BookingData: any): Promise<any>;
     airvoid(pnr: string): Promise<any>;
-    airfarerules(farerulesDto: FareRulesDto): Promise<any>;
-    seat_map(seatMapDto: any): Promise<void>;
 }

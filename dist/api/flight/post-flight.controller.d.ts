@@ -1,13 +1,7 @@
-import { SeapMapDto } from './dto/seatmap-flight.dto';
 import { FlightService } from './flight.service';
-import { FareRulesDto } from './dto/farerules-flight.dto';
 export declare class PostFlightController {
     private readonly flightService;
     constructor(flightService: FlightService);
-    AirFareRulesAgent(header: string, farerulesDto: FareRulesDto): Promise<any>;
-    AirFareRulesAdmin(header: Headers, farerulesDto: FareRulesDto): Promise<any>;
-    AirSeatMapAgent(header: string, seatMapDto: SeapMapDto): Promise<any>;
-    AirSeatMapAdmin(header: Headers, seatMapDto: SeapMapDto): Promise<void | any[]>;
     AirRetrieveAgent(header: string, bookingUId: string): Promise<{
         bookingdata: any;
         sabredata: any;

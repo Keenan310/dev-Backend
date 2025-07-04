@@ -101,7 +101,7 @@ let AlhindAPI = class AlhindAPI {
         }
         catch (err) {
             console.log(err.response.data);
-            return err.response.data;
+            return [];
         }
     }
     async flightUtils(result, agentdata, flighDto) {
@@ -358,6 +358,9 @@ let AlhindAPI = class AlhindAPI {
         else {
             return [];
         }
+    }
+    async priceCheck(agent, revalidation) {
+        return revalidation;
     }
     async getAirports(code) {
         const foundItem = airports_data_1.airportsData.find(item => item.code === code);

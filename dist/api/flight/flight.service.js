@@ -26,17 +26,15 @@ const agent_model_1 = require("../agent/agent.model");
 const groupfare_service_1 = require("../groupfare/groupfare.service");
 const booking_service_1 = require("../booking/booking.service");
 const auth_service_1 = require("../auth/auth.service");
-const searchhistory_model_1 = require("../searchhistory/searchhistory.model");
 const alhind_flights_service_1 = require("./alhind.flights.service");
 let FlightService = class FlightService {
-    constructor(bookingRepository, agentRepository, passengerRepository, reissueRepository, refundRepository, ticketingRepository, searchHistoryRepository, authService, sabreService, bookingService, groupFareService, alhindAPI) {
+    constructor(bookingRepository, agentRepository, passengerRepository, reissueRepository, refundRepository, ticketingRepository, authService, sabreService, bookingService, groupFareService, alhindAPI) {
         this.bookingRepository = bookingRepository;
         this.agentRepository = agentRepository;
         this.passengerRepository = passengerRepository;
         this.reissueRepository = reissueRepository;
         this.refundRepository = refundRepository;
         this.ticketingRepository = ticketingRepository;
-        this.searchHistoryRepository = searchHistoryRepository;
         this.authService = authService;
         this.sabreService = sabreService;
         this.bookingService = bookingService;
@@ -48,9 +46,8 @@ let FlightService = class FlightService {
         if (!agent) {
             throw new common_1.UnauthorizedException();
         }
-        const AlhindData = await this.alhindAPI.flights(agent, flightDto);
-        AlhindData.sort((a, b) => a.NetFare - b.NetFare);
-        return AlhindData;
+        const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
+        return Sabre_FlightData;
     }
     async airrevalidation(header, revalidationDto) {
         const agent = await this.authService.verifyAgentToken(header);
@@ -64,6 +61,9 @@ let FlightService = class FlightService {
         }
         else if (System === 'GroupFare') {
             RevalidationData = await this.groupFareService.findOne(revalidationDto.OfferId);
+        }
+        else if (System === 'AlHind') {
+            RevalidationData = await this.alhindAPI.priceCheck(agent, revalidationDto);
         }
         else {
             RevalidationData = 'Other System';
@@ -116,41 +116,6 @@ let FlightService = class FlightService {
             BookingResponse = 'Other System';
         }
         return BookingResponse;
-    }
-    async airseatmapagent(header, seatMapDto) {
-        const agent = await this.authService.verifyAgentToken(header);
-        if (!agent) {
-            throw new common_1.UnauthorizedException();
-        }
-        let SeatMapData;
-        if (seatMapDto?.System === 'Sabre') {
-            SeatMapData = await this.sabreService.seat_map(seatMapDto);
-        }
-        else if (seatMapDto?.System === 'GroupFare') {
-            SeatMapData = await this.sabreService.seat_map(seatMapDto);
-        }
-        else if (seatMapDto?.System === 'Portal') {
-            SeatMapData = await this.sabreService.seat_map(seatMapDto);
-        }
-        return SeatMapData;
-    }
-    async airseatmapadmin(header, seatMapDto) {
-        const verifyAdminId = await this.authService.verifyAdminToken(header);
-        if (!verifyAdminId) {
-            throw new common_1.UnauthorizedException();
-        }
-        if (seatMapDto.System == 'Sabre') {
-            return await this.sabreService.seat_map(seatMapDto);
-        }
-        else if (seatMapDto.System == 'Portal') {
-            return await this.sabreService.seat_map(seatMapDto);
-        }
-        else if (seatMapDto.System == 'GroupFare') {
-            return await this.sabreService.seat_map(seatMapDto);
-        }
-        else {
-            return [];
-        }
     }
     async aircancelagent(header, bookingUId) {
         const agent = await this.authService.verifyAgentToken(header);
@@ -405,36 +370,6 @@ let FlightService = class FlightService {
         return await this.sabreService.checkpnr(pnr);
         ;
     }
-    async airfarerulesagent(header, farerulesDto) {
-        const agent = await this.authService.verifyAgentToken(header);
-        if (!agent) {
-            throw new common_1.UnauthorizedException();
-        }
-        if (farerulesDto.System === 'Sabre') {
-            return await this.sabreService.airfarerules(farerulesDto);
-        }
-        else if (farerulesDto.System === 'Portal') {
-            return await this.sabreService.airfarerules(farerulesDto);
-        }
-        else {
-            throw new common_1.HttpException("System not found", axios_1.HttpStatusCode.NotFound);
-        }
-    }
-    async airfarerulesadmin(header, farerulesDto) {
-        const verifyAdminId = await this.authService.verifyAdminToken(header);
-        if (!verifyAdminId) {
-            throw new common_1.UnauthorizedException();
-        }
-        if (farerulesDto.System === 'Sabre') {
-            return await this.sabreService.airfarerules(farerulesDto);
-        }
-        else if (farerulesDto.System === 'Portal') {
-            return await this.sabreService.airfarerules(farerulesDto);
-        }
-        else {
-            throw new common_1.HttpException("System not found", axios_1.HttpStatusCode.NotFound);
-        }
-    }
 };
 exports.FlightService = FlightService;
 exports.FlightService = FlightService = __decorate([
@@ -445,9 +380,7 @@ exports.FlightService = FlightService = __decorate([
     __param(3, (0, typeorm_1.InjectRepository)(reissue_model_1.ReissueModel)),
     __param(4, (0, typeorm_1.InjectRepository)(refund_model_1.RefundModel)),
     __param(5, (0, typeorm_1.InjectRepository)(booking_model_1.TicketModel)),
-    __param(6, (0, typeorm_1.InjectRepository)(searchhistory_model_1.SearchHistoryModel)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

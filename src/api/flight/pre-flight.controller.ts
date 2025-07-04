@@ -38,38 +38,6 @@ export class PreFlightController {
   }
 
   @ApiBearerAuth('access_token')
-  @Post("agent/flight/fare/rules")
-  AirFareRulesAgent(
-    @Headers() header: string,
-    @Body() farerulesDto: FareRulesDto) {
-    return this.flightService.airfarerulesagent(header, farerulesDto);
-  }
-
-  @ApiBearerAuth('access_token')
-  @Post("admin/flight/fare/rules")
-  AirFareRulesAdmin(
-    @Headers() header: Headers,
-    @Body() farerulesDto: FareRulesDto) {
-    return this.flightService.airfarerulesadmin(header, farerulesDto);
-  }
-
-  @ApiBearerAuth('access_token')
-  @Post("agent/flight/seatmap")
-  AirSeatMapAgent(
-    @Headers() header: string,
-    @Body() seatMapDto: SeapMapDto) {
-    return this.flightService.airseatmapagent(header, seatMapDto);
-  }
-
-  @ApiBearerAuth('access_token')
-  @Post("admin/flight/seatmap")
-  AirSeatMapAdmin(
-    @Headers() header: Headers,
-    @Body() seatMapDto: SeapMapDto) {
-    return this.flightService.airseatmapadmin(header, seatMapDto);
-  }
-
-  @ApiBearerAuth('access_token')
   @Get("agent/flight/booking/details/:bookingUId")
   AirRetrieveAgent(
     @Headers() header: string,

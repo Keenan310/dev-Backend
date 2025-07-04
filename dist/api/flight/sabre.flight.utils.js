@@ -14,7 +14,6 @@ const common_1 = require("@nestjs/common");
 const dotenv = require("dotenv");
 const airlines_service_1 = require("../airlines/airlines.service");
 const airports_service_1 = require("../airports/airports.service");
-const xml2js_1 = require("xml2js");
 const airports_data_1 = require("./data/airports.data");
 const airlines_data_1 = require("./data/airlines.data");
 dotenv.config();
@@ -22,11 +21,6 @@ let SabreUtils = class SabreUtils {
     constructor(airlinesService, airportsService) {
         this.airlinesService = airlinesService;
         this.airportsService = airportsService;
-    }
-    async tokenParser(data) {
-        const xmlTokenData = await this.xmlParser(data);
-        const securitytoken = xmlTokenData?.Envelope?.Header?.[0]['wsse:Security'][0]['wsse:BinarySecurityToken'][0]['_'];
-        return securitytoken;
     }
     async restBFMParser(agentdata, SearchResponse) {
         if (SearchResponse?.groupedItineraryResponse?.statistics?.itineraryCount > 0) {
@@ -77,12 +71,8 @@ let SabreUtils = class SabreUtils {
                 for (const flights of GroupAllFlights.flat()) {
                     const ValidatingCarrier = flights.pricingInformation[0].fare.validatingCarrierCode;
                     const airlineData = await this.airlinesService.getAirlines(ValidatingCarrier);
-                    const FareType = "Regular";
                     const AllPassenger = flights.pricingInformation[0].fare.passengerInfoList;
                     const CarrierName = airlineData?.marketing_name || 'N/F';
-                    const Instant_Payment = airlineData?.instantPayment;
-                    const IssuePermit = airlineData?.issuePermit;
-                    const IsBookable = airlineData?.bookable;
                     const equivalentAmount = flights.pricingInformation[0].fare.totalFare.equivalentAmount;
                     const Taxes = flights.pricingInformation[0].fare.totalFare.totalTaxAmount;
                     let TotalFare = flights.pricingInformation[0].fare.totalFare.totalPrice;
@@ -123,7 +113,6 @@ let SabreUtils = class SabreUtils {
                     if (NetFare > TotalFare) {
                         TotalFare = NetFare;
                     }
-                    const PartialAmount = NetFare * 0.30;
                     const Refundable = !flights.pricingInformation?.[0].fare.passengerInfoList?.[0].passengerInfo.nonRefundable;
                     let TimeLimit;
                     if (flights?.pricingInformation?.[0]?.fare?.lastTicketDate) {
@@ -172,19 +161,6 @@ let SabreUtils = class SabreUtils {
                                 Allowance: Allowance,
                             };
                         });
-                        let i = 0;
-                        const FareBasis = allPassenger?.passengerInfo?.fareComponents?.map(fareComponent => {
-                            i++;
-                            const farecompoRef = fareComponent?.ref;
-                            const fareCompo = AllFareCompoDescs[farecompoRef - 1];
-                            return {
-                                Origin: fareComponent?.beginAirport,
-                                Destination: fareComponent?.endAirport,
-                                DepDate: GroupLegDescs[i - 1]?.departureDate || GroupLegDescs[0]?.departureDate,
-                                FareBasisCode: fareCompo.fareBasisCode,
-                                Carrier: fareCompo.governingCarrier
-                            };
-                        });
                         return {
                             PaxType: PaxType,
                             BaseFare: PaxequivalentAmount,
@@ -192,7 +168,7 @@ let SabreUtils = class SabreUtils {
                             TotalFare: PaxtotalFare,
                             PaxCount: paxCount,
                             Bag: Baggage,
-                            FareComponent: FareBasis
+                            FareComponent: {}
                         };
                     });
                     const AllLegsInfo = [];
@@ -299,35 +275,6 @@ let SabreUtils = class SabreUtils {
         else {
             return [];
         }
-    }
-    async restGetBooking(agentdata, getBookingResponse) {
-    }
-    async soapBFMParser(agentdata, SearchResponse) {
-    }
-    async seatMapParser(data) {
-        const seatmap = await this.xmlParser(data);
-        const seatdata = seatmap?.Envelope?.Body[0]?.EnhancedSeatMapRS[0]?.SeatMap[0];
-        return seatdata;
-    }
-    async fareRulesParser(data) {
-        const farerules = await this.xmlParser(data);
-        const farerulesdata = farerules.Envelope?.Body[0]?.OTA_AirRulesRS[0]?.FareRuleInfo[0]?.Rules[0];
-        const refundpolicy = farerulesdata.Paragraph[0].Text;
-        const reissuepolicy = farerulesdata.Paragraph[1].Text;
-        const finalresult = {
-            refundpolicy: refundpolicy,
-            reissuepolicy: reissuepolicy
-        };
-        return finalresult;
-    }
-    async xmlParser(data) {
-        let convertedData;
-        (0, xml2js_1.parseString)(data, function (err, results) {
-            const removeSoap = JSON.stringify(results)?.replaceAll('soap-env:', '');
-            const replace = removeSoap?.replaceAll('$', 'data');
-            convertedData = JSON.parse(replace);
-        });
-        return convertedData;
     }
     async getAirports(code) {
         const foundItem = airports_data_1.airportsData.find(item => item.code === code);

@@ -1,9 +1,7 @@
-import { SeapMapDto } from './dto/seatmap-flight.dto';
 import { FlightService } from './flight.service';
 import { AirBookingModel } from './dto/booking-flight.dto';
 import { Revalidation } from './dto/revalidation-flight.dto';
 import { FlightSearchModel } from './dto/search-flight.dto';
-import { FareRulesDto } from './dto/farerules-flight.dto';
 export declare class PreFlightController {
     private readonly flightService;
     constructor(flightService: FlightService);
@@ -72,10 +70,6 @@ export declare class PreFlightController {
         flightdate: any;
         companyname: string;
     } & import("../booking/booking.model").BookingModel) | "Invalid System">;
-    AirFareRulesAgent(header: string, farerulesDto: FareRulesDto): Promise<any>;
-    AirFareRulesAdmin(header: Headers, farerulesDto: FareRulesDto): Promise<any>;
-    AirSeatMapAgent(header: string, seatMapDto: SeapMapDto): Promise<any>;
-    AirSeatMapAdmin(header: Headers, seatMapDto: SeapMapDto): Promise<void | any[]>;
     AirRetrieveAgent(header: string, bookingUId: string): Promise<{
         bookingdata: any;
         sabredata: any;
