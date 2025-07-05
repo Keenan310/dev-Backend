@@ -117,7 +117,6 @@ export declare class FlightService {
     }>;
     airretrieveadmin(header: any, bookingUId: string): Promise<{
         bookingdata: BookingModel;
-        sabredata: any;
         passengerdata: PassengerModel[];
         refunddata: RefundModel;
         reissuedata: ReissueModel[];

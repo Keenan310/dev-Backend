@@ -20,7 +20,6 @@ export declare class PostFlightController {
     }>;
     AirRetrieveAdmin(header: Headers, bookingUId: string): Promise<{
         bookingdata: import("../booking/booking.model").BookingModel;
-        sabredata: any;
         passengerdata: import("../passenger/passenger.model").PassengerModel[];
         refunddata: import("../refund/refund.model").RefundModel;
         reissuedata: import("../reissue/reissue.model").ReissueModel[];

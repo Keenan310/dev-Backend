@@ -308,21 +308,11 @@ let FlightService = class FlightService {
         }
         const passengerdata = await this.passengerRepository.find({ where: { bookingId: bookingdata.bookingId } });
         if (bookingdata.system === 'Sabre') {
-            let bookingresponse = await this.sabreService.airretrieve(bookingdata.pnr);
-            if (bookingdata.flightdata === null && bookingdata.status === 'Hold') {
-                bookingdata['flightdata'] = bookingresponse.flights;
-                await this.bookingRepository.update(bookingdata.id, bookingdata);
-            }
-            else if (bookingresponse?.isTicketed === true && bookingdata.status === 'Hold') {
-                bookingdata['status'] = 'Ticketed';
-                await this.bookingRepository.update(bookingdata.id, bookingdata);
-            }
             const ticketdetails = await this.ticketingRepository.find({ where: { bookingId: bookingdata.bookingId } });
             const refunddata = await this.refundRepository.findOne({ where: { bookingId: bookingdata.bookingId } });
             const reissuedata = await this.reissueRepository.find({ where: { bookingId: bookingdata.bookingId } });
             const customResponseData = {
                 bookingdata: bookingdata,
-                sabredata: bookingresponse,
                 passengerdata: passengerdata,
                 refunddata: refunddata,
                 reissuedata: reissuedata,
