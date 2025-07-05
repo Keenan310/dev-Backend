@@ -109,7 +109,7 @@ export declare class BookingService {
     findUpcomingFlightAgentId(header: any): Promise<BookingModel[]>;
     findCalendareAgentId(header: any, yearMonth: Date): Promise<any[]>;
     findOneByAdmin(header: any, bookingUId: string): Promise<BookingModel>;
-    findOneAgent(header: any, bookingUId: string): Promise<void>;
+    findOneAgent(header: any, bookingUId: string): Promise<BookingModel>;
     update(header: any, bookingUId: string, updateBookingDto: BookingModelUpdateAdmin): Promise<import("typeorm").UpdateResult>;
     remove(header: any, bookingUId: string): Promise<import("typeorm").DeleteResult>;
 }

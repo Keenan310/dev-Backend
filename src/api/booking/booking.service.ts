@@ -424,6 +424,17 @@ export class BookingService {
   }
 
   async findOneAgent(header: any, bookingUId: string){
+    const verifyAgentId = await this.authService.verifyAgentToken(header);
+
+    if(!verifyAgentId){
+        throw new UnauthorizedException();
+    }
+
+    const booking = await this.bookingRepository.findOne({where: { uid: bookingUId }});
+    if (!booking) {
+      throw new NotFoundException('Id not found');
+    }
+    return booking;
 
   }
 

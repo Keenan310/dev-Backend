@@ -24,7 +24,7 @@ export declare class BookingController {
         totaldata: number;
         data: import("./booking.model").BookingModel[];
     }>;
-    findOneAgent(header: string, bookingUId: string): Promise<void>;
+    findOneAgent(header: string, bookingUId: string): Promise<import("./booking.model").BookingModel>;
     findOneBookingAdmin(header: Headers, bookingUId: string): Promise<import("./booking.model").BookingModel>;
     findPastFlightAgentId(header: string): Promise<any>;
     findUpcomingFlightAgentId(header: string): Promise<import("./booking.model").BookingModel[]>;

@@ -348,6 +348,15 @@ let BookingService = class BookingService {
         return booking;
     }
     async findOneAgent(header, bookingUId) {
+        const verifyAgentId = await this.authService.verifyAgentToken(header);
+        if (!verifyAgentId) {
+            throw new common_1.UnauthorizedException();
+        }
+        const booking = await this.bookingRepository.findOne({ where: { uid: bookingUId } });
+        if (!booking) {
+            throw new common_1.NotFoundException('Id not found');
+        }
+        return booking;
     }
     async update(header, bookingUId, updateBookingDto) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
