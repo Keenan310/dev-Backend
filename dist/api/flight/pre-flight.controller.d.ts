@@ -71,15 +71,14 @@ export declare class PreFlightController {
         companyname: string;
     } & import("../booking/booking.model").BookingModel) | "Invalid System">;
     AirRetrieveAgent(header: string, bookingUId: string): Promise<{
-        bookingdata: any;
-        sabredata: any;
+        bookingdata: import("../booking/booking.model").BookingModel;
         passengerdata: import("../passenger/passenger.model").PassengerModel[];
         refunddata: import("../refund/refund.model").RefundModel;
         reissuedata: import("../reissue/reissue.model").ReissueModel[];
         ticketdetails: import("../booking/booking.model").TicketModel[];
         partialpaymentdata: string;
     } | {
-        bookingdata: any;
+        bookingdata: import("../booking/booking.model").BookingModel;
         sabredata: any[];
         passengerdata: import("../passenger/passenger.model").PassengerModel[];
         refunddata: any[];

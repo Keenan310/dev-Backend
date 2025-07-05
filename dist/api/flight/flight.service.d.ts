@@ -100,15 +100,14 @@ export declare class FlightService {
         message: string;
     }>;
     airretrieveagent(header: any, bookingUId: string): Promise<{
-        bookingdata: any;
-        sabredata: any;
+        bookingdata: BookingModel;
         passengerdata: PassengerModel[];
         refunddata: RefundModel;
         reissuedata: ReissueModel[];
         ticketdetails: TicketModel[];
         partialpaymentdata: string;
     } | {
-        bookingdata: any;
+        bookingdata: BookingModel;
         sabredata: any[];
         passengerdata: PassengerModel[];
         refunddata: any[];

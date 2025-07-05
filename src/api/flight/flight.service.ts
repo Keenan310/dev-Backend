@@ -271,33 +271,20 @@ export class FlightService {
       throw new UnauthorizedException();
     }
 
-
-    let booking: any;
+    const booking =  await this.bookingRepository.findOne({ where : {uid: bookingUId}});
+    if(!booking){
+      throw new UnauthorizedException();
+    }
 
     const passengerdata =  await this.passengerRepository.find({ where : {bookingId: booking.bookingId}});
 
     if(booking.system === 'Sabre'){
-      let bookingresponse = await this.sabreService.airretrieve(booking.pnr);
-
-      if(booking.flightdata === null && booking.status === 'Hold'){
-        booking['flightdata'] = bookingresponse.flights;
-        booking['airlinespnr'] = bookingresponse?.flights[0]?.confirmationId;
-
-        await this.bookingRepository.update(booking.id, booking);
-      }else if(bookingresponse?.isTicketed === true && booking.status === 'Hold'){
-        booking['status'] = 'Ticketed';
-        booking['airlinespnr'] = bookingresponse?.flights[0]?.confirmationId;
-        booking['ticketed_at'] =  new Date();
-        await this.bookingRepository.update(booking.id, booking);
-      }
-
       const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
       const refunddata = await this.refundRepository.findOne({ where : {bookingId: booking.bookingId}});
       const reissuedata =  await this.reissueRepository.find({ where : {bookingId: booking.bookingId}});
 
       const customResponseData = {
         bookingdata: booking,
-        sabredata: bookingresponse,
         passengerdata: passengerdata,
         refunddata: refunddata,
         reissuedata: reissuedata,
@@ -308,6 +295,25 @@ export class FlightService {
       return customResponseData;
 
     }else if(booking.system === 'Portal'){
+
+      const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
+      const refunddata = await this.refundRepository.findOne({ where : {bookingId: booking.bookingId}});
+      const reissuedata =  await this.reissueRepository.find({ where : {bookingId: booking.bookingId}});
+
+      const customResponseData = {
+        bookingdata: booking,
+        sabredata: [],
+        passengerdata: passengerdata,
+        refunddata: refunddata,
+        reissuedata: reissuedata,
+        ticketdetails: ticketdetails,
+        partialpaymentdata: ''
+
+      };
+
+      return customResponseData;
+
+    }else if(booking.system === 'AlHind'){
 
       const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
       const refunddata = await this.refundRepository.findOne({ where : {bookingId: booking.bookingId}});
@@ -343,7 +349,6 @@ export class FlightService {
       return customResponseData;
 
     }
-
   }
 
   async airretrieveadmin(header: any, bookingUId: string){
