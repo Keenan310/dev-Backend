@@ -210,7 +210,7 @@ export class AgentService {
 
     const agentLedger = await this.agentLedgerRepository
     .createQueryBuilder()
-    .select('SUM(amount)', 'sum')
+    .select('SUM(credit) -SUM(debit)', 'sum')
     .where('agentId = :agentId', { agentId: agent.agentId })
     .getRawOne();
 
@@ -233,7 +233,7 @@ export class AgentService {
     delete agent.password;
     const agentLedger = await this.agentLedgerRepository
     .createQueryBuilder()
-    .select('SUM(amount)', 'sum')
+    .select('SUM(credit) -SUM(debit)', 'sum')
     .where('agentId = :agentId', { agentId: agent.agentId })
     .getRawOne();
 
