@@ -570,10 +570,6 @@ export class MailService {
     });
   }
 
-  async partialPaymentMail(booking, partial){
-
-  }
-
   ticketedMail() {
     return 'This action adds a new mail';
   }
@@ -687,6 +683,4 @@ export class MailService {
   async reissueResultMail() {
     return 'This action adds a new mail';
   }
-
-
 }
