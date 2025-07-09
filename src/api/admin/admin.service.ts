@@ -51,10 +51,10 @@ export class AdminService {
 
     let adminId='';
     if(admin.length == 1){
-      let old_admin_id = (admin[0].adminId).replace("EZAD",'');
-      adminId = "EZAD" + (parseInt(old_admin_id) + 1);
+      let old_admin_id = (admin[0].adminId).replace("KTAD",'');
+      adminId = "KTAD" + (parseInt(old_admin_id) + 1);
     }else{
-      adminId = 'EZAD1000';
+      adminId = 'KTAD1000';
     }
 
     //const hashedPassword =  await bcrypt.hash(createAdminDto.password, 10);
@@ -66,7 +66,7 @@ export class AdminService {
     return await this.adminRepository.save(createAdminDto);
   }
 
-  async findAll(header: any) {  
+  async findAll(header: any) {
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
     if(!verifyAdminId){

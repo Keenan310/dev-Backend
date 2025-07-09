@@ -35,10 +35,10 @@ let BookingUtils = class BookingUtils {
         const infant = (bookingDto.PassengerInfo.infant).length || 0;
         const paxCount = adult + child + infant;
         const booking = await this.bookingRepository.find({ order: { id: 'DESC' }, take: 1 });
-        let bookingId = 'POB1000';
+        let bookingId = 'KTB1000';
         if (booking.length == 1) {
-            let old_booking_id = (booking[0].bookingId).replace("POB", '');
-            bookingId = "POB" + (parseInt(old_booking_id) + 1);
+            let old_booking_id = (booking[0].bookingId).replace("KTB", '');
+            bookingId = "KTB" + (parseInt(old_booking_id) + 1);
         }
         let PNR = responseData?.CreatePassengerNameRecordRS?.ItineraryRef?.ID || await this.generatePNR();
         let airlinesPnr = await this.generateAirlinesPNR();

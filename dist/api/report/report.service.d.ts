@@ -43,7 +43,10 @@ export declare class ReportService {
         totalsell: any;
         totaldeposit: any;
     }>;
-    findAllByDateRangeAgentId(header: any, startDate: Date, endDate: Date): Promise<any>;
+    findAllByDateRangeAgentId(header: any, startDate: Date, endDate: Date): Promise<{
+        lossProfit: any;
+        ledger: any;
+    }>;
     findDashboard(header: any): Promise<{
         AgentData: AgentModel[];
         SearchData: SearchHistoryModel[];

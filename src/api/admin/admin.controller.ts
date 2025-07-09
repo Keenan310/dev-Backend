@@ -3,7 +3,7 @@ import { AdminService } from './admin.service';
 import { AdminModel, AdminModelUpdate } from './admin.model';
 import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
 
-@ApiExcludeController()
+
 @ApiTags("Admin Modules")
 @Controller('admin')
 export class AdminController {

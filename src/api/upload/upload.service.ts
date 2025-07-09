@@ -69,10 +69,10 @@ export class UploadService {
   
       let agentId: string;
       if(agent.length === 1){
-        let old_agent_id = (agent[0].agentId).replace("POA",'');
-        agentId = "POA" + (parseInt(old_agent_id) + 1);
+        let old_agent_id = (agent[0].agentId).replace("KTA",'');
+        agentId = "KTA" + (parseInt(old_agent_id) + 1);
       }else{
-        agentId = 'POA1000';
+        agentId = 'KTAA1000';
       }
 
       const hashedPassword = await bcrypt.hash(agentDto.password, 9);
@@ -292,8 +292,8 @@ export class UploadService {
     
         let depositId: string;
         if(deposit.length === 1){
-          let old_deposit_id = (deposit[0].depositId).replace("POD",'');
-          depositId = "POD" + (parseInt(old_deposit_id) + 1);
+          let old_deposit_id = (deposit[0].depositId).replace("KTD",'');
+          depositId = "KTD" + (parseInt(old_deposit_id) + 1);
         }else{
           depositId = 'POD1000';
         }

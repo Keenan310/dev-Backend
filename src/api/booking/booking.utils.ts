@@ -27,10 +27,10 @@ export class BookingUtils {
 
         const booking = await this.bookingRepository.find({order: { id: 'DESC' }, take : 1});
   
-        let bookingId='POB1000';
+        let bookingId='KTB1000';
         if(booking.length == 1){
-            let old_booking_id = (booking[0].bookingId).replace("POB",'');
-            bookingId = "POB" + (parseInt(old_booking_id) + 1);
+            let old_booking_id = (booking[0].bookingId).replace("KTB",'');
+            bookingId = "KTB" + (parseInt(old_booking_id) + 1);
         }
 
         let PNR : string = responseData?.CreatePassengerNameRecordRS?.ItineraryRef?.ID || await this.generatePNR();

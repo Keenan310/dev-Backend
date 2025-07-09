@@ -21,7 +21,10 @@ export declare class ReportController {
         voidAmount: any;
         data: any;
     }>;
-    findAllBydate(header: string, startDate: Date, endDate: Date): Promise<any>;
+    findAllBydate(header: string, startDate: Date, endDate: Date): Promise<{
+        lossProfit: any;
+        ledger: any;
+    }>;
     findDashboard(header: Headers): Promise<{
         AgentData: import("../agent/agent.model").AgentModel[];
         SearchData: import("../searchhistory/searchhistory.model").SearchHistoryModel[];

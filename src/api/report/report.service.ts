@@ -385,7 +385,19 @@ export class ReportService {
       [agent.agentId, startDate, endDate]
     );
 
-    return ledger;
+    const bookingTicketed = await this.bookingRepository
+    .createQueryBuilder('booking')
+    .select('SUM(booking.sellprice) - SUM(booking.purchaseprice)', 'totalProfit')
+    .where('booking.status = :status', { status: 'Ticketed' })
+    .andWhere('booking.created_at BETWEEN :startDate AND :endDate', { startDate: startDate, endDate: endDate })
+    .getRawOne();
+
+    const ledgerData={
+      lossProfit: bookingTicketed.totalProfit,
+      ledger: ledger
+    }
+
+    return ledgerData;
   }
 
   async findDashboard(header: any){

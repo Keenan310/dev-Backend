@@ -49,11 +49,11 @@ let AdminService = class AdminService {
         const admin = await this.adminRepository.find({ order: { id: 'DESC' }, take: 1 });
         let adminId = '';
         if (admin.length == 1) {
-            let old_admin_id = (admin[0].adminId).replace("EZAD", '');
-            adminId = "EZAD" + (parseInt(old_admin_id) + 1);
+            let old_admin_id = (admin[0].adminId).replace("KTAD", '');
+            adminId = "KTAD" + (parseInt(old_admin_id) + 1);
         }
         else {
-            adminId = 'EZAD1000';
+            adminId = 'KTAD1000';
         }
         createAdminDto["adminId"] = adminId;
         createAdminDto["status"] = "active";

@@ -39,8 +39,8 @@ let GroupfareService = class GroupfareService {
         });
         let groupId;
         if (groupfare.length == 1) {
-            let old_group_id = (groupfare[0].GroupId).replace("POG", '');
-            groupId = "POG" + (parseInt(old_group_id) + 1);
+            let old_group_id = (groupfare[0].GroupId).replace("KTG", '');
+            groupId = "KTG" + (parseInt(old_group_id) + 1);
         }
         else {
             groupId = 'POG1000';

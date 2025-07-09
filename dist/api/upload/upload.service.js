@@ -68,11 +68,11 @@ let UploadService = class UploadService {
         const agent = await this.agentRepository.find({ order: { id: 'DESC' }, take: 1 });
         let agentId;
         if (agent.length === 1) {
-            let old_agent_id = (agent[0].agentId).replace("POA", '');
-            agentId = "POA" + (parseInt(old_agent_id) + 1);
+            let old_agent_id = (agent[0].agentId).replace("KTA", '');
+            agentId = "KTA" + (parseInt(old_agent_id) + 1);
         }
         else {
-            agentId = 'POA1000';
+            agentId = 'KTAA1000';
         }
         const hashedPassword = await bcrypt.hash(agentDto.password, 9);
         agentDto.password = hashedPassword;
@@ -255,8 +255,8 @@ let UploadService = class UploadService {
                 });
                 let depositId;
                 if (deposit.length === 1) {
-                    let old_deposit_id = (deposit[0].depositId).replace("POD", '');
-                    depositId = "POD" + (parseInt(old_deposit_id) + 1);
+                    let old_deposit_id = (deposit[0].depositId).replace("KTD", '');
+                    depositId = "KTD" + (parseInt(old_deposit_id) + 1);
                 }
                 else {
                     depositId = 'POD1000';

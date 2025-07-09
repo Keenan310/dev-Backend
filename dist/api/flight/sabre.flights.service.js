@@ -1366,10 +1366,10 @@ let SabreService = class SabreService {
         try {
             if (getBooking?.isTicketed === false && getBooking?.fares && getBooking?.journeys) {
                 const booking = await this.bookingRepository.find({ order: { id: 'DESC' }, take: 1 });
-                let bookingId = 'POB1000';
+                let bookingId = 'KTB1000';
                 if (booking.length == 1) {
-                    let old_booking_id = (booking[0].bookingId).replace("POB", '');
-                    bookingId = "POB" + (parseInt(old_booking_id) + 1);
+                    let old_booking_id = (booking[0].bookingId).replace("KTB", '');
+                    bookingId = "KTB" + (parseInt(old_booking_id) + 1);
                 }
                 const rawemail = getBooking?.specialServices?.find(item => item.code === 'CTCE')?.message || '';
                 const rawphone = getBooking?.specialServices?.find(item => item.code === 'CTCM')?.message || '';
