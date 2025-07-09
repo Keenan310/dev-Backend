@@ -114,7 +114,7 @@ export class AdminService {
 
   }
 
-  async delete(header: any , uid: string) {
+  async delete(header: any, uid: string) {
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
     if(!verifyAdminId){
@@ -126,7 +126,9 @@ export class AdminService {
       throw new NotFoundException('Admin not found');
     }
 
-    if(admin.role !== 'superadmin' && admin.role !=='admin'){
+    console.log(admin)
+
+    if(verifyAdminId.role !== 'superadmin' && verifyAdminId.role !=='admin'){
       throw new NotAcceptableException("Only Super admin can delete account");
     }
 
