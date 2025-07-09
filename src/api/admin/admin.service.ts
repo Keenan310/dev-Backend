@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotAcceptableException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { AdminModel, AdminModelUpdate } from './admin.model';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -113,5 +113,26 @@ export class AdminService {
     return this.adminRepository.update(admin.id, updateAdminDto)
 
   }
+
+  async delete(header: any , uid: string) {
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
+
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
+
+    const admin = await this.adminRepository.findOne({where: { uid: uid }});
+    if (!admin) {
+      throw new NotFoundException('Admin not found');
+    }
+
+    if(admin.role != 'superadmin'){
+      throw new NotAcceptableException("Only Super admin can delete account");
+    }
+
+    return this.adminRepository.delete(admin.id)
+  }
+
+
 
 }

@@ -13,4 +13,5 @@ export declare class AdminService {
     findAll(header: any): Promise<AdminModel[]>;
     findOne(header: any, uid: string): Promise<AdminModel>;
     update(header: any, uid: string, updateAdminDto: AdminModelUpdate): Promise<import("typeorm").UpdateResult>;
+    delete(header: any, uid: string): Promise<import("typeorm").DeleteResult>;
 }

@@ -19,6 +19,17 @@ export class ReportController {
   }
 
   @ApiBearerAuth('access_token')
+  @Get('admin/report/ledger/:startDate/:endDate')
+  findAllAdminLedger(
+    @Headers() header: string,
+    @Param('startDate') startDate: Date,
+    @Param('endDate') endDate: Date,
+  ) {
+    return this.reportService.findAllAdminLedger(header, startDate, endDate);
+  }
+
+
+  @ApiBearerAuth('access_token')
   @Get('admin/report/:startDate/:endDate')
   findAllReportAdmin(
     @Headers() header: Headers,

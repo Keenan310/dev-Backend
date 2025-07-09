@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Req, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Req, Headers, Delete } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { AdminModel, AdminModelUpdate } from './admin.model';
 import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
@@ -31,6 +31,12 @@ export class AdminController {
     @Param('uid') uid: string,
     @Body() updateAdminDto: AdminModelUpdate) {
     return this.adminService.update(header, uid, updateAdminDto);
+  }
+
+  @Delete(':uid')
+  delete(@Headers() header: Headers,
+   @Param('uid') uid: string) {
+    return this.adminService.delete(header, uid);
   }
 
 }

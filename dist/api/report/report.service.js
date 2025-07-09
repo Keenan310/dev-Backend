@@ -351,9 +351,26 @@ let ReportService = class ReportService {
             .where('booking.status = :status', { status: 'Ticketed' })
             .andWhere('booking.created_at BETWEEN :startDate AND :endDate', { startDate: startDate, endDate: endDate })
             .getRawOne();
+        const sell = await this.ledgerRepository
+            .createQueryBuilder('ledger')
+            .select('SUM(ledger.credit)', 'totalAmount')
+            .where('ledger.trxtype = :trxtype', { trxtype: 'purchase' })
+            .andWhere('ledger.created_at BETWEEN :startDate AND :endDate', {
+            startDate: startDate,
+            endDate: endDate
+        }).getRawOne();
+        const expense = await this.adminExpenseRepository
+            .createQueryBuilder('expense')
+            .select('SUM(expense.amount)', 'totalAmount')
+            .where('ledger.created_at BETWEEN :startDate AND :endDate', {
+            startDate: startDate,
+            endDate: endDate
+        }).getRawOne();
         const ledgerData = {
-            lossProfit: bookingTicketed.totalProfit,
-            ledger: ledger
+            lossProfit: bookingTicketed?.totalProfit || 0,
+            ledger: ledger,
+            totalExpense: expense.totalAmount,
+            totalIncome: sell?.totalAmount || 0,
         };
         return ledgerData;
     }
@@ -505,6 +522,51 @@ let ReportService = class ReportService {
             totalpage: Math.ceil(totaldata / limit),
             totaldata: totaldata,
             data: ledgerdata
+        };
+        return ledgerData;
+    }
+    async findAllAdminLedger(header, startDate, endDate) {
+        const ledger = await this.dataSource.query(`SELECT id, agentId, trxtype, debit, credit,
+        refId,
+        details,
+        remarks,
+        companyname,
+        created_at,
+        updated_at,
+        uid, SUM(credit - debit) OVER (
+          PARTITION BY agentId
+          ORDER BY id
+          ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS remaining_balance
+      FROM agent_ledger
+      WHERE created_at BETWEEN ? AND ?
+      ORDER BY id DESC`, [startDate, endDate]);
+        const bookingTicketed = await this.bookingRepository
+            .createQueryBuilder('booking')
+            .select('SUM(booking.sellprice) - SUM(booking.purchaseprice)', 'totalProfit')
+            .where('booking.status = :status', { status: 'Ticketed' })
+            .andWhere('booking.created_at BETWEEN :startDate AND :endDate', { startDate: startDate, endDate: endDate })
+            .getRawOne();
+        const sell = await this.ledgerRepository
+            .createQueryBuilder('ledger')
+            .select('SUM(ledger.credit)', 'totalAmount')
+            .where('ledger.trxtype = :trxtype', { trxtype: 'purchase' })
+            .andWhere('ledger.created_at BETWEEN :startDate AND :endDate', {
+            startDate: startDate,
+            endDate: endDate
+        }).getRawOne();
+        const expense = await this.adminExpenseRepository
+            .createQueryBuilder('expense')
+            .select('SUM(expense.amount)', 'totalAmount')
+            .where('expense.created_at BETWEEN :startDate AND :endDate', {
+            startDate: startDate,
+            endDate: endDate
+        }).getRawOne();
+        const ledgerData = {
+            lossProfit: bookingTicketed?.totalProfit || 0,
+            ledger: ledger,
+            totalExpense: expense.totalAmount,
+            totalIncome: sell?.totalAmount || 0,
         };
         return ledgerData;
     }

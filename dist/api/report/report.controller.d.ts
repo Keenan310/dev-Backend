@@ -4,6 +4,12 @@ export declare class ReportController {
     private readonly reportService;
     constructor(reportService: ReportService);
     addExpsense(header: Headers, adminExpenseModel: AdminExpenseModel): Promise<AdminExpenseModel>;
+    findAllAdminLedger(header: string, startDate: Date, endDate: Date): Promise<{
+        lossProfit: any;
+        ledger: any;
+        totalExpense: any;
+        totalIncome: any;
+    }>;
     findAllReportAdmin(header: Headers, startDate: Date, endDate: Date): Promise<{
         name: string;
         value: any;
@@ -24,6 +30,8 @@ export declare class ReportController {
     findAllBydate(header: string, startDate: Date, endDate: Date): Promise<{
         lossProfit: any;
         ledger: any;
+        totalExpense: any;
+        totalIncome: any;
     }>;
     findDashboard(header: Headers): Promise<{
         AgentData: import("../agent/agent.model").AgentModel[];

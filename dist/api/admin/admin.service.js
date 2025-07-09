@@ -89,6 +89,20 @@ let AdminService = class AdminService {
         }
         return this.adminRepository.update(admin.id, updateAdminDto);
     }
+    async delete(header, uid) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        const admin = await this.adminRepository.findOne({ where: { uid: uid } });
+        if (!admin) {
+            throw new common_1.NotFoundException('Admin not found');
+        }
+        if (admin.role != 'superadmin') {
+            throw new common_1.NotAcceptableException("Only Super admin can delete account");
+        }
+        return this.adminRepository.delete(admin.id);
+    }
 };
 exports.AdminService = AdminService;
 exports.AdminService = AdminService = __decorate([

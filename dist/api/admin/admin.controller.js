@@ -33,6 +33,9 @@ let AdminController = class AdminController {
     update(header, uid, updateAdminDto) {
         return this.adminService.update(header, uid, updateAdminDto);
     }
+    delete(header, uid) {
+        return this.adminService.delete(header, uid);
+    }
 };
 exports.AdminController = AdminController;
 __decorate([
@@ -67,6 +70,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, admin_model_1.AdminModelUpdate]),
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':uid'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Param)('uid')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "delete", null);
 exports.AdminController = AdminController = __decorate([
     (0, swagger_1.ApiTags)("Admin Modules"),
     (0, common_1.Controller)('admin'),

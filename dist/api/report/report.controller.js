@@ -24,6 +24,9 @@ let ReportController = class ReportController {
     addExpsense(header, adminExpenseModel) {
         return this.reportService.addAdminExpsense(header, adminExpenseModel);
     }
+    findAllAdminLedger(header, startDate, endDate) {
+        return this.reportService.findAllAdminLedger(header, startDate, endDate);
+    }
     findAllReportAdmin(header, startDate, endDate) {
         return this.reportService.findAllReportAdmin(header, startDate, endDate);
     }
@@ -62,6 +65,17 @@ __decorate([
     __metadata("design:paramtypes", [Object, report_model_1.AdminExpenseModel]),
     __metadata("design:returntype", void 0)
 ], ReportController.prototype, "addExpsense", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, common_1.Get)('admin/report/ledger/:startDate/:endDate'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Param)('startDate')),
+    __param(2, (0, common_1.Param)('endDate')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Date,
+        Date]),
+    __metadata("design:returntype", void 0)
+], ReportController.prototype, "findAllAdminLedger", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Get)('admin/report/:startDate/:endDate'),

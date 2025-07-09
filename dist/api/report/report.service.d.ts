@@ -46,6 +46,8 @@ export declare class ReportService {
     findAllByDateRangeAgentId(header: any, startDate: Date, endDate: Date): Promise<{
         lossProfit: any;
         ledger: any;
+        totalExpense: any;
+        totalIncome: any;
     }>;
     findDashboard(header: any): Promise<{
         AgentData: AgentModel[];
@@ -87,5 +89,11 @@ export declare class ReportService {
         totalpage: number;
         totaldata: number;
         data: AdminExpenseModel[];
+    }>;
+    findAllAdminLedger(header: any, startDate: Date, endDate: Date): Promise<{
+        lossProfit: any;
+        ledger: any;
+        totalExpense: any;
+        totalIncome: any;
     }>;
 }
