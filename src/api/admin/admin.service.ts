@@ -126,13 +126,11 @@ export class AdminService {
       throw new NotFoundException('Admin not found');
     }
 
-    if(admin.role != 'superadmin'){
+    if(admin.role !== 'superadmin' && admin.role !=='admin'){
       throw new NotAcceptableException("Only Super admin can delete account");
     }
 
     return this.adminRepository.delete(admin.id)
   }
-
-
 
 }

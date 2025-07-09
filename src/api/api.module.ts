@@ -25,11 +25,12 @@ import { TravellerModule } from './traveller/traveller.module';
 import { ActivitylogModule } from './activitylog/activitylog.module';
 import { MarkupModule } from './admin/markup/markup.module';
 import { ControlModule } from './admin/control/control.module';
+import { CurrencyModule } from './currency/currency.module';
 @Module({
   imports: [AuthModule, AgentModule, AdminModule, FlightModule, BookingModule,TicketingModule,VoidModule,
     RefundModule, ReissueModule, TravellerModule, NoticeModule, PromotionModule, AirlinesModule,
     PassengerModule, DepositModule, ReportModule, UploadModule, StaffModule, GroupfareModule,
      NotesModule, BanklistModule, AirportsModule, SearchhistoryModule, MarkupModule,
-    ControlModule, ActivitylogModule]
+    ControlModule, ActivitylogModule, CurrencyModule]
 })
 export class ApiModule {}

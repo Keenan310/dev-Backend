@@ -98,7 +98,7 @@ let AdminService = class AdminService {
         if (!admin) {
             throw new common_1.NotFoundException('Admin not found');
         }
-        if (admin.role != 'superadmin') {
+        if (admin.role !== 'superadmin' && admin.role !== 'admin') {
             throw new common_1.NotAcceptableException("Only Super admin can delete account");
         }
         return this.adminRepository.delete(admin.id);
