@@ -526,6 +526,10 @@ let ReportService = class ReportService {
         return ledgerData;
     }
     async findAllAdminLedger(header, startDate, endDate) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
         const ledger = await this.dataSource.query(`SELECT id, agentId, trxtype, debit, credit,
         refId,
         details,

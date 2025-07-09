@@ -613,11 +613,11 @@ export class ReportService {
 
   async findAllAdminLedger(header: any, startDate: Date, endDate: Date) {
 
-    // const verifyAdminId = await this.authService.verifyAdminToken(header);
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    // if(!verifyAdminId){
-    //     throw new UnauthorizedException();
-    // }
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
 
     const ledger = await this.dataSource.query(
       `SELECT id, agentId, trxtype, debit, credit,

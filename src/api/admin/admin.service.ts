@@ -107,9 +107,6 @@ export class AdminService {
       throw new NotFoundException('Admin not found');
     }
 
-    // const hashedPassword =  await bcrypt.hash(updateAdminDto.password, 10);
-    // updateAdminDto['password'] = hashedPassword;
-
     return this.adminRepository.update(admin.id, updateAdminDto)
 
   }
@@ -125,8 +122,6 @@ export class AdminService {
     if (!admin) {
       throw new NotFoundException('Admin not found');
     }
-
-    console.log(admin)
 
     if(verifyAdminId.role !== 'superadmin' && verifyAdminId.role !=='admin'){
       throw new NotAcceptableException("Only Super admin can delete account");
