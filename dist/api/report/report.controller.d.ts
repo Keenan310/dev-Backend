@@ -1,7 +1,9 @@
 import { ReportService } from './report.service';
+import { AdminExpenseModel } from './report.model';
 export declare class ReportController {
     private readonly reportService;
     constructor(reportService: ReportService);
+    addExpsense(header: Headers, adminExpenseModel: AdminExpenseModel): Promise<AdminExpenseModel>;
     findAllReportAdmin(header: Headers, startDate: Date, endDate: Date): Promise<{
         name: string;
         value: any;
@@ -62,5 +64,12 @@ export declare class ReportController {
             voidAmount: any;
         };
         data: import("./report.model").AgentLedgerModel[];
+    }>;
+    findAdminExpense(header: Headers, page?: number, filter?: string, limit?: number): Promise<{
+        limit: number;
+        page: number;
+        totalpage: number;
+        totaldata: number;
+        data: AdminExpenseModel[];
     }>;
 }

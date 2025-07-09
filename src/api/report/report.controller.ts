@@ -1,6 +1,7 @@
-import { Controller, Get, Param, Headers, Query, NotAcceptableException } from '@nestjs/common';
+import { Controller, Get, Param, Headers, Query, NotAcceptableException, Post, Body } from '@nestjs/common';
 import { ReportService } from './report.service';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { AdminExpenseModel } from './report.model';
 
 @ApiTags("Report Module")
 @Controller()
@@ -8,6 +9,14 @@ export class ReportController {
   constructor(
     private readonly reportService: ReportService
   ) {}
+
+  @ApiBearerAuth('access_token')
+  @Post('admin/expense')
+  addExpsense(
+    @Headers() header: Headers,
+    @Body() adminExpenseModel: AdminExpenseModel) {
+    return this.reportService.addAdminExpsense(header, adminExpenseModel);
+  }
 
   @ApiBearerAuth('access_token')
   @Get('admin/report/:startDate/:endDate')
@@ -64,5 +73,18 @@ export class ReportController {
     throw new NotAcceptableException("Limit Range must be 10-100");
   }
     return this.reportService.findAllLedger(header, page, type, filter, limit);
+  }
+
+  @ApiBearerAuth('access_token')
+  @Get('admin/report/expense')
+  @ApiQuery({ name: 'filter', required: false })
+  findAdminExpense(@Headers() header: Headers,
+  @Query('page') page?: number,
+  @Query('filter') filter?: string,
+  @Query('limit') limit?: number){
+  if(limit > 100 || limit < 10){
+    throw new NotAcceptableException("Limit Range must be 10-100");
+  }
+    return this.reportService.findAdminExpense(header, page, filter, limit);
   }
 }

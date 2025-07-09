@@ -28,7 +28,7 @@ let ReportModule = class ReportModule {
 exports.ReportModule = ReportModule;
 exports.ReportModule = ReportModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([report_model_1.AgentLedgerModel, agent_model_1.AgentModel, staff_model_1.StaffModel, admin_model_1.AdminModel, booking_model_1.BookingModel, deposit_model_1.DepositModel, searchhistory_model_1.SearchHistoryModel, auth_model_1.OTPModel])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([report_model_1.AgentLedgerModel, agent_model_1.AgentModel, staff_model_1.StaffModel, admin_model_1.AdminModel, booking_model_1.BookingModel, deposit_model_1.DepositModel, searchhistory_model_1.SearchHistoryModel, auth_model_1.OTPModel, report_model_1.AdminExpenseModel])],
         controllers: [report_controller_1.ReportController],
         providers: [report_service_1.ReportService, auth_service_1.AuthService, jwt_1.JwtService, auth_utils_1.AuthUtils, mail_service_1.MailService],
     })

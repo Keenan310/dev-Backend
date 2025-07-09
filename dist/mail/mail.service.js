@@ -550,8 +550,6 @@ let MailService = class MailService {
             }
         });
     }
-    async partialPaymentMail(booking, partial) {
-    }
     ticketedMail() {
         return 'This action adds a new mail';
     }

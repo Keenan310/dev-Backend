@@ -19,7 +19,6 @@ export declare class MailService {
     bookingConfirmation(bookingData: BookingModel): Promise<void>;
     IssueRequestMail(bookingData: BookingModel): Promise<void>;
     IssueRequestRejectMail(bookingData: BookingModel): Promise<void>;
-    partialPaymentMail(booking: any, partial: any): Promise<void>;
     ticketedMail(): string;
     voidRequestMail(bookingData: BookingModel): Promise<void>;
     voidResultMail(bookingData: BookingModel): Promise<void>;

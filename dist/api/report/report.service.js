@@ -24,14 +24,18 @@ const deposit_model_1 = require("../deposit/deposit.model");
 const auth_service_1 = require("../auth/auth.service");
 const searchhistory_model_1 = require("../searchhistory/searchhistory.model");
 let ReportService = class ReportService {
-    constructor(ledgerRepository, bookingRepository, agentRepository, depositRepository, searchHistoryRepository, authService, dataSource) {
+    constructor(ledgerRepository, bookingRepository, agentRepository, depositRepository, searchHistoryRepository, adminExpenseRepository, authService, dataSource) {
         this.ledgerRepository = ledgerRepository;
         this.bookingRepository = bookingRepository;
         this.agentRepository = agentRepository;
         this.depositRepository = depositRepository;
         this.searchHistoryRepository = searchHistoryRepository;
+        this.adminExpenseRepository = adminExpenseRepository;
         this.authService = authService;
         this.dataSource = dataSource;
+    }
+    async addAdminExpsense(header, adminExpenseModel) {
+        return this.adminExpenseRepository.save(adminExpenseModel);
     }
     async findAllReportAdmin(header, startDate, endDate) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
@@ -468,6 +472,32 @@ let ReportService = class ReportService {
         };
         return ledgerData;
     }
+    async findAdminExpense(header, page, filter, limit) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        const skip = (page - 1) * limit;
+        const take = limit;
+        let queryBuilder = this.adminExpenseRepository.createQueryBuilder("expense");
+        if (filter) {
+            queryBuilder = queryBuilder.andWhere("(expense.details LIKE :filter)", { filter: `%${filter}%` });
+        }
+        const totaldata = await queryBuilder.getCount();
+        const ledgerdata = await queryBuilder
+            .orderBy("expense.id", "DESC")
+            .skip(skip)
+            .take(take)
+            .getMany();
+        const ledgerData = {
+            limit: Number(limit),
+            page: Number(page),
+            totalpage: Math.ceil(totaldata / limit),
+            totaldata: totaldata,
+            data: ledgerdata
+        };
+        return ledgerData;
+    }
 };
 exports.ReportService = ReportService;
 exports.ReportService = ReportService = __decorate([
@@ -477,7 +507,9 @@ exports.ReportService = ReportService = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(agent_model_1.AgentModel)),
     __param(3, (0, typeorm_1.InjectRepository)(deposit_model_1.DepositModel)),
     __param(4, (0, typeorm_1.InjectRepository)(searchhistory_model_1.SearchHistoryModel)),
+    __param(5, (0, typeorm_1.InjectRepository)(report_model_1.AdminExpenseModel)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

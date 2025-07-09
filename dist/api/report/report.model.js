@@ -9,7 +9,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AgentLedgerModel = void 0;
+exports.AdminExpenseModel = exports.AgentLedgerModel = void 0;
+const swagger_1 = require("@nestjs/swagger");
 const typeorm_1 = require("typeorm");
 let AgentLedgerModel = class AgentLedgerModel {
 };
@@ -66,4 +67,37 @@ __decorate([
 exports.AgentLedgerModel = AgentLedgerModel = __decorate([
     (0, typeorm_1.Entity)('agent_ledger')
 ], AgentLedgerModel);
+let AdminExpenseModel = class AdminExpenseModel {
+};
+exports.AdminExpenseModel = AdminExpenseModel;
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], AdminExpenseModel.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], AdminExpenseModel.prototype, "details", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2, default: 0.0 }),
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", Number)
+], AdminExpenseModel.prototype, "amount", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
+    __metadata("design:type", Date)
+], AdminExpenseModel.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)({ type: 'timestamp' }),
+    __metadata("design:type", Date)
+], AdminExpenseModel.prototype, "updated_at", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Generated)("uuid"),
+    __metadata("design:type", String)
+], AdminExpenseModel.prototype, "uid", void 0);
+exports.AdminExpenseModel = AdminExpenseModel = __decorate([
+    (0, typeorm_1.Entity)('admin_expense')
+], AdminExpenseModel);
 //# sourceMappingURL=report.model.js.map

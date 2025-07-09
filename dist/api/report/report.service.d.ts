@@ -1,4 +1,4 @@
-import { AgentLedgerModel } from './report.model';
+import { AgentLedgerModel, AdminExpenseModel } from './report.model';
 import { Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
 import { AgentModel } from '../agent/agent.model';
@@ -12,9 +12,11 @@ export declare class ReportService {
     private readonly agentRepository;
     private readonly depositRepository;
     private readonly searchHistoryRepository;
+    private readonly adminExpenseRepository;
     private readonly authService;
     private dataSource;
-    constructor(ledgerRepository: Repository<AgentLedgerModel>, bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, depositRepository: Repository<DepositModel>, searchHistoryRepository: Repository<SearchHistoryModel>, authService: AuthService, dataSource: DataSource);
+    constructor(ledgerRepository: Repository<AgentLedgerModel>, bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, depositRepository: Repository<DepositModel>, searchHistoryRepository: Repository<SearchHistoryModel>, adminExpenseRepository: Repository<AdminExpenseModel>, authService: AuthService, dataSource: DataSource);
+    addAdminExpsense(header: any, adminExpenseModel: AdminExpenseModel): Promise<AdminExpenseModel>;
     findAllReportAdmin(header: any, startDate: Date, endDate: Date): Promise<{
         name: string;
         value: any;
@@ -75,5 +77,12 @@ export declare class ReportService {
             voidAmount: any;
         };
         data: AgentLedgerModel[];
+    }>;
+    findAdminExpense(header: any, page: number, filter: string, limit: number): Promise<{
+        limit: number;
+        page: number;
+        totalpage: number;
+        totaldata: number;
+        data: AdminExpenseModel[];
     }>;
 }

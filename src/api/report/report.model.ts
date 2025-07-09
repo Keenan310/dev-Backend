@@ -1,4 +1,5 @@
 
+import { ApiProperty } from '@nestjs/swagger';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Generated } from 'typeorm';
 
 @Entity('agent_ledger')
@@ -40,4 +41,29 @@ export class AgentLedgerModel {
   @Generated("uuid")
   uid: string;
 
+}
+
+@Entity('admin_expense')
+export class AdminExpenseModel{
+  @PrimaryGeneratedColumn()
+  id: number;
+
+
+  @Column()
+  @ApiProperty()
+  details: string;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0.0 })
+  @ApiProperty()
+  amount: number;
+
+  @CreateDateColumn({ type: 'timestamp' })
+  created_at: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updated_at: Date;
+
+  @Column()
+  @Generated("uuid")
+  uid: string;
 }

@@ -16,9 +16,13 @@ exports.ReportController = void 0;
 const common_1 = require("@nestjs/common");
 const report_service_1 = require("./report.service");
 const swagger_1 = require("@nestjs/swagger");
+const report_model_1 = require("./report.model");
 let ReportController = class ReportController {
     constructor(reportService) {
         this.reportService = reportService;
+    }
+    addExpsense(header, adminExpenseModel) {
+        return this.reportService.addAdminExpsense(header, adminExpenseModel);
     }
     findAllReportAdmin(header, startDate, endDate) {
         return this.reportService.findAllReportAdmin(header, startDate, endDate);
@@ -41,8 +45,23 @@ let ReportController = class ReportController {
         }
         return this.reportService.findAllLedger(header, page, type, filter, limit);
     }
+    findAdminExpense(header, page, filter, limit) {
+        if (limit > 100 || limit < 10) {
+            throw new common_1.NotAcceptableException("Limit Range must be 10-100");
+        }
+        return this.reportService.findAdminExpense(header, page, filter, limit);
+    }
 };
 exports.ReportController = ReportController;
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, common_1.Post)('admin/expense'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, report_model_1.AdminExpenseModel]),
+    __metadata("design:returntype", void 0)
+], ReportController.prototype, "addExpsense", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Get)('admin/report/:startDate/:endDate'),
@@ -104,6 +123,18 @@ __decorate([
     __metadata("design:paramtypes", [Object, Number, String, String, Number]),
     __metadata("design:returntype", void 0)
 ], ReportController.prototype, "findAllLedger", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, common_1.Get)('admin/report/expense'),
+    (0, swagger_1.ApiQuery)({ name: 'filter', required: false }),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('filter')),
+    __param(3, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number, String, Number]),
+    __metadata("design:returntype", void 0)
+], ReportController.prototype, "findAdminExpense", null);
 exports.ReportController = ReportController = __decorate([
     (0, swagger_1.ApiTags)("Report Module"),
     (0, common_1.Controller)(),

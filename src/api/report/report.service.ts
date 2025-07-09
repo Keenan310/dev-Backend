@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { AgentLedgerModel } from './report.model';
+import { AgentLedgerModel, AdminExpenseModel } from './report.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
@@ -22,9 +22,15 @@ export class ReportService {
     private readonly depositRepository: Repository<DepositModel>,
     @InjectRepository(SearchHistoryModel)
     private readonly searchHistoryRepository: Repository<SearchHistoryModel>,
+    @InjectRepository(AdminExpenseModel)
+    private readonly adminExpenseRepository: Repository<AdminExpenseModel>,
     private readonly authService: AuthService,
     private dataSource: DataSource
   ) {}
+
+  async addAdminExpsense(header : any, adminExpenseModel : AdminExpenseModel){
+    return this.adminExpenseRepository.save(adminExpenseModel);
+  }
   
   async findAllReportAdmin(header: any, startDate: Date, endDate: Date) {
 
@@ -532,6 +538,42 @@ export class ReportService {
       totalpage: Math.ceil(totaldata / limit),
       totaldata: totaldata,
       report: ledgerReport,
+      data: ledgerdata
+    }
+
+    return ledgerData;
+  }
+
+  async findAdminExpense(header: any, page: number, filter: string, limit: number){
+
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
+
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
+
+    const skip = (page - 1) * limit;
+    const take = limit;
+
+    let queryBuilder = this.adminExpenseRepository.createQueryBuilder("expense");
+
+    if (filter) {
+        queryBuilder = queryBuilder.andWhere("(expense.details LIKE :filter)", { filter: `%${filter}%` });
+    }
+
+    const totaldata = await queryBuilder.getCount();
+
+    const ledgerdata = await queryBuilder
+        .orderBy("expense.id", "DESC")
+        .skip(skip)
+        .take(take)
+        .getMany();
+
+    const ledgerData = {
+      limit: Number(limit),
+      page: Number(page),
+      totalpage: Math.ceil(totaldata / limit),
+      totaldata: totaldata,
       data: ledgerdata
     }
 

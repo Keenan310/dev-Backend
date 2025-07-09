@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ReportService } from './report.service';
 import { ReportController } from './report.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AgentLedgerModel } from './report.model';
+import { AdminExpenseModel, AgentLedgerModel } from './report.model';
 import { AgentModel } from '../agent/agent.model';
 import { StaffModel } from '../staff/staff.model';
 import { AdminModel } from '../admin/admin.model';
@@ -16,7 +16,7 @@ import { AuthUtils } from '../auth/auth.utils';
 import { OTPModel } from '../auth/auth.model';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AgentLedgerModel, AgentModel, StaffModel, AdminModel, BookingModel, DepositModel, SearchHistoryModel, OTPModel])],
+  imports: [TypeOrmModule.forFeature([AgentLedgerModel, AgentModel, StaffModel, AdminModel, BookingModel, DepositModel, SearchHistoryModel, OTPModel, AdminExpenseModel])],
   controllers: [ReportController],
   providers: [ReportService, AuthService, JwtService , AuthUtils, MailService],
 })
