@@ -15,11 +15,12 @@ export class CurrencyService {
       private authService: AuthService
     ) {}
   async create(header : any, createCurrencyDto: CreateCurrencyDto) {
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
+    // const verifyAdminId = await this.authService.verifyAdminToken(header);
     
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
+    // if(!verifyAdminId){
+    //     throw new UnauthorizedException();
+    // }
+
     return this.currencyConverterRepository.save(createCurrencyDto);
   }
 

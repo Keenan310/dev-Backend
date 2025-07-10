@@ -17,12 +17,12 @@ export class CurrencyController {
     return this.currencyService.findAll(header);
   }
 
-  @Patch(':uid')
+  @Patch(':id')
   update(@Headers() header: Headers, @Param('id') id: string, @Body() updateCurrencyDto: UpdateCurrencyDto) {
     return this.currencyService.update(header, +id, updateCurrencyDto);
   }
 
-  @Delete(':uid')
+  @Delete(':id')
   remove(@Headers() header: Headers, @Param('id') id: string) {
     return this.currencyService.remove(header, +id);
   }

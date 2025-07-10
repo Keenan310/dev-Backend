@@ -24,10 +24,6 @@ let CurrencyService = class CurrencyService {
         this.authService = authService;
     }
     async create(header, createCurrencyDto) {
-        const verifyAdminId = await this.authService.verifyAdminToken(header);
-        if (!verifyAdminId) {
-            throw new common_1.UnauthorizedException();
-        }
         return this.currencyConverterRepository.save(createCurrencyDto);
     }
     async findAll(header) {

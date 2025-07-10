@@ -51,7 +51,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CurrencyController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Patch)(':uid'),
+    (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Headers)()),
     __param(1, (0, common_1.Param)('id')),
     __param(2, (0, common_1.Body)()),
@@ -60,7 +60,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CurrencyController.prototype, "update", null);
 __decorate([
-    (0, common_1.Delete)(':uid'),
+    (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Headers)()),
     __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
