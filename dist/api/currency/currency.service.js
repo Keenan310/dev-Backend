@@ -24,6 +24,10 @@ let CurrencyService = class CurrencyService {
         this.authService = authService;
     }
     async create(header, createCurrencyDto) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
         return this.currencyConverterRepository.save(createCurrencyDto);
     }
     async findAll(header) {
@@ -38,6 +42,10 @@ let CurrencyService = class CurrencyService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
+        const data = await this.currencyConverterRepository.findOneBy({ id: id });
+        if (!data) {
+            throw new common_1.NotFoundException("Data Id Not Valid");
+        }
         return await this.currencyConverterRepository.update(id, updateCurrencyDto);
     }
     async remove(header, id) {
@@ -45,7 +53,11 @@ let CurrencyService = class CurrencyService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        return await this.currencyConverterRepository.delete(id);
+        const data = await this.currencyConverterRepository.findOneBy({ id: id });
+        if (!data) {
+            throw new common_1.NotFoundException("Data Id Not Valid or may be deleted");
+        }
+        return await this.currencyConverterRepository.delete(data.id);
     }
 };
 exports.CurrencyService = CurrencyService;

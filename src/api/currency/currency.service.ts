@@ -1,12 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateCurrencyDto } from './dto/create-currency.dto';
 import { UpdateCurrencyDto } from './dto/update-currency.dto';
 import { CurrencyConverter } from './entities/currency.entity';
 import { AuthService } from '../auth/auth.service';
-import { AdminModel } from '../admin/admin.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
 @Injectable()
 export class CurrencyService {
   constructor(
@@ -15,16 +13,16 @@ export class CurrencyService {
       private authService: AuthService
     ) {}
   async create(header : any, createCurrencyDto: CreateCurrencyDto) {
-    // const verifyAdminId = await this.authService.verifyAdminToken(header);
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
     
-    // if(!verifyAdminId){
-    //     throw new UnauthorizedException();
-    // }
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
 
     return this.currencyConverterRepository.save(createCurrencyDto);
   }
 
-  async findAll(header : any,) {
+  async findAll(header : any) {
     const verifyAdminId = await this.authService.verifyAdminToken(header);
     
     if(!verifyAdminId){
@@ -40,15 +38,27 @@ export class CurrencyService {
     if(!verifyAdminId){
         throw new UnauthorizedException();
     }
+    const data = await this.currencyConverterRepository.findOneBy({ id : id });
+    if (!data) {
+      throw new NotFoundException("Data Id Not Valid");
+    }
+
     return await this.currencyConverterRepository.update(id, updateCurrencyDto);
   }
 
-  async remove(header : any, id: number) {
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
-    
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
-    return await this.currencyConverterRepository.delete(id);
+  async remove(header: any, id: number) {
+  const verifyAdminId = await this.authService.verifyAdminToken(header);
+
+  if (!verifyAdminId) {
+    throw new UnauthorizedException();
   }
+
+  const data = await this.currencyConverterRepository.findOneBy( { id : id });
+
+  if (!data) {
+    throw new NotFoundException("Data Id Not Valid or may be deleted");
+  }
+
+  return await this.currencyConverterRepository.delete(data.id);
+}
 }
