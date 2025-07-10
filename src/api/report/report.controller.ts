@@ -28,6 +28,14 @@ export class ReportController {
     return this.reportService.findAllAdminLedger(header, startDate, endDate);
   }
 
+  @ApiBearerAuth('access_token')
+  @Get('admin/report/balance/inquery')
+  findAllAdminBalance(
+    @Headers() header: string
+  ) {
+    return this.reportService.findAllAdminBalanceInquery(header);
+  }
+
 
   @ApiBearerAuth('access_token')
   @Get('admin/report/:startDate/:endDate')

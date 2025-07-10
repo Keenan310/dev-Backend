@@ -683,4 +683,37 @@ export class ReportService {
     return ledgerData;
   }
 
+  async findAllAdminBalanceInquery(header: any) {
+
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
+
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
+
+    const ledger = await this.dataSource.query(
+      `SELECT 
+      a.agentId AS agentId,
+      a.phone,
+      a.company,
+      ag.total_deposit,
+      ag.total_sell,
+      ag.current_balance
+      FROM (
+      SELECT 
+          agentId,
+          SUM(CASE WHEN trxtype = 'deposit' THEN credit ELSE 0 END) AS total_deposit,
+          SUM(debit) AS total_sell,
+          SUM(credit - debit) AS current_balance
+      FROM agent_ledger
+      GROUP BY agentId
+      ) AS ag
+      JOIN agents a ON ag.agentId = a.agentId
+      WHERE ag.current_balance < 0
+      ORDER BY ag.current_balance ASC;`
+    );
+
+    return ledger;
+  }
+
 }

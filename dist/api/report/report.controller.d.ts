@@ -12,6 +12,7 @@ export declare class ReportController {
         totalSell: any;
         totaldeposit: any;
     }>;
+    findAllAdminBalance(header: string): Promise<any>;
     findAllReportAdmin(header: Headers, startDate: Date, endDate: Date): Promise<{
         name: string;
         value: any;
