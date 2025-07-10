@@ -647,8 +647,17 @@ export class ReportService {
 
     const sell = await this.ledgerRepository
     .createQueryBuilder('ledger')
-    .select('SUM(ledger.credit)', 'totalAmount')
+    .select('SUM(ledger.debit)', 'totalAmount')
     .where('ledger.trxtype = :trxtype', { trxtype: 'purchase' })
+    .andWhere('ledger.created_at BETWEEN :startDate AND :endDate', {
+      startDate: startDate, 
+      endDate: endDate
+    }).getRawOne();
+
+    const deposit = await this.ledgerRepository
+    .createQueryBuilder('ledger')
+    .select('SUM(ledger.credit)', 'totalAmount')
+    .where('ledger.trxtype = :trxtype', { trxtype: 'deposit' })
     .andWhere('ledger.created_at BETWEEN :startDate AND :endDate', {
       startDate: startDate, 
       endDate: endDate
@@ -667,6 +676,8 @@ export class ReportService {
       ledger: ledger,
       totalExpense: expense.totalAmount,
       totalIncome: sell?.totalAmount || 0,
+      totalSell: sell?.totalAmount || 0,
+      totaldeposit: deposit.totalAmount
     }
 
     return ledgerData;

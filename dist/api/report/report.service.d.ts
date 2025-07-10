@@ -95,5 +95,7 @@ export declare class ReportService {
         ledger: any;
         totalExpense: any;
         totalIncome: any;
+        totalSell: any;
+        totaldeposit: any;
     }>;
 }

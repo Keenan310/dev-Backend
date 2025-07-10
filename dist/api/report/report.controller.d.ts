@@ -9,6 +9,8 @@ export declare class ReportController {
         ledger: any;
         totalExpense: any;
         totalIncome: any;
+        totalSell: any;
+        totaldeposit: any;
     }>;
     findAllReportAdmin(header: Headers, startDate: Date, endDate: Date): Promise<{
         name: string;
