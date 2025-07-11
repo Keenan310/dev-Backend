@@ -110,19 +110,17 @@ export class AlhindAPI {
             const ArrCounty = await this.airportsService.getCountry(ArrPlace);
 
             let farepolicy: string;
-            let partialoption: boolean;
             if(DepCounty === 'AE' && ArrCounty === 'AE'){
                 farepolicy = 'domestic';
-                partialoption = false;
             }else if(DepCounty != 'AE' && ArrCounty != 'AE'){
                 farepolicy = 'soto';
-                partialoption = false;
+               
             }else if(DepCounty != 'AE' && ArrCounty === 'AE'){
                 farepolicy = 'soti';
-                partialoption = true;
+                
             }else if(DepCounty === 'AE' && ArrCounty != 'AE'){
                 farepolicy = 'sito';
-                partialoption = true;
+                
             }
 
             const FlightItenary = [];
@@ -324,7 +322,7 @@ export class AlhindAPI {
                             "bookingCode": segment.RBD,
                             "cabinCode": cabinclass,
                             "mealCode": segment.MealKey,
-                            "seatsAvailable": flights?.AvailableSeat
+                            "seatsAvailable": 9 //flights?.AvailableSeat || 9
                         },
                     };
                     AllSegmentInfo.push(SingleSegments);
