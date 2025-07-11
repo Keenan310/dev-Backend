@@ -84,14 +84,13 @@ export class AlhindAPI {
         return []
     }
 
-
     const headers = {
       Accept: '/',
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/json',
     };
 
     try{
-      const response = await axios.post(process.env.AH_ENDPOINT_SEARCH, data, {headers});
+      const response = await axios.post(`https://b2b.keenantravel.com/api.php`, data, {headers});
         const result = response?.data;
         return this.flightUtils(result, agent, flightDto);
     }catch (err) {
