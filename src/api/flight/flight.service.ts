@@ -114,6 +114,8 @@ export class FlightService {
       return await this.sabreService.booking(agent, bookingDto);
     }else if(System === 'GroupFare'){
       return await this.bookingService.group_booking(agent, bookingDto);
+    }else if(System === 'AlHind'){
+      return await this.bookingService.alhind_booking(agent, bookingDto);
     }else{
       return "Invalid System";
     }
