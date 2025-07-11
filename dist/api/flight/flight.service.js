@@ -46,8 +46,9 @@ let FlightService = class FlightService {
         if (!agent) {
             throw new common_1.UnauthorizedException();
         }
-        const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
-        return Sabre_FlightData;
+        const AlhindData = await this.alhindAPI.flights(agent, flightDto);
+        AlhindData.sort((a, b) => a.NetFare - b.NetFare);
+        return AlhindData;
     }
     async airrevalidation(header, revalidationDto) {
         const agent = await this.authService.verifyAgentToken(header);

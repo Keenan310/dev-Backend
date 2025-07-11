@@ -5,7 +5,7 @@ import { FlightSearchModel } from './dto/search-flight.dto';
 export declare class PreFlightController {
     private readonly flightService;
     constructor(flightService: FlightService);
-    AirSearch(header: string, flightDto: FlightSearchModel): Promise<any>;
+    AirSearch(header: string, flightDto: FlightSearchModel): Promise<any[]>;
     Revalidation(header: string, revalidationDto: Revalidation): Promise<any>;
     AirBooking(header: string, bookingDto: AirBookingModel): Promise<({
         agentId: string;

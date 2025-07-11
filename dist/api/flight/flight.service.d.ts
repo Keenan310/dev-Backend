@@ -24,7 +24,7 @@ export declare class FlightService {
     private readonly groupFareService;
     private readonly alhindAPI;
     constructor(bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, reissueRepository: Repository<ReissueModel>, refundRepository: Repository<RefundModel>, ticketingRepository: Repository<TicketModel>, authService: AuthService, sabreService: SabreService, bookingService: BookingService, groupFareService: GroupfareService, alhindAPI: AlhindAPI);
-    airsearch(header: any, flightDto: FlightSearchModel): Promise<any>;
+    airsearch(header: any, flightDto: FlightSearchModel): Promise<any[]>;
     airrevalidation(header: any, revalidationDto: any): Promise<any>;
     pricecheck(agentUId: string, revalidationDto: any): Promise<any[] | "Other System">;
     airbooking(header: any, bookingDto: AirBookingModel): Promise<({
