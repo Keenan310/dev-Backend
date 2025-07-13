@@ -17,6 +17,7 @@ export declare class AgentController {
         credit: number;
         refId: string;
         ticketcost: number;
+        netfare: number;
         pnr: string;
         details: string;
         companyname: string;

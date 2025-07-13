@@ -57,6 +57,10 @@ __decorate([
 ], AgentLedgerModel.prototype, "ticketcost", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], AgentLedgerModel.prototype, "netfare", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], AgentLedgerModel.prototype, "pnr", void 0);
 __decorate([

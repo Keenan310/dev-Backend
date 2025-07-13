@@ -284,6 +284,7 @@ let AgentService = class AgentService {
                 credit: updateAgentBalanceDto.amount,
                 refId: updateAgentBalanceDto.refId,
                 ticketcost: updateAgentBalanceDto.ticketcost,
+                netfare: updateAgentBalanceDto.amount,
                 pnr: updateAgentBalanceDto.pnr,
                 details: updateAgentBalanceDto.details,
                 companyname: agent.company

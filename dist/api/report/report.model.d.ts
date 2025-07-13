@@ -9,6 +9,7 @@ export declare class AgentLedgerModel {
     remarks: string;
     companyname: string;
     ticketcost: number;
+    netfare: number;
     pnr: string;
     created_at: Date;
     updated_at: Date;

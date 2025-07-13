@@ -35,6 +35,9 @@ export class AgentLedgerModel {
   ticketcost: number
 
   @Column()
+  netfare: number
+
+  @Column()
   pnr: string
 
   @CreateDateColumn({ type: 'timestamp' })
