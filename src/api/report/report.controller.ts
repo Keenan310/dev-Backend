@@ -28,6 +28,14 @@ export class ReportController {
     return this.reportService.findAllAdminLedger(header, startDate, endDate);
   }
 
+  @Get('admin/report/single/:agentId')
+  findSingleLedgerAdmin(
+    @Headers() header: string,
+    @Param('agentId') agentId: string
+  ) {
+    return this.reportService.findSingleAgentLedgerAdmin(header, agentId);
+  }
+
   @ApiBearerAuth('access_token')
   @Get('admin/report/balance/inquery')
   findAllAdminBalance(

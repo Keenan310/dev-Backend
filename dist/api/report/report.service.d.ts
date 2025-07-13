@@ -98,5 +98,10 @@ export declare class ReportService {
         totalSell: any;
         totaldeposit: any;
     }>;
+    findSingleAgentLedgerAdmin(header: any, agentId: string): Promise<{
+        totalSell: any;
+        totalDeposit: any;
+        lastBalance: any;
+    }>;
     findAllAdminBalanceInquery(header: any): Promise<any>;
 }

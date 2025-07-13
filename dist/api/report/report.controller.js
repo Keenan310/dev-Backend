@@ -27,6 +27,9 @@ let ReportController = class ReportController {
     findAllAdminLedger(header, startDate, endDate) {
         return this.reportService.findAllAdminLedger(header, startDate, endDate);
     }
+    findSingleLedgerAdmin(header, agentId) {
+        return this.reportService.findSingleAgentLedgerAdmin(header, agentId);
+    }
     findAllAdminBalance(header) {
         return this.reportService.findAllAdminBalanceInquery(header);
     }
@@ -79,6 +82,14 @@ __decorate([
         Date]),
     __metadata("design:returntype", void 0)
 ], ReportController.prototype, "findAllAdminLedger", null);
+__decorate([
+    (0, common_1.Get)('admin/report/single/:agentId'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Param)('agentId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], ReportController.prototype, "findSingleLedgerAdmin", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Get)('admin/report/balance/inquery'),

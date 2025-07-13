@@ -530,18 +530,18 @@ let ReportService = class ReportService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        const ledger = await this.dataSource.query(`SELECT id, agentId, trxtype, debit, credit,
+        const ledger = await this.dataSource.query(`SELECT id, agentId, trxtype, debit, credit, netfare, ticketcost, pnr
         refId,
         details,
         remarks,
         companyname,
         created_at,
         updated_at,
-        uid, SUM(credit - debit) OVER (
+        uid, SUM(netfare - ticketcost) OVER (
           PARTITION BY agentId
           ORDER BY id
           ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-        ) AS remaining_balance
+        ) AS profit
       FROM agent_ledger
       WHERE created_at BETWEEN ? AND ?
       ORDER BY id DESC`, [startDate, endDate]);
@@ -581,6 +581,35 @@ let ReportService = class ReportService {
             totalIncome: sell?.totalAmount || 0,
             totalSell: sell?.totalAmount || 0,
             totaldeposit: deposit.totalAmount
+        };
+        return ledgerData;
+    }
+    async findSingleAgentLedgerAdmin(header, agentId) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        const totaSell = await this.ledgerRepository
+            .createQueryBuilder('ledger')
+            .select('SUM(ledger.debit)', 'totalAmount')
+            .where('ledger.trxtype = :trxtype', { trxtype: 'purchase' })
+            .andWhere('ledger.agentId = :agentId', { agentId })
+            .getRawOne();
+        const totalDeposit = await this.ledgerRepository
+            .createQueryBuilder('ledger')
+            .select('SUM(ledger.credit)', 'totalAmount')
+            .where('ledger.trxtype = :trxtype', { trxtype: 'deposit' })
+            .andWhere('ledger.agentId = :agentId', { agentId })
+            .getRawOne();
+        const balance = await this.ledgerRepository
+            .createQueryBuilder('ledger')
+            .select('SUM(ledger.credit) - SUM(ledger.debit', 'totalAmount')
+            .where('ledger.agentId = :agentId', { agentId })
+            .getRawOne();
+        const ledgerData = {
+            totalSell: totaSell?.totalProfit || 0,
+            totalDeposit: totalDeposit.totalAmount || 0,
+            lastBalance: balance?.totalAmount || 0,
         };
         return ledgerData;
     }
