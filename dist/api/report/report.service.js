@@ -589,7 +589,7 @@ let ReportService = class ReportService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        const totaSell = await this.ledgerRepository
+        const totalSell = await this.ledgerRepository
             .createQueryBuilder('ledger')
             .select('SUM(ledger.debit)', 'totalAmount')
             .where('ledger.trxtype = :trxtype', { trxtype: 'purchase' })
@@ -603,11 +603,11 @@ let ReportService = class ReportService {
             .getRawOne();
         const balance = await this.ledgerRepository
             .createQueryBuilder('ledger')
-            .select('SUM(ledger.credit) - SUM(ledger.debit', 'totalAmount')
+            .select('SUM(ledger.credit) - SUM(ledger.debit)', 'totalAmount')
             .where('ledger.agentId = :agentId', { agentId })
             .getRawOne();
         const ledgerData = {
-            totalSell: totaSell?.totalProfit || 0,
+            totalSell: totalSell?.totalAmount || 0,
             totalDeposit: totalDeposit.totalAmount || 0,
             lastBalance: balance?.totalAmount || 0,
         };

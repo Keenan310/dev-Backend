@@ -710,28 +710,28 @@ export class ReportService {
     //   [agentId]
     // );
 
-    const totaSell = await this.ledgerRepository
+  const totalSell = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('SUM(ledger.debit)', 'totalAmount')
     .where('ledger.trxtype = :trxtype', { trxtype: 'purchase' })
     .andWhere('ledger.agentId = :agentId', { agentId })
     .getRawOne();
 
-    const totalDeposit = await this.ledgerRepository
+  const totalDeposit = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('SUM(ledger.credit)', 'totalAmount')
     .where('ledger.trxtype = :trxtype', { trxtype: 'deposit' })
     .andWhere('ledger.agentId = :agentId', { agentId })
     .getRawOne();
 
-    const balance = await this.ledgerRepository
+  const balance = await this.ledgerRepository
     .createQueryBuilder('ledger')
-    .select('SUM(ledger.credit) - SUM(ledger.debit', 'totalAmount')
+    .select('SUM(ledger.credit) - SUM(ledger.debit)', 'totalAmount')
     .where('ledger.agentId = :agentId', { agentId })
     .getRawOne();
 
     const ledgerData={
-      totalSell: totaSell?.totalProfit || 0,
+      totalSell: totalSell?.totalAmount || 0,
       totalDeposit: totalDeposit.totalAmount || 0,
       lastBalance: balance?.totalAmount || 0,
     }
