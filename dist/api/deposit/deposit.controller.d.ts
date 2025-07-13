@@ -22,7 +22,7 @@ export declare class DepositController {
     depositBonus(header: Headers, agentUId: string, depositBonuseModel: DepositBonuseModel): Promise<{
         agentId: string;
         trxtype: string;
-        amount: number;
+        credit: number;
         refId: string;
         details: string;
         companyname: string;

@@ -295,7 +295,7 @@ export class UploadService {
           let old_deposit_id = (deposit[0].depositId).replace("KTD",'');
           depositId = "KTD" + (parseInt(old_deposit_id) + 1);
         }else{
-          depositId = 'POD1000';
+          depositId = 'KTD1000';
         }
 
         const depositModel =  new DepositModel;

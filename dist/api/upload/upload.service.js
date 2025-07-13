@@ -259,7 +259,7 @@ let UploadService = class UploadService {
                     depositId = "KTD" + (parseInt(old_deposit_id) + 1);
                 }
                 else {
-                    depositId = 'POD1000';
+                    depositId = 'KTD1000';
                 }
                 const depositModel = new deposit_model_1.DepositModel;
                 depositModel.depositId = depositId;

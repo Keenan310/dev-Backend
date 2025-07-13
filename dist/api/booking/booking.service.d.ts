@@ -84,6 +84,34 @@ export declare class BookingService {
         flightdate: any;
         companyname: string;
     } & BookingModel>;
+    alhind_booking(agentdata: AgentModel, bookingDto: AirBookingModel): Promise<{
+        agentId: string;
+        bookingId: string;
+        system: any;
+        carrier_name: any;
+        carrier_code: any;
+        depfrom: any;
+        pnr: string;
+        refundable: any;
+        arrto: any;
+        triptype: any;
+        netfare: any;
+        grossfare: any;
+        status: string;
+        name: string;
+        email: string;
+        phone: string;
+        adultcount: number;
+        childcount: number;
+        infantcount: number;
+        totalpax: number;
+        flightdata: any;
+        itenary: AirBookingModel;
+        totalsegment: number;
+        timelimit: any;
+        flightdate: any;
+        companyname: string;
+    } & BookingModel>;
     findAllAdmin(header: any, page: number, status: string, filter: string, limit: number): Promise<{
         limit: number;
         page: number;

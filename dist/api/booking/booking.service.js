@@ -130,6 +130,57 @@ let BookingService = class BookingService {
         await this.mailService.bookingConfirmation(bookingResult);
         return bookingResult;
     }
+    async alhind_booking(agentdata, bookingDto) {
+        const agentId = agentdata.agentId;
+        const email = bookingDto.ContactInfo.email || "dev@flyjatt.com";
+        const phone = bookingDto.ContactInfo.phone || "08801685370455";
+        const name = bookingDto.PassengerInfo.adult[0].givenname + " " + bookingDto.PassengerInfo.adult[0].surname;
+        const adult = (bookingDto.PassengerInfo.adult).length;
+        const child = (bookingDto.PassengerInfo.child).length || 0;
+        const infant = (bookingDto.PassengerInfo.infant).length || 0;
+        const paxCount = adult + child + infant;
+        const booking = await this.bookingRepository.find({ order: { id: 'DESC' }, take: 1 });
+        let bookingId = 'KTB1000';
+        if (booking.length == 1) {
+            let old_booking_id = (booking[0]?.bookingId).replace("KTB", '');
+            bookingId = "KTB" + (parseInt(old_booking_id) + 1);
+        }
+        let Booking_PNR = await this.bookingUtils.generatePNR();
+        let airlinesPnr = await this.bookingUtils.generateAirlinesPNR();
+        const bookingData = {
+            agentId: agentId,
+            bookingId: bookingId,
+            system: bookingDto.FlightInfo.System,
+            carrier_name: bookingDto.FlightInfo.CarrierName,
+            carrier_code: bookingDto.FlightInfo.Carrier,
+            depfrom: bookingDto.FlightInfo.AllLegsInfo[0].DepFrom,
+            pnr: Booking_PNR,
+            refundable: bookingDto.FlightInfo.Refundable,
+            arrto: bookingDto.FlightInfo.AllLegsInfo[0].ArrTo,
+            triptype: bookingDto.FlightInfo.TripType,
+            netfare: bookingDto.FlightInfo.NetFare,
+            grossfare: bookingDto.FlightInfo.NetFare,
+            status: "Hold",
+            name: name,
+            email: email,
+            phone: phone,
+            adultcount: adult,
+            childcount: child,
+            infantcount: infant,
+            totalpax: paxCount,
+            flightdata: null,
+            itenary: bookingDto,
+            totalsegment: 0,
+            timelimit: bookingDto.FlightInfo.TimeLimit || 'N/F',
+            flightdate: bookingDto.FlightInfo.AllLegsInfo[0].DepDate,
+            companyname: agentdata.company
+        };
+        const bookingResult = await this.bookingRepository.save(bookingData);
+        const passengerData = bookingDto.PassengerInfo;
+        await this.passengerService.createBookingPax(passengerData, agentId, bookingId);
+        await this.mailService.bookingConfirmation(bookingResult);
+        return bookingResult;
+    }
     async findAllAdmin(header, page, status, filter, limit) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {

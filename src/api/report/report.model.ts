@@ -31,6 +31,12 @@ export class AgentLedgerModel {
   @Column()
   companyname: string
 
+  @Column()
+  ticketcost: number
+
+  @Column()
+  pnr: string
+
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 

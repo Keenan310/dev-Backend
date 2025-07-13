@@ -345,19 +345,33 @@ export class AgentService {
       throw new NotFoundException('Agent not found');
     }
 
-    const details = updateAgentBalanceDto.amount + ' AED By '+ verifyAdminId.firstname;
+    if(updateAgentBalanceDto.trxtype === 'purchase' || updateAgentBalanceDto.trxtype === 'reissue'){
+      const AgentLedgerData = {
+        agentId: agent.agentId,
+        trxtype: updateAgentBalanceDto.trxtype,
+        credit: updateAgentBalanceDto.amount,
+        refId: updateAgentBalanceDto.refId,
+        ticketcost: updateAgentBalanceDto.ticketcost,
+        pnr: updateAgentBalanceDto.pnr,
+        details: updateAgentBalanceDto.details,
 
-    const AgentLedgerData = {
+        companyname: agent.company
+      }
+      return await this.agentLedgerRepository.save(AgentLedgerData);
+    }else{
+      const AgentLedgerData = {
       agentId: agent.agentId,
       trxtype: updateAgentBalanceDto.trxtype,
-      amount: updateAgentBalanceDto.amount,
+      debit: updateAgentBalanceDto.amount,
       refId: updateAgentBalanceDto.refId,
-      details: details,
+      details: updateAgentBalanceDto.details,
+      ticketcost: updateAgentBalanceDto.ticketcost,
+      pnr: updateAgentBalanceDto.pnr,
       companyname: agent.company
     }
 
     return await this.agentLedgerRepository.save(AgentLedgerData);
-
   }
 
+  }
 }

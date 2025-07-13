@@ -30,7 +30,7 @@ export declare class DepositService {
     addDepositBonus(header: any, agentUId: string, depositBonuseModel: DepositBonuseModel): Promise<{
         agentId: string;
         trxtype: string;
-        amount: number;
+        credit: number;
         refId: string;
         details: string;
         companyname: string;

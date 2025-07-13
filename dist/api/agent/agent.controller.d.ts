@@ -14,8 +14,10 @@ export declare class AgentController {
     addBalance(header: Headers, uid: string, updateAgentBalanceDto: AgentBalanceUpdate): Promise<{
         agentId: string;
         trxtype: string;
-        amount: number;
+        credit: number;
         refId: string;
+        ticketcost: number;
+        pnr: string;
         details: string;
         companyname: string;
     } & import("../report/report.model").AgentLedgerModel>;

@@ -155,7 +155,7 @@ let DepositService = class DepositService {
         const AgentLedgerData = {
             agentId: agent.agentId,
             trxtype: 'bonus',
-            amount: depositBonuseModel.bonus,
+            credit: depositBonuseModel.bonus,
             refId: depositBonuseModel.refId,
             details: details,
             companyname: agent.company

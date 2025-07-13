@@ -41,8 +41,10 @@ export declare class AgentService {
     addBalance(header: any, uid: string, updateAgentBalanceDto: AgentBalanceUpdate): Promise<{
         agentId: string;
         trxtype: string;
-        amount: number;
+        credit: number;
         refId: string;
+        ticketcost: number;
+        pnr: string;
         details: string;
         companyname: string;
     } & AgentLedgerModel>;

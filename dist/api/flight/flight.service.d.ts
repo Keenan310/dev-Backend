@@ -73,8 +73,8 @@ export declare class FlightService {
         refundable: any;
         arrto: any;
         triptype: any;
-        netfare: number;
-        grossfare: number;
+        netfare: any;
+        grossfare: any;
         status: string;
         name: string;
         email: string;

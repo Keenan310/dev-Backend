@@ -206,6 +206,13 @@ export class AgentBalanceUpdate{
   @IsString()
   details : string;
 
+  @ApiProperty()
+  ticketcost : number;
+
+  @ApiProperty()
+  @IsString()
+  pnr : string;
+
 }
 
 @Entity('credit_summery')

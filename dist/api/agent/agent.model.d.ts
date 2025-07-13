@@ -55,6 +55,8 @@ export declare class AgentBalanceUpdate {
     trxtype: string;
     refId: string;
     details: string;
+    ticketcost: number;
+    pnr: string;
 }
 export declare class AgentCreditModel {
     id: number;

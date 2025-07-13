@@ -89,7 +89,7 @@ let VoidService = class VoidService {
             const agentLedgerData1 = {
                 agentId: booking.agentId,
                 trxtype: 'fee',
-                amount: -(servicefee),
+                debit: servicefee,
                 refId: booking.bookingId,
                 details: feeDetails,
                 companyname: booking.companyname

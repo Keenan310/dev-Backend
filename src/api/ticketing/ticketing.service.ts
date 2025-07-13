@@ -128,7 +128,9 @@ export class TicketingService {
       debit: booking.netfare,
       refId: booking.bookingId,
       details: details,
-      remarks: '',
+      ticketcost : makeTicketModel.purchaseprice,
+      pnr : makeTicketModel.bookingpnr,
+      remarks: makeTicketModel.bookingpnr,
       companyname: booking.companyname
     }
 

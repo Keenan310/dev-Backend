@@ -96,6 +96,9 @@ let FlightService = class FlightService {
         else if (System === 'GroupFare') {
             return await this.bookingService.group_booking(agent, bookingDto);
         }
+        else if (System === 'AlHind') {
+            return await this.bookingService.alhind_booking(agent, bookingDto);
+        }
         else {
             return "Invalid System";
         }

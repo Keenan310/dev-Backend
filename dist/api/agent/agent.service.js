@@ -277,16 +277,32 @@ let AgentService = class AgentService {
         if (!agent) {
             throw new common_1.NotFoundException('Agent not found');
         }
-        const details = updateAgentBalanceDto.amount + ' AED By ' + verifyAdminId.firstname;
-        const AgentLedgerData = {
-            agentId: agent.agentId,
-            trxtype: updateAgentBalanceDto.trxtype,
-            amount: updateAgentBalanceDto.amount,
-            refId: updateAgentBalanceDto.refId,
-            details: details,
-            companyname: agent.company
-        };
-        return await this.agentLedgerRepository.save(AgentLedgerData);
+        if (updateAgentBalanceDto.trxtype === 'purchase' || updateAgentBalanceDto.trxtype === 'reissue') {
+            const AgentLedgerData = {
+                agentId: agent.agentId,
+                trxtype: updateAgentBalanceDto.trxtype,
+                credit: updateAgentBalanceDto.amount,
+                refId: updateAgentBalanceDto.refId,
+                ticketcost: updateAgentBalanceDto.ticketcost,
+                pnr: updateAgentBalanceDto.pnr,
+                details: updateAgentBalanceDto.details,
+                companyname: agent.company
+            };
+            return await this.agentLedgerRepository.save(AgentLedgerData);
+        }
+        else {
+            const AgentLedgerData = {
+                agentId: agent.agentId,
+                trxtype: updateAgentBalanceDto.trxtype,
+                debit: updateAgentBalanceDto.amount,
+                refId: updateAgentBalanceDto.refId,
+                details: updateAgentBalanceDto.details,
+                ticketcost: updateAgentBalanceDto.ticketcost,
+                pnr: updateAgentBalanceDto.pnr,
+                companyname: agent.company
+            };
+            return await this.agentLedgerRepository.save(AgentLedgerData);
+        }
     }
 };
 exports.AgentService = AgentService;

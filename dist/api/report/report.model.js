@@ -52,6 +52,14 @@ __decorate([
     __metadata("design:type", String)
 ], AgentLedgerModel.prototype, "companyname", void 0);
 __decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], AgentLedgerModel.prototype, "ticketcost", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], AgentLedgerModel.prototype, "pnr", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
     __metadata("design:type", Date)
 ], AgentLedgerModel.prototype, "created_at", void 0);
