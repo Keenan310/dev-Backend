@@ -54,7 +54,6 @@ export class BookingService {
   }
 
 
-
   async group_booking(agentdata: AgentModel, bookingDto: AirBookingModel){
 
     const agentId : string = agentdata.agentId;
@@ -215,6 +214,7 @@ export class BookingService {
 
     let queryBuilder = this.bookingRepository.createQueryBuilder("booking");
     queryBuilder.select([
+      'booking.system',
       'booking.bookingId',
       'booking.status',
       'booking.name',

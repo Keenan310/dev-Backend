@@ -190,6 +190,7 @@ let BookingService = class BookingService {
         const take = limit;
         let queryBuilder = this.bookingRepository.createQueryBuilder("booking");
         queryBuilder.select([
+            'booking.system',
             'booking.bookingId',
             'booking.status',
             'booking.name',
