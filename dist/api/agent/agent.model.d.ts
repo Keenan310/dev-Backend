@@ -21,6 +21,7 @@ export declare class AgentModel {
     civilaviationno: string;
     acc_key_manager: string;
     partial_eligibility: boolean;
+    currency: string;
     ip: string;
     created_at: Date;
     updated_at: Date;
@@ -35,7 +36,7 @@ export declare class AgentModelUpdateAdmin {
     status: string;
     searchlimit: number;
     acc_key_manager: string;
-    partial_eligibility: boolean;
+    currency: string;
     civilaviationno: string;
 }
 export declare class AgentModelUpdateAgent {

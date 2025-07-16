@@ -106,6 +106,9 @@ export class AgentModel {
   partial_eligibility: boolean;
 
   @Column()
+  currency: string;
+
+  @Column()
   ip: string;
 
   @CreateDateColumn()
@@ -146,7 +149,8 @@ export class AgentModelUpdateAdmin {
   acc_key_manager: string;
 
   @ApiPropertyOptional()
-  partial_eligibility: boolean;
+  currency: string;
+
 
   @ApiPropertyOptional()
   civilaviationno: string;

@@ -140,6 +140,10 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
+], AgentModel.prototype, "currency", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
 ], AgentModel.prototype, "ip", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
@@ -194,8 +198,8 @@ __decorate([
 ], AgentModelUpdateAdmin.prototype, "acc_key_manager", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)(),
-    __metadata("design:type", Boolean)
-], AgentModelUpdateAdmin.prototype, "partial_eligibility", void 0);
+    __metadata("design:type", String)
+], AgentModelUpdateAdmin.prototype, "currency", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)(),
     __metadata("design:type", String)
