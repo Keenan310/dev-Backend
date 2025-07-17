@@ -89,7 +89,7 @@ export class VoidService {
 
     if(booking.status === 'Void Requested' && status === 'accept'){
       booking['status'] = bookingstatus;
-      const feeDetails = servicefee + ' AED Void Charge. '+voidData.passengerdata+' By '+ verifyAdminId?.firstname;
+      const feeDetails = servicefee + ' Void Charge. '+voidData.passengerdata+' By '+ verifyAdminId?.firstname;
 
       const agentLedgerData1 = {
         agentId: booking.agentId,
@@ -102,7 +102,7 @@ export class VoidService {
       await this.agentLedgerRepository.save(agentLedgerData1);
 
       const voidedAmount = Number(booking.netfare) - servicefee;
-      const details = voidedAmount + ' AED Void. '+voidData.passengerdata+' with Service Fee: '+servicefee+ 'AED'+ ' By '+ verifyAdminId.firstname;
+      const details = voidedAmount + ' Void. '+voidData.passengerdata+' with Service Fee: '+servicefee+ '/'+ ' By '+ verifyAdminId.firstname;
       const agentLedgerData2 = {
         agentId: booking.agentId,
         trxtype: 'void',

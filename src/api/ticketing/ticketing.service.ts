@@ -169,7 +169,7 @@ export class TicketingService {
       throw new HttpException(`Agnet not Found`, HttpStatusCode.NotFound);
     }
 
-    const details = booking.carrier_name+' ' + booking.depfrom+ '-'+booking.arrto+' Ticket Issue Rejected '+ booking.netfare + ' AED (Revesal due to '+ remarks+'). PNR : '+ booking.pnr+' .';
+    const details = booking.carrier_name+' ' + booking.depfrom+ '-'+booking.arrto+' Ticket Issue Rejected '+ booking.netfare + ' (Revesal due to '+ remarks+'). PNR : '+ booking.pnr+' .';
 
     const AgentLedgerData = {
       agentId: booking.agentId,

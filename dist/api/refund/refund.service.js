@@ -153,7 +153,7 @@ let RefundService = class RefundService {
         }
         if (booking.status === 'Refund Quotation Accepted' && status === 'accept') {
             booking['status'] = bookingstatus;
-            const details = refund.quotationamount + ' AED Refund. ' + refund.passengerdata + ' By ' + verifyAdminId.firstname;
+            const details = refund.quotationamount + ' Refund. ' + refund.passengerdata + ' By ' + verifyAdminId.firstname;
             const AgentLedgerData = {
                 agentId: booking.agentId,
                 trxtype: 'refund',

@@ -117,7 +117,7 @@ let DepositService = class DepositService {
         }
         if (updateDepositDto.status === 'approved') {
             deposit.status = 'approved';
-            const details = deposit.amount + ' AED Deposite By ' + deposit.sender;
+            const details = deposit.trxId + '/ ' + deposit.ref + '/ Deposit By ' + deposit.sender;
             const AgentLedgerData = {
                 agentId: deposit.agentId,
                 trxtype: 'deposit',
@@ -151,7 +151,7 @@ let DepositService = class DepositService {
         if (!agent) {
             throw new common_1.NotFoundException('Agent not found');
         }
-        const details = depositBonuseModel.bonus + ' AED Deposit Bonus By ' + verifyAdminId.firstname;
+        const details = depositBonuseModel.bonus + '/ Deposit Bonus By ' + verifyAdminId.firstname;
         const AgentLedgerData = {
             agentId: agent.agentId,
             trxtype: 'bonus',

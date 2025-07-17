@@ -82,7 +82,7 @@ let BookingService = class BookingService {
             throw new common_1.NotAcceptableException("Insufficient Amount. Please Top Up");
         }
         else if (agentLedgerValue >= groupData.NetFare) {
-            const details = groupData.Carrier + ' ' + groupData.DepFrom + '-' + groupData.ArrTo + ' Ticket Purchase ' + groupData.NetFare + ' AED. PNR : ' + groupData.PNR + ' .';
+            const details = groupData.Carrier + ' ' + groupData.DepFrom + '-' + groupData.ArrTo + ' Ticket Purchase ' + groupData.NetFare + '. PNR : ' + groupData.PNR + ' .';
             const generatedUUID = (0, uuid_1.v4)();
             const AgentLedgerData = {
                 agentId: agentdata.agentId,

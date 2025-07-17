@@ -132,7 +132,7 @@ export class ReissueService {
 
         const details = booking.carrier_name+' ' + booking.depfrom+'-'+booking.arrto+
           ' Ticket Reissue Date: '+reissue.reissuedate+' Reissue Charge ' + reissue.quotationamount +
-          ' AED. PNR : '+ booking.pnr+' .';
+          '. PNR : '+ booking.pnr+' .';
 
         const AgentLedgerData = {
           agentId: booking.agentId,

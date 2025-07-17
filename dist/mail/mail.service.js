@@ -274,7 +274,7 @@ let MailService = class MailService {
                     </tr>
                     <tr>
                         <th>Top Up Amount</th>
-                        <td>AED. ${depositData.amount}</td>
+                        <td> ${depositData.amount}</td>
                     </tr>
                     <tr>
                         <th>Payment Type</th>
@@ -324,8 +324,8 @@ let MailService = class MailService {
         <tr>
           <td bgcolor="#ffffff" style="padding: 20px; text-align: center;">
             <h3 style="color: #333333;">Despoit Request!</h3>
-            <p style="color: #666666;"><strong>Your deposit request ${depositData.amount} AED.</strong></p>
-            <p style="color: #666666;"><strong>Sender:  ${depositData.sender} AED.</strong></p>
+            <p style="color: #666666;"><strong>Your deposit request ${depositData.amount}.</strong></p>
+            <p style="color: #666666;"><strong>Sender:  ${depositData.sender}.</strong></p>
             <p style="color: #666666;"><strong>Using ${depositData.paymentway} which Reference is ${depositData.ref} now ${depositData.status}</strong></p>
             <p style="color: #666666;">Thanks for staying with Keenan Travel. </p>
             <p style="color: #666666;">Thank you, <br/>${depositData.companyname}</p>
@@ -372,7 +372,7 @@ let MailService = class MailService {
             <h3 style="color: #333333;">Despoit Request!</h3>
             <p style="color: #666666;">After reviewing your request.</p>
             <p style="color: #666666;"><strong>Your deposit is now ${depositData.status} .</strong></p>
-            <p style="color: #666666;"><strong>Your deposit amount ${depositData.status} AED.</strong></p>
+            <p style="color: #666666;"><strong>Your deposit amount ${depositData.status}.</strong></p>
             <p style="color: #666666;">Thanks for staying with Keenan Travel. </p>
             <p style="color: #666666;">Thank you, <br/>${agentData.company}</p>
           </td>
