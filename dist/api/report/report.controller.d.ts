@@ -67,25 +67,6 @@ export declare class ReportController {
         totalsell: any;
         totaldeposit: any;
     }>;
-    findAllLedger(header: Headers, page?: number, type?: string, filter?: string, limit?: number): Promise<{
-        limit: number;
-        page: number;
-        totalpage: number;
-        totaldata: number;
-        report: {
-            depositCount: any;
-            depositAmount: any;
-            refundCount: any;
-            refundAmount: any;
-            reissueCount: any;
-            reissueAmount: any;
-            ticketCount: any;
-            ticketAmount: any;
-            voidCount: any;
-            voidAmount: any;
-        };
-        data: import("./report.model").AgentLedgerModel[];
-    }>;
     findAdminExpense(header: Headers, page?: number, filter?: string, limit?: number): Promise<{
         limit: number;
         page: number;

@@ -67,25 +67,6 @@ export declare class ReportService {
         TotalDepositPending: number;
         TotalDepositRejected: number;
     }>;
-    findAllLedger(header: any, page: number, type: string, filter: string, limit: number): Promise<{
-        limit: number;
-        page: number;
-        totalpage: number;
-        totaldata: number;
-        report: {
-            depositCount: any;
-            depositAmount: any;
-            refundCount: any;
-            refundAmount: any;
-            reissueCount: any;
-            reissueAmount: any;
-            ticketCount: any;
-            ticketAmount: any;
-            voidCount: any;
-            voidAmount: any;
-        };
-        data: AgentLedgerModel[];
-    }>;
     findAdminExpense(header: any, page: number, filter: string, limit: number): Promise<{
         limit: number;
         page: number;

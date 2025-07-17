@@ -508,96 +508,6 @@ export class ReportService {
     return DataResponse;
   }
 
-  async findAllLedger(header: any, page: number, type: string, filter: string, limit: number){
-
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
-
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
-
-    const deposit = await this.ledgerRepository
-    .createQueryBuilder('ledger')
-    .select('COUNT(ledger.id)', 'rowCount')
-    .addSelect('SUM(ledger.credit)', 'totalAmount')
-    .where('ledger.trxtype = :trxtype', { trxtype: 'deposit' })
-    .getRawOne();
-
-    const refund = await this.ledgerRepository
-    .createQueryBuilder('ledger')
-    .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.credit)', 'totalAmount')
-    .where('ledger.trxtype = :trxtype', { trxtype: 'refund' })
-    .getRawOne();
-    
-    const reissue = await this.ledgerRepository
-    .createQueryBuilder('ledger')
-    .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.debit)', 'totalAmount')
-    .where('ledger.trxtype = :trxtype', { trxtype: 'reissue' })
-    .getRawOne(); 
-
-    const voided = await this.ledgerRepository
-    .createQueryBuilder('ledger')
-    .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.credit)', 'totalAmount')
-    .where('ledger.trxtype = :trxtype', { trxtype: 'void' })
-    .getRawOne();
-    
-    const ticket = await this.ledgerRepository
-    .createQueryBuilder('ledger')
-    .select('COUNT(ledger.id)', 'rowCount') 
-    .addSelect('SUM(ledger.debit)', 'totalAmount')
-    .where('ledger.trxtype = :trxtype', { trxtype: 'ticket' })
-    .getRawOne();
-
-    const skip = (page - 1) * limit;
-    const take = limit;
-
-    let queryBuilder = this.ledgerRepository.createQueryBuilder("ledger");
-
-    if (type) {
-        queryBuilder = queryBuilder.where("ledger.trxtype = :trxtype", { trxtype: type });
-    }
-
-    if (filter) {
-        queryBuilder = queryBuilder.andWhere("(ledger.agentId LIKE :filter OR ledger.companyname LIKE :filter)", { filter: `%${filter}%` });
-    }
-
-    const totaldata = await queryBuilder.getCount();
-
-    const ledgerdata = await queryBuilder
-        .orderBy("ledger.id", "DESC")
-        .skip(skip)
-        .take(take)
-        .getMany();
-
-    
-    const ledgerReport = {
-      depositCount :  deposit.rowCount,
-      depositAmount : deposit.totalAmount,
-      refundCount : refund.rowCount,
-      refundAmount : refund.totalAmount,
-      reissueCount : reissue.rowCount,
-      reissueAmount : reissue.totalAmount,
-      ticketCount : ticket.rowCount,
-      ticketAmount : ticket.totalAmount,
-      voidCount : voided.rowCount,
-      voidAmount : voided.totalAmount,
-    }
-
-    const ledgerData = {
-      limit: Number(limit),
-      page: Number(page),
-      totalpage: Math.ceil(totaldata / limit),
-      totaldata: totaldata,
-      report: ledgerReport,
-      data: ledgerdata
-    }
-
-    return ledgerData;
-  }
-
   async findAdminExpense(header: any, page: number, filter: string, limit: number){
 
     const verifyAdminId = await this.authService.verifyAdminToken(header);
@@ -643,39 +553,41 @@ export class ReportService {
     }
 
     const ledger = await this.adminLedgerRepository
-    .createQueryBuilder('ledger')
+    .createQueryBuilder('aledger')
     .select([
-      'ledger.id',
-      'ledger.created_at',
-      'ledger.description',
-      'ledger.pnr',
-      'ledger.ticketprice',
-      'ledger.supplier',
-      'ledger.netfare',
-      'ledger.agentcode',
-      'ledger.status'
+      'aledger.id',
+      'aledger.created_at',
+      'aledger.description',
+      'aledger.pnr',
+      'aledger.ticketprice',
+      'aledger.supplier',
+      'aledger.netfare',
+      'aledger.agentcode',
+      'aledger.status'
     ])
     .addSelect(
-      `SUM(ledger.netfare - ledger.ticketprice) OVER (
-        PARTITION BY ledger.agentcode
-        ORDER BY ledger.id
+      `SUM(aledger.netfare - aledger.ticketprice) OVER (
+        PARTITION BY aledger.agentcode
+        ORDER BY aledger.id
         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-      )`, 'profit'
+      )`,
+      'profit'
     )
-    .where('ledger.created_at BETWEEN :startDate AND :endDate', {
+    .where('aledger.created_at BETWEEN :startDate AND :endDate', {
       startDate,
       endDate,
     })
-    .orderBy('ledger.id', 'DESC')
+    .orderBy('aledger.id', 'DESC')
     .getRawMany();
 
+
     const sell = await this.adminLedgerRepository
-    .createQueryBuilder('ledger')
-    .select('SUM(ledger.netfare)', 'totalamount').getRawOne();
+    .createQueryBuilder('aledger')
+    .select('SUM(aledger.netfare)', 'totalamount').getRawOne();
 
     const lossProfit = await this.adminLedgerRepository
-    .createQueryBuilder('ledger')
-    .select('SUM(ledger.netfare) - SUM(ledger.ticketprice)', 'totalamount').getRawOne();
+    .createQueryBuilder('aledger')
+    .select('SUM(aledger.netfare) - SUM(aledger.ticketprice)', 'totalamount').getRawOne();
 
     const deposit = await this.ledgerRepository
     .createQueryBuilder('ledger')
@@ -686,7 +598,7 @@ export class ReportService {
     .createQueryBuilder('expense')
     .select('SUM(expense.amount)', 'totalAmount').getRawOne();
 
-    const totalTicket = await this.adminExpenseRepository
+    const totalTicket = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
     .select('SUM(ledger.netfare)', 'totalAmount').getRawOne();
 
@@ -712,24 +624,6 @@ export class ReportService {
     //     throw new UnauthorizedException();
     // }
 
-    // const ledger = await this.dataSource.query(
-    //   `SELECT id, agentId, trxtype, debit, credit, netfare, ticketcost, pnr
-    //     refId,
-    //     details,
-    //     remarks,
-    //     companyname,
-    //     created_at,
-    //     updated_at,
-    //     uid, SUM(netfare - ticketcost) OVER (
-    //       PARTITION BY agentId
-    //       ORDER BY id
-    //       ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-    //     ) AS profit
-    //   FROM agent_ledger
-    //   WHERE agentId ?
-    //   ORDER BY id DESC`,
-    //   [agentId]
-    // );
 
   const totalSell = await this.ledgerRepository
     .createQueryBuilder('ledger')
