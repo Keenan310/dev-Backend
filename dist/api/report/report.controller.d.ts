@@ -19,6 +19,13 @@ export declare class ReportController {
         totalDeposit: any;
         lastBalance: any;
     }>;
+    findAgentSingelAllLedger(header: Headers, agentId?: string, page?: number, limit?: number): Promise<{
+        limit: number;
+        page: number;
+        totalpage: number;
+        totaldata: number;
+        data: AdminExpenseModel[];
+    }>;
     findAllAdminBalance(header: string): Promise<any>;
     findAllReportAdmin(header: Headers, startDate: Date, endDate: Date): Promise<{
         name: string;

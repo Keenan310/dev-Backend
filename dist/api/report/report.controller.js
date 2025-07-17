@@ -36,6 +36,12 @@ let ReportController = class ReportController {
     findSingleLedgerAdmin(header, agentId) {
         return this.reportService.findSingleAgentLedgerAdmin(header, agentId);
     }
+    findAgentSingelAllLedger(header, agentId, page, limit) {
+        if (limit > 100 || limit < 10) {
+            throw new common_1.NotAcceptableException("Limit Range must be 10-100");
+        }
+        return this.reportService.findAllAgentSingelAdmin(header, agentId, page, limit);
+    }
     findAllAdminBalance(header) {
         return this.reportService.findAllAdminBalanceInquery(header);
     }
@@ -109,6 +115,17 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], ReportController.prototype, "findSingleLedgerAdmin", null);
+__decorate([
+    (0, common_1.Get)('admin/ledger/single/:agentId'),
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Param)('agentId')),
+    __param(2, (0, common_1.Query)('page')),
+    __param(3, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, Number, Number]),
+    __metadata("design:returntype", void 0)
+], ReportController.prototype, "findAgentSingelAllLedger", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Get)('admin/report/balance/inquery'),

@@ -53,6 +53,18 @@ export class ReportController {
     return this.reportService.findSingleAgentLedgerAdmin(header, agentId);
   }
 
+  @Get('admin/ledger/single/:agentId')
+  @ApiBearerAuth('access_token')
+  findAgentSingelAllLedger(@Headers() header: Headers,
+  @Param('agentId') agentId?: string,
+  @Query('page') page?: number,
+  @Query('limit') limit?: number){
+  if(limit > 100 || limit < 10){
+    throw new NotAcceptableException("Limit Range must be 10-100");
+  }
+    return this.reportService.findAllAgentSingelAdmin(header, agentId, page, limit);
+  }
+
   @ApiBearerAuth('access_token')
   @Get('admin/report/balance/inquery')
   findAllAdminBalance(

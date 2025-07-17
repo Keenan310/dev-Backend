@@ -468,6 +468,30 @@ let ReportService = class ReportService {
         };
         return ledgerData;
     }
+    async findAllAgentSingelAdmin(header, agentId, page, limit) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        const skip = (page - 1) * limit;
+        const take = limit;
+        let queryBuilder = this.adminExpenseRepository.createQueryBuilder("ledger");
+        queryBuilder = queryBuilder.andWhere("ledger.agentId = :agentId", { agentId });
+        const totaldata = await queryBuilder.getCount();
+        const ledgerdata = await queryBuilder
+            .orderBy("expense.id", "DESC")
+            .skip(skip)
+            .take(take)
+            .getMany();
+        const ledgerData = {
+            limit: Number(limit),
+            page: Number(page),
+            totalpage: Math.ceil(totaldata / limit),
+            totaldata: totaldata,
+            data: ledgerdata
+        };
+        return ledgerData;
+    }
     async findAllAdminLedger(header, startDate, endDate) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {
