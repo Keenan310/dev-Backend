@@ -585,10 +585,6 @@ let ReportService = class ReportService {
         return ledgerData;
     }
     async findSingleAgentLedgerAdmin(header, agentId) {
-        const verifyAdminId = await this.authService.verifyAdminToken(header);
-        if (!verifyAdminId) {
-            throw new common_1.UnauthorizedException();
-        }
         const totalSell = await this.ledgerRepository
             .createQueryBuilder('ledger')
             .select('SUM(ledger.debit)', 'totalAmount')

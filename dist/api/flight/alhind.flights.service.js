@@ -178,6 +178,7 @@ let AlhindAPI = class AlhindAPI {
                 const airlinesMarkUpAmount = equivalentAmount * (ComissionPolicy / 100);
                 const agentMarkUpType = agentdata?.clientmarkuptype;
                 const agentMarkUp = agentdata?.clientmarkup;
+                const currency = agentdata?.currency;
                 let agentMarkUpAmount = 0;
                 if (agentMarkUpType === 'percent') {
                     agentMarkUpAmount = equivalentAmount * (agentMarkUp / 100);
@@ -337,6 +338,7 @@ let AlhindAPI = class AlhindAPI {
                     Carrier: ValidatingCarrier,
                     CarrierName: CarrierName,
                     Cabinclass: Class,
+                    Currency: currency,
                     BaseFare: equivalentAmount,
                     Taxes: Taxes,
                     NetFare: NetFare,

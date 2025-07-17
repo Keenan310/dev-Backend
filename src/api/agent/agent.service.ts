@@ -349,7 +349,7 @@ export class AgentService {
       const AgentLedgerData = {
         agentId: agent.agentId,
         trxtype: updateAgentBalanceDto.trxtype,
-        credit: updateAgentBalanceDto.amount,
+        debit: updateAgentBalanceDto.amount,
         refId: updateAgentBalanceDto.refId,
         ticketcost: updateAgentBalanceDto.ticketcost,
         netfare: updateAgentBalanceDto.amount,
@@ -362,7 +362,7 @@ export class AgentService {
       const AgentLedgerData = {
       agentId: agent.agentId,
       trxtype: updateAgentBalanceDto.trxtype,
-      debit: updateAgentBalanceDto.amount,
+      credit: updateAgentBalanceDto.amount,
       refId: updateAgentBalanceDto.refId,
       details: updateAgentBalanceDto.details,
       ticketcost: updateAgentBalanceDto.ticketcost,

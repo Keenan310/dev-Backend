@@ -138,9 +138,7 @@ export class AlhindAPI {
                     flights['PriceBreakDown'] = flight;
                      delete flights.FlightFares;
                     AllFareWithPrice.push(flights)
-
                 }
-               
             }
 
             for (const flights of AllFareWithPrice){
@@ -181,6 +179,7 @@ export class AlhindAPI {
                 const airlinesMarkUpAmount =  equivalentAmount * (ComissionPolicy/100);
                 const agentMarkUpType: string = agentdata?.clientmarkuptype;
                 const agentMarkUp: number = agentdata?.clientmarkup;
+                const currency: string = agentdata?.currency;
 
                 let agentMarkUpAmount: number = 0;
                 if(agentMarkUpType === 'percent'){
@@ -345,6 +344,7 @@ export class AlhindAPI {
                     Carrier: ValidatingCarrier,
                     CarrierName: CarrierName,
                     Cabinclass: Class,
+                    Currency: currency,
                     BaseFare: equivalentAmount,
                     Taxes: Taxes,
                     NetFare: NetFare,

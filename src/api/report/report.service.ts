@@ -685,11 +685,11 @@ export class ReportService {
 
   async findSingleAgentLedgerAdmin(header: any, agentId: string) {
 
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
+    // const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
+    // if(!verifyAdminId){
+    //     throw new UnauthorizedException();
+    // }
 
     // const ledger = await this.dataSource.query(
     //   `SELECT id, agentId, trxtype, debit, credit, netfare, ticketcost, pnr

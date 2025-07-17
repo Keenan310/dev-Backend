@@ -151,7 +151,6 @@ export class AgentModelUpdateAdmin {
   @ApiPropertyOptional()
   currency: string;
 
-
   @ApiPropertyOptional()
   civilaviationno: string;
 

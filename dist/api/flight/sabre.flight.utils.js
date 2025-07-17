@@ -102,6 +102,7 @@ let SabreUtils = class SabreUtils {
                     const airlinesMarkUpAmount = equivalentAmount * (ComissionPolicy / 100);
                     const agentMarkUpType = agentdata?.clientmarkuptype;
                     const agentMarkUp = agentdata?.clientmarkup;
+                    const currency = agentdata?.currency;
                     let agentMarkUpAmount = 0;
                     if (agentMarkUpType === 'percent') {
                         agentMarkUpAmount = equivalentAmount * (agentMarkUp / 100);
@@ -258,6 +259,7 @@ let SabreUtils = class SabreUtils {
                         Carrier: ValidatingCarrier,
                         CarrierName: CarrierName,
                         Cabinclass: Class,
+                        Currency: currency,
                         BaseFare: equivalentAmount,
                         Taxes: Taxes,
                         NetFare: NetFare,
