@@ -87,7 +87,7 @@ let BookingService = class BookingService {
             const AgentLedgerData = {
                 agentId: agentdata.agentId,
                 trxtype: 'ticket',
-                amount: -groupData.NetFare,
+                debit: -groupData.NetFare,
                 refId: bookingId,
                 details: details,
                 compnayname: agentdata.company,

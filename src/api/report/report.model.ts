@@ -1,5 +1,5 @@
 
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Generated } from 'typeorm';
 
 @Entity('agent_ledger')
@@ -51,6 +51,48 @@ export class AgentLedgerModel {
   uid: string;
 
 }
+
+@Entity('admin_ledger')
+export class AdminLedger {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ApiProperty()
+  @Column({ type: 'text' })
+  description: string;
+
+  @ApiProperty()
+  @Column({ type: 'varchar', length: 255 })
+  pnr: string;
+
+  @ApiProperty()
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  ticketprice: number;
+
+  @ApiProperty()
+  @Column({ type: 'varchar', length: 255 })
+  supplier: string;
+
+  @ApiProperty()
+  @Column({ type: 'varchar', length: 255 })
+  agentcode: string;
+
+  @ApiProperty()
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  netfare: number;
+
+  @ApiProperty()
+  @Column({ type: 'varchar', length: 50 })
+  status: string;
+
+  @CreateDateColumn({ type: 'timestamp' })
+  created_at: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updated_at: Date;
+}
+
+export class UpdateAdminLedgerDto extends PartialType(AdminLedger) {}
 
 @Entity('admin_expense')
 export class AdminExpenseModel{

@@ -1,16 +1,18 @@
 import { ReportService } from './report.service';
-import { AdminExpenseModel } from './report.model';
+import { AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto } from './report.model';
 export declare class ReportController {
     private readonly reportService;
     constructor(reportService: ReportService);
     addExpsense(header: Headers, adminExpenseModel: AdminExpenseModel): Promise<AdminExpenseModel>;
+    addAdminLedger(header: Headers, adminledgerModel: AdminLedger): Promise<void>;
+    editAdminLedger(header: Headers, id: string, adminledgerDto: UpdateAdminLedgerDto): Promise<void>;
     findAllAdminLedger(header: string, startDate: Date, endDate: Date): Promise<{
         lossProfit: any;
-        ledger: any;
+        ledger: any[];
         totalExpense: any;
-        totalIncome: any;
+        totalIncome: number;
         totalSell: any;
-        totaldeposit: any;
+        totalDeposit: any;
     }>;
     findSingleLedgerAdmin(header: string, agentId: string): Promise<{
         totalSell: any;

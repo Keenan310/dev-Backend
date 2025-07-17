@@ -1,7 +1,7 @@
-import { Controller, Get, Param, Headers, Query, NotAcceptableException, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Headers, Query, NotAcceptableException, Post, Body, Patch } from '@nestjs/common';
 import { ReportService } from './report.service';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { AdminExpenseModel } from './report.model';
+import { AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto } from './report.model';
 
 @ApiTags("Report Module")
 @Controller()
@@ -16,6 +16,23 @@ export class ReportController {
     @Headers() header: Headers,
     @Body() adminExpenseModel: AdminExpenseModel) {
     return this.reportService.addAdminExpsense(header, adminExpenseModel);
+  }
+
+  @ApiBearerAuth('access_token')
+  @Post('admin/ledger')
+  addAdminLedger(
+    @Headers() header: Headers,
+    @Body() adminledgerModel: AdminLedger) {
+    return this.reportService.addAdminLedger(header, adminledgerModel);
+  }
+
+  @ApiBearerAuth('access_token')
+  @Patch('admin/ledger/:id')
+  editAdminLedger(
+    @Headers() header: Headers,
+    @Param('id') id: string,
+    @Body() adminledgerDto: UpdateAdminLedgerDto) {
+    return this.reportService.editAdminLedger(header, +id, adminledgerDto);
   }
 
   @ApiBearerAuth('access_token')

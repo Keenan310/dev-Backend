@@ -1,4 +1,4 @@
-import { AgentLedgerModel, AdminExpenseModel } from './report.model';
+import { AgentLedgerModel, AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto } from './report.model';
 import { Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
 import { AgentModel } from '../agent/agent.model';
@@ -13,10 +13,13 @@ export declare class ReportService {
     private readonly depositRepository;
     private readonly searchHistoryRepository;
     private readonly adminExpenseRepository;
+    private readonly adminLedgerRepository;
     private readonly authService;
     private dataSource;
-    constructor(ledgerRepository: Repository<AgentLedgerModel>, bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, depositRepository: Repository<DepositModel>, searchHistoryRepository: Repository<SearchHistoryModel>, adminExpenseRepository: Repository<AdminExpenseModel>, authService: AuthService, dataSource: DataSource);
+    constructor(ledgerRepository: Repository<AgentLedgerModel>, bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, depositRepository: Repository<DepositModel>, searchHistoryRepository: Repository<SearchHistoryModel>, adminExpenseRepository: Repository<AdminExpenseModel>, adminLedgerRepository: Repository<AdminLedger>, authService: AuthService, dataSource: DataSource);
     addAdminExpsense(header: any, adminExpenseModel: AdminExpenseModel): Promise<AdminExpenseModel>;
+    addAdminLedger(header: any, adminLedgerModel: AdminLedger): Promise<void>;
+    editAdminLedger(header: any, id: number, updateAdminLedgerDto: UpdateAdminLedgerDto): Promise<void>;
     findAllReportAdmin(header: any, startDate: Date, endDate: Date): Promise<{
         name: string;
         value: any;
@@ -92,11 +95,11 @@ export declare class ReportService {
     }>;
     findAllAdminLedger(header: any, startDate: Date, endDate: Date): Promise<{
         lossProfit: any;
-        ledger: any;
+        ledger: any[];
         totalExpense: any;
-        totalIncome: any;
+        totalIncome: number;
         totalSell: any;
-        totaldeposit: any;
+        totalDeposit: any;
     }>;
     findSingleAgentLedgerAdmin(header: any, agentId: string): Promise<{
         totalSell: any;

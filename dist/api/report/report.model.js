@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AdminExpenseModel = exports.AgentLedgerModel = void 0;
+exports.AdminExpenseModel = exports.UpdateAdminLedgerDto = exports.AdminLedger = exports.AgentLedgerModel = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const typeorm_1 = require("typeorm");
 let AgentLedgerModel = class AgentLedgerModel {
@@ -79,6 +79,62 @@ __decorate([
 exports.AgentLedgerModel = AgentLedgerModel = __decorate([
     (0, typeorm_1.Entity)('agent_ledger')
 ], AgentLedgerModel);
+let AdminLedger = class AdminLedger {
+};
+exports.AdminLedger = AdminLedger;
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], AdminLedger.prototype, "id", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, typeorm_1.Column)({ type: 'text' }),
+    __metadata("design:type", String)
+], AdminLedger.prototype, "description", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
+    __metadata("design:type", String)
+], AdminLedger.prototype, "pnr", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2 }),
+    __metadata("design:type", Number)
+], AdminLedger.prototype, "ticketprice", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
+    __metadata("design:type", String)
+], AdminLedger.prototype, "supplier", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
+    __metadata("design:type", String)
+], AdminLedger.prototype, "agentcode", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2 }),
+    __metadata("design:type", Number)
+], AdminLedger.prototype, "netfare", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 50 }),
+    __metadata("design:type", String)
+], AdminLedger.prototype, "status", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
+    __metadata("design:type", Date)
+], AdminLedger.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)({ type: 'timestamp' }),
+    __metadata("design:type", Date)
+], AdminLedger.prototype, "updated_at", void 0);
+exports.AdminLedger = AdminLedger = __decorate([
+    (0, typeorm_1.Entity)('admin_ledger')
+], AdminLedger);
+class UpdateAdminLedgerDto extends (0, swagger_1.PartialType)(AdminLedger) {
+}
+exports.UpdateAdminLedgerDto = UpdateAdminLedgerDto;
 let AdminExpenseModel = class AdminExpenseModel {
 };
 exports.AdminExpenseModel = AdminExpenseModel;

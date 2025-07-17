@@ -24,6 +24,12 @@ let ReportController = class ReportController {
     addExpsense(header, adminExpenseModel) {
         return this.reportService.addAdminExpsense(header, adminExpenseModel);
     }
+    addAdminLedger(header, adminledgerModel) {
+        return this.reportService.addAdminLedger(header, adminledgerModel);
+    }
+    editAdminLedger(header, id, adminledgerDto) {
+        return this.reportService.editAdminLedger(header, +id, adminledgerDto);
+    }
     findAllAdminLedger(header, startDate, endDate) {
         return this.reportService.findAllAdminLedger(header, startDate, endDate);
     }
@@ -71,6 +77,25 @@ __decorate([
     __metadata("design:paramtypes", [Object, report_model_1.AdminExpenseModel]),
     __metadata("design:returntype", void 0)
 ], ReportController.prototype, "addExpsense", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, common_1.Post)('admin/ledger'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, report_model_1.AdminLedger]),
+    __metadata("design:returntype", void 0)
+], ReportController.prototype, "addAdminLedger", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, common_1.Patch)('admin/ledger/:id'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, report_model_1.UpdateAdminLedgerDto]),
+    __metadata("design:returntype", void 0)
+], ReportController.prototype, "editAdminLedger", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Get)('admin/report/ledger/:startDate/:endDate'),

@@ -277,7 +277,7 @@ let AgentService = class AgentService {
         if (!agent) {
             throw new common_1.NotFoundException('Agent not found');
         }
-        if (updateAgentBalanceDto.trxtype === 'purchase' || updateAgentBalanceDto.trxtype === 'reissue') {
+        if (updateAgentBalanceDto.trxtype === 'ticket' || updateAgentBalanceDto.trxtype === 'reissue') {
             const AgentLedgerData = {
                 agentId: agent.agentId,
                 trxtype: updateAgentBalanceDto.trxtype,
