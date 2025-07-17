@@ -474,35 +474,35 @@ let ReportService = class ReportService {
             throw new common_1.UnauthorizedException();
         }
         const ledger = await this.adminLedgerRepository
-            .createQueryBuilder('aledger')
+            .createQueryBuilder('ledger')
             .select([
-            'aledger.id',
-            'aledger.created_at',
-            'aledger.description',
-            'aledger.pnr',
-            'aledger.ticketprice',
-            'aledger.supplier',
-            'aledger.netfare',
-            'aledger.agentcode',
-            'aledger.status'
+            'ledger.id',
+            'ledger.created_at',
+            'ledger.description',
+            'ledger.pnr',
+            'ledger.ticketprice',
+            'ledger.supplier',
+            'ledger.netfare',
+            'ledger.agentcode',
+            'ledger.status'
         ])
-            .addSelect(`SUM(aledger.netfare - aledger.ticketprice) OVER (
-        PARTITION BY aledger.agentcode
-        ORDER BY aledger.id
+            .addSelect(`SUM(ledger.netfare - ledger.ticketprice) OVER (
+        PARTITION BY ledger.agentcode
+        ORDER BY ledger.id
         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
       )`, 'profit')
-            .where('aledger.created_at BETWEEN :startDate AND :endDate', {
+            .where('ledger.created_at BETWEEN :startDate AND :endDate', {
             startDate,
             endDate,
         })
-            .orderBy('aledger.id', 'DESC')
+            .orderBy('ledger.id', 'DESC')
             .getRawMany();
         const sell = await this.adminLedgerRepository
-            .createQueryBuilder('aledger')
-            .select('SUM(aledger.netfare)', 'totalamount').getRawOne();
+            .createQueryBuilder('ledger')
+            .select('SUM(ledger.netfare)', 'totalamount').getRawOne();
         const lossProfit = await this.adminLedgerRepository
-            .createQueryBuilder('aledger')
-            .select('SUM(aledger.netfare) - SUM(aledger.ticketprice)', 'totalamount').getRawOne();
+            .createQueryBuilder('ledger')
+            .select('SUM(ledger.netfare) - SUM(aledger.ticketprice)', 'totalamount').getRawOne();
         const deposit = await this.ledgerRepository
             .createQueryBuilder('ledger')
             .select('SUM(ledger.credit)', 'totalAmount')
