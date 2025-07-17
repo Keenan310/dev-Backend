@@ -555,12 +555,12 @@ export class ReportService {
     const skip = (page - 1) * limit;
     const take = limit;
 
-    let queryBuilder = this.adminExpenseRepository.createQueryBuilder("ledger");
+    let queryBuilder = this.ledgerRepository.createQueryBuilder("ledger");
     queryBuilder = queryBuilder.andWhere("ledger.agentId = :agentId", { agentId });
     const totaldata = await queryBuilder.getCount();
 
     const ledgerdata = await queryBuilder
-        .orderBy("expense.id", "DESC")
+        .orderBy("ledger.id", "DESC")
         .skip(skip)
         .take(take)
         .getMany();

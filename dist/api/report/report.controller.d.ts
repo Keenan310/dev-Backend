@@ -24,7 +24,7 @@ export declare class ReportController {
         page: number;
         totalpage: number;
         totaldata: number;
-        data: AdminExpenseModel[];
+        data: import("./report.model").AgentLedgerModel[];
     }>;
     findAllAdminBalance(header: string): Promise<any>;
     findAllReportAdmin(header: Headers, startDate: Date, endDate: Date): Promise<{

@@ -79,7 +79,7 @@ export declare class ReportService {
         page: number;
         totalpage: number;
         totaldata: number;
-        data: AdminExpenseModel[];
+        data: AgentLedgerModel[];
     }>;
     findAllAdminLedger(header: any, startDate: Date, endDate: Date): Promise<{
         lossProfit: any;
