@@ -502,7 +502,7 @@ let ReportService = class ReportService {
             .select('SUM(ledger.netfare)', 'totalamount').getRawOne();
         const lossProfit = await this.adminLedgerRepository
             .createQueryBuilder('ledger')
-            .select('SUM(ledger.netfare) - SUM(aledger.ticketprice)', 'totalamount').getRawOne();
+            .select('SUM(ledger.netfare) - SUM(ledger.ticketprice)', 'totalamount').getRawOne();
         const deposit = await this.ledgerRepository
             .createQueryBuilder('ledger')
             .select('SUM(ledger.credit)', 'totalAmount')
@@ -525,6 +525,10 @@ let ReportService = class ReportService {
         return ledgerData;
     }
     async findSingleAgentLedgerAdmin(header, agentId) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
         const totalSell = await this.ledgerRepository
             .createQueryBuilder('ledger')
             .select('SUM(ledger.debit)', 'totalAmount')

@@ -587,7 +587,7 @@ export class ReportService {
 
     const lossProfit = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
-    .select('SUM(ledger.netfare) - SUM(aledger.ticketprice)', 'totalamount').getRawOne();
+    .select('SUM(ledger.netfare) - SUM(ledger.ticketprice)', 'totalamount').getRawOne();
 
     const deposit = await this.ledgerRepository
     .createQueryBuilder('ledger')
@@ -618,11 +618,11 @@ export class ReportService {
 
   async findSingleAgentLedgerAdmin(header: any, agentId: string) {
 
-    // const verifyAdminId = await this.authService.verifyAdminToken(header);
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    // if(!verifyAdminId){
-    //     throw new UnauthorizedException();
-    // }
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
 
 
   const totalSell = await this.ledgerRepository
