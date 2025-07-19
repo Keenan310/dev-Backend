@@ -159,9 +159,9 @@ export class AlhindAPI {
                 const Instant_Payment : boolean = false; //airlineData?.instantPayment;
                 const IssuePermit : boolean = false; //airlineData?.issuePermit;
                 const IsBookable : boolean = true; //airlineData?.bookable;
-                const equivalentAmount : number = flights.PriceBreakDown?.AprxTotalBaseFare * converstionrate;
-                const Taxes : number =flights.PriceBreakDown?.AprxTotalTax * converstionrate;
-                let TotalFare: number = Math.ceil(flights.PriceBreakDown?.TotalAmount * converstionrate);
+                const equivalentAmount : number = Math.ceil(flights.PriceBreakDown?.AprxTotalBaseFare * converstionrate * 100)/ 100;
+                const Taxes : number = Math.ceil(flights.PriceBreakDown?.AprxTotalTax * converstionrate * 100)/100;
+                let TotalFare: number = Math.ceil(flights.PriceBreakDown?.TotalAmount * converstionrate * 100)/100;
 
                 const adminMarkUpType: string = agentdata?.markuptype;
                 const adminMarkUp: number = agentdata?.markup;
@@ -197,7 +197,7 @@ export class AlhindAPI {
                     agentMarkUpAmount =  agentMarkUp;
                 }
 
-                const NetFare = Math.ceil(equivalentAmount + adminMarkUpAmount + airlinesMarkUpAmount + addAmount + agentMarkUpAmount + Taxes);
+                const NetFare = Math.ceil((equivalentAmount + adminMarkUpAmount + airlinesMarkUpAmount + addAmount + agentMarkUpAmount + Taxes) * 100)/100;
 
                 if(NetFare > TotalFare){
                     TotalFare = NetFare;
@@ -281,8 +281,8 @@ export class AlhindAPI {
                         }
                     }
     
-                    const totalTaxAmount = allPassenger?.Tax;
-                    const PaxequivalentAmount = allPassenger?.BaseFare;
+                    const totalTaxAmount = Math.ceil(allPassenger?.Tax * 100)/100;
+                    const PaxequivalentAmount = Math.ceil(allPassenger?.BaseFare * 100) / 100;
                     const PaxtotalFare = PaxequivalentAmount + totalTaxAmount;
 
 
