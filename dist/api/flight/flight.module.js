@@ -44,6 +44,7 @@ const post_flight_controller_1 = require("./post-flight.controller");
 const activitylog_service_1 = require("../activitylog/activitylog.service");
 const activitylog_entity_1 = require("../activitylog/entities/activitylog.entity");
 const alhind_flights_service_1 = require("./alhind.flights.service");
+const currency_entity_1 = require("../currency/entities/currency.entity");
 let FlightModule = class FlightModule {
 };
 exports.FlightModule = FlightModule;
@@ -51,7 +52,7 @@ exports.FlightModule = FlightModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([airlines_model_1.AirlinesModel, searchhistory_model_1.SearchHistoryModel, groupfare_model_1.GroupFareModel, traveller_model_1.TravellerModel, ticketing_model_1.TicketModel, airports_model_1.AirportsModel,
                 booking_model_1.BookingModel, passenger_model_1.PassengerModel, agent_model_1.AgentModel, staff_model_1.StaffModel, admin_model_1.AdminModel, refund_model_1.RefundModel, reissue_model_1.ReissueModel,
-                report_model_1.AgentLedgerModel, auth_model_1.OTPModel, activitylog_entity_1.ActivityLogModel])],
+                report_model_1.AgentLedgerModel, auth_model_1.OTPModel, activitylog_entity_1.ActivityLogModel, currency_entity_1.CurrencyConverter])],
         controllers: [pre_flight_controller_1.PreFlightController, post_flight_controller_1.PostFlightController],
         providers: [flight_service_1.FlightService, traveller_service_1.TravellerService, groupfare_service_1.GroupfareService, sabre_flights_service_1.SabreService, airlines_service_1.AirlinesService, booking_utils_1.BookingUtils,
             mail_service_1.MailService, airports_service_1.AirportsService, booking_service_1.BookingService, passenger_service_1.PassengerService, auth_service_1.AuthService, jwt_1.JwtService, sabre_flight_utils_1.SabreUtils,

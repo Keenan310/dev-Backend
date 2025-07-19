@@ -26,10 +26,12 @@ const airlines_service_1 = require("../airlines/airlines.service");
 const airports_service_1 = require("../airports/airports.service");
 const airports_data_1 = require("./data/airports.data");
 const airlines_data_1 = require("./data/airlines.data");
+const currency_entity_1 = require("../currency/entities/currency.entity");
 dotenv.config();
 let AlhindAPI = class AlhindAPI {
-    constructor(bookingRepository, passengerService, bookingService, searchHistoryService, airlinesService, airportsService) {
+    constructor(bookingRepository, currencyConverterRepository, passengerService, bookingService, searchHistoryService, airlinesService, airportsService) {
         this.bookingRepository = bookingRepository;
+        this.currencyConverterRepository = currencyConverterRepository;
         this.passengerService = passengerService;
         this.bookingService = bookingService;
         this.searchHistoryService = searchHistoryService;
@@ -186,7 +188,13 @@ let AlhindAPI = class AlhindAPI {
                 else if ((agentMarkUpType === 'amount')) {
                     agentMarkUpAmount = agentMarkUp;
                 }
-                const NetFare = equivalentAmount + adminMarkUpAmount + airlinesMarkUpAmount + addAmount + agentMarkUpAmount + Taxes;
+                const conversionData = await this.currencyConverterRepository.findOne({
+                    where: {
+                        alternate: currency
+                    }
+                });
+                const converstionrate = conversionData?.exchange_rate || 1;
+                const NetFare = equivalentAmount + adminMarkUpAmount + airlinesMarkUpAmount + addAmount + agentMarkUpAmount + Taxes * converstionrate;
                 if (NetFare > TotalFare) {
                     TotalFare = NetFare;
                 }
@@ -382,7 +390,9 @@ exports.AlhindAPI = AlhindAPI;
 exports.AlhindAPI = AlhindAPI = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(booking_model_1.BookingModel)),
+    __param(1, (0, typeorm_1.InjectRepository)(currency_entity_1.CurrencyConverter)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         passenger_service_1.PassengerService,
         booking_service_1.BookingService,
         searchhistory_service_1.SearchhistoryService,
