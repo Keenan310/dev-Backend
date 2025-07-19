@@ -281,9 +281,9 @@ export class AlhindAPI {
                         }
                     }
     
-                    const totalTaxAmount = Math.ceil(allPassenger?.Tax * 100)/100;
-                    const PaxequivalentAmount = Math.ceil(allPassenger?.BaseFare * 100) / 100;
-                    const PaxtotalFare = Math.ceil((PaxequivalentAmount + totalTaxAmount) * 100)/ 100;
+                    const totalTaxAmount = Math.ceil(allPassenger?.Tax * converstionrate * 100)/100;
+                    const PaxequivalentAmount = Math.ceil(allPassenger?.BaseFare * converstionrate * 100) / 100;
+                    const PaxtotalFare = Math.ceil((PaxequivalentAmount + totalTaxAmount) * converstionrate * 100)/ 100;
 
 
                     return {
