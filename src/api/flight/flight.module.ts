@@ -35,12 +35,13 @@ import { PostFlightController } from './post-flight.controller';
 import { ActivitylogService } from '../activitylog/activitylog.service';
 import { ActivityLogModel } from '../activitylog/entities/activitylog.entity';
 import { AlhindAPI } from './alhind.flights.service';
+import { CurrencyConverter } from '../currency/entities/currency.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature(
     [AirlinesModel,SearchHistoryModel, GroupFareModel, TravellerModel,TicketModel, AirportsModel,
     BookingModel, PassengerModel, AgentModel, StaffModel, AdminModel,RefundModel, ReissueModel,
-    AgentLedgerModel, OTPModel, ActivityLogModel])],
+    AgentLedgerModel, OTPModel, ActivityLogModel, CurrencyConverter])],
   controllers: [PreFlightController, PostFlightController],
   providers: [FlightService, TravellerService , GroupfareService, SabreService, AirlinesService, BookingUtils,
     MailService, AirportsService, BookingService , PassengerService, AuthService, JwtService, SabreUtils,

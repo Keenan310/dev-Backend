@@ -14,6 +14,7 @@ import { AirportsService } from '../airports/airports.service';
 import { airportsData } from './data/airports.data';
 import { airlinesData } from './data/airlines.data';
 import { Revalidation } from './dto/revalidation-flight.dto';
+import { CurrencyConverter } from '../currency/entities/currency.entity';
 dotenv.config()
 
 
@@ -22,9 +23,12 @@ export class AlhindAPI {
     constructor(
       @InjectRepository(BookingModel)
       private readonly bookingRepository: Repository<BookingModel>,
+      @InjectRepository(CurrencyConverter)
+      private readonly currencyConverterRepository: Repository<CurrencyConverter>,
       private readonly passengerService: PassengerService,
       private readonly bookingService: BookingService,
       private readonly searchHistoryService: SearchhistoryService,
+
       private readonly airlinesService: AirlinesService,
       private readonly airportsService: AirportsService,
     ) {}
@@ -188,11 +192,22 @@ export class AlhindAPI {
                     agentMarkUpAmount =  agentMarkUp;
                 }
 
-                const NetFare = equivalentAmount + adminMarkUpAmount + airlinesMarkUpAmount + addAmount + agentMarkUpAmount + Taxes;
+                const conversionData = await this.currencyConverterRepository.findOne({
+                where: {
+                    alternate: currency
+                }
+                });
+
+                const converstionrate = conversionData?.exchange_rate || 1;
+
+                const NetFare = equivalentAmount + adminMarkUpAmount + airlinesMarkUpAmount + addAmount + agentMarkUpAmount + Taxes * converstionrate;
+
 
                 if(NetFare > TotalFare){
                     TotalFare = NetFare;
                 }
+
+
 
                 const Refundable : boolean = flights.PriceBreakDown?.RefundableInfo;
                 let TimeLimit : string = '';
