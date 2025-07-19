@@ -145,6 +145,11 @@ export class AlhindAPI {
                 }
             }
 
+            const conversionData = await this.currencyConverterRepository.findOne({
+                where: {alternate: agentdata.currency}});
+
+            const converstionrate = conversionData?.exchange_rate || 1;
+
             for (const flights of AllFareWithPrice){
                 const ValidatingCarrier : string = flights?.TicketingCarrier;
                 const airlineData : any = await this.airlinesService.getAirlines(ValidatingCarrier);
@@ -154,9 +159,9 @@ export class AlhindAPI {
                 const Instant_Payment : boolean = false; //airlineData?.instantPayment;
                 const IssuePermit : boolean = false; //airlineData?.issuePermit;
                 const IsBookable : boolean = true; //airlineData?.bookable;
-                const equivalentAmount : number = flights.PriceBreakDown?.AprxTotalBaseFare;
-                const Taxes : number =flights.PriceBreakDown?.AprxTotalTax;
-                let TotalFare: number = flights.PriceBreakDown?.TotalAmount;
+                const equivalentAmount : number = flights.PriceBreakDown?.AprxTotalBaseFare * converstionrate;
+                const Taxes : number =flights.PriceBreakDown?.AprxTotalTax * converstionrate;
+                let TotalFare: number = Math.ceil(flights.PriceBreakDown?.TotalAmount * converstionrate);
 
                 const adminMarkUpType: string = agentdata?.markuptype;
                 const adminMarkUp: number = agentdata?.markup;
@@ -192,23 +197,11 @@ export class AlhindAPI {
                     agentMarkUpAmount =  agentMarkUp;
                 }
 
-                const conversionData = await this.currencyConverterRepository.findOne({
-                where: {
-                    alternate: currency
-                }
-                });
-
-                const converstionrate = conversionData?.exchange_rate || 1;
-
-                const NetFare = Math.ceil((equivalentAmount + adminMarkUpAmount + airlinesMarkUpAmount + addAmount + agentMarkUpAmount + Taxes) * converstionrate);
-
+                const NetFare = Math.ceil(equivalentAmount + adminMarkUpAmount + airlinesMarkUpAmount + addAmount + agentMarkUpAmount + Taxes);
 
                 if(NetFare > TotalFare){
                     TotalFare = NetFare;
-                }else{
-                    TotalFare = Math.ceil(TotalFare * converstionrate);
                 }
-
 
 
                 const Refundable : boolean = flights.PriceBreakDown?.RefundableInfo;
