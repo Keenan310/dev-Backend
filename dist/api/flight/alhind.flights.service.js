@@ -198,6 +198,9 @@ let AlhindAPI = class AlhindAPI {
                 if (NetFare > TotalFare) {
                     TotalFare = NetFare;
                 }
+                else {
+                    TotalFare = TotalFare * converstionrate;
+                }
                 const Refundable = flights.PriceBreakDown?.RefundableInfo;
                 let TimeLimit = '';
                 let cabinclass = 'Y';

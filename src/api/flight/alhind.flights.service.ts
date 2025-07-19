@@ -205,6 +205,8 @@ export class AlhindAPI {
 
                 if(NetFare > TotalFare){
                     TotalFare = NetFare;
+                }else{
+                    TotalFare = TotalFare * converstionrate;
                 }
 
 
