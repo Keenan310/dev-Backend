@@ -200,13 +200,13 @@ export class AlhindAPI {
 
                 const converstionrate = conversionData?.exchange_rate || 1;
 
-                const NetFare = equivalentAmount + adminMarkUpAmount + airlinesMarkUpAmount + addAmount + agentMarkUpAmount + Taxes * converstionrate;
+                const NetFare = Math.ceil((equivalentAmount + adminMarkUpAmount + airlinesMarkUpAmount + addAmount + agentMarkUpAmount + Taxes) * converstionrate);
 
 
                 if(NetFare > TotalFare){
                     TotalFare = NetFare;
                 }else{
-                    TotalFare = TotalFare * converstionrate;
+                    TotalFare = Math.ceil(TotalFare * converstionrate);
                 }
 
 
