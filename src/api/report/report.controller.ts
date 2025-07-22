@@ -36,7 +36,7 @@ export class ReportController {
   }
 
   @ApiBearerAuth('access_token')
-  @Patch('admin/ledger/single/:uid')
+  @Patch('admin/ledger/single/:id')
   editAgentLedgerByAdmin(
     @Headers() header: Headers,
     @Param('id') id: string,
