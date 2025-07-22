@@ -118,8 +118,8 @@ export class AdminLedger {
   profit: number;
 
   @ApiProperty()
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  deposit: number;
+  @Column({ name: 'deposit', type: 'decimal', precision: 10, scale: 2 })
+  depositAmount: number;
 
   @ApiProperty()
   @Column({ type: 'varchar', length: 50 })
