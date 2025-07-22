@@ -40,6 +40,7 @@ export class ReportService {
     if(!verifyAdminId){
         throw new UnauthorizedException();
     }
+    adminLedgerModel['profit'] = adminLedgerModel['netfare'] - adminLedgerModel['ticketprice'];
     await this.adminLedgerRepository.save(adminLedgerModel);
 
   }
