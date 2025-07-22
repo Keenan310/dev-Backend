@@ -52,6 +52,39 @@ export class AgentLedgerModel {
 
 }
 
+export class AgentLedgerDto {
+
+  @Column()
+  trxtype: string;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0.0 })
+  debit: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0.0 })
+  credit: number;
+
+  @Column()
+  refId: string;
+
+  @Column({ type: 'text', nullable: true })
+  details: string;
+
+  @Column()
+  remarks: string;
+
+  @Column()
+  ticketcost: number;
+
+  @Column()
+  netfare: number;
+
+  @Column()
+  pnr: string;
+
+}
+
+export class UpdateAgentLedgerDto extends PartialType(AgentLedgerDto) {}
+
 @Entity('admin_ledger')
 export class AdminLedger {
   @PrimaryGeneratedColumn()
