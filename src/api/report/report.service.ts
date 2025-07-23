@@ -590,11 +590,11 @@ export class ReportService {
 
   async findAllAdminLedger(header: any, startDate: Date, endDate: Date) {
 
-    // const verifyAdminId = await this.authService.verifyAdminToken(header);
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    // if(!verifyAdminId){
-    //     throw new UnauthorizedException();
-    // }
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
 
     const ledger = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
@@ -647,11 +647,11 @@ export class ReportService {
 
     const sell = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
-    .select('SUM(ledger.netfare)', 'totalamount').getRawOne();
+    .select('SUM(ledger.netfare)', 'totalAmount').getRawOne();
 
     const lossProfit = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
-    .select('SUM(ledger.netfare) - SUM(ledger.ticketprice)', 'totalamount').getRawOne();
+    .select('SUM(ledger.profit)', 'totalAmount').getRawOne();
 
     const deposit = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
@@ -669,7 +669,7 @@ export class ReportService {
     const totalIncome = lossProfit?.totalProfit - expense.totalAmount;
 
     const ledgerData={
-      lossProfit: lossProfit?.totalProfit || 0,
+      lossProfit: lossProfit?.totalAmount || 0,
       ledger: ledger,
       depsoit: depositLedger,
       totalExpense: expense.totalAmount || 0,
