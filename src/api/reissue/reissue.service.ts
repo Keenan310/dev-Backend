@@ -51,7 +51,7 @@ export class ReissueService {
       const bookingResponse = await this.bookingRepository.update(booking.id, booking);
 
       if(bookingResponse.affected === 1){
-        return { message: booking.status+' successfully.'};
+        return { message: booking.status+' Successfully.'};
       }else{
         return { message: 'Something error'};
       }

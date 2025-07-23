@@ -636,8 +636,8 @@ export class ReportService {
 
     const deposit = await this.ledgerRepository
     .createQueryBuilder('ledger')
-    .select('SUM(ledger.credit)', 'totalAmount')
-    .where('ledger.trxtype = :trxtype', { trxtype: 'deposit' }).getRawOne();
+    .select('SUM(ledger.deposit)', 'totalAmount')
+    .getRawOne();
 
     const expense = await this.adminExpenseRepository
     .createQueryBuilder('expense')
@@ -645,7 +645,7 @@ export class ReportService {
 
     const totalTicket = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
-    .select('SUM(ledger.netfare)', 'totalAmount').getRawOne();
+    .select('SUM(ledger.ticketprice)', 'totalAmount').getRawOne();
 
     const totalIncome = lossProfit?.totalProfit - expense.totalAmount;
 
@@ -655,6 +655,7 @@ export class ReportService {
       totalExpense: expense.totalAmount || 0,
       totalIncome: totalIncome || 0,
       totalSell: sell?.totalAmount || 0,
+      totalTicketCost: totalTicket?.totalAmount || 0,
       totalDeposit: deposit?.totalAmount || 0,
     }
 
@@ -670,18 +671,16 @@ export class ReportService {
     }
 
 
-  const totalSell = await this.ledgerRepository
+  const totalSell = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
-    .select('SUM(ledger.debit)', 'totalAmount')
-    .where('ledger.trxtype = :trxtype', { trxtype: 'ticket' })
-    .andWhere('ledger.agentId = :agentId', { agentId })
+    .select('SUM(ledger.netfare)', 'totalAmount')
+    .where('ledger.agentId = :agentId', { agentId })
     .getRawOne();
 
-  const totalDeposit = await this.ledgerRepository
+  const totalDeposit = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
-    .select('SUM(ledger.credit)', 'totalAmount')
-    .where('ledger.trxtype = :trxtype', { trxtype: 'deposit' })
-    .andWhere('ledger.agentId = :agentId', { agentId })
+    .select('SUM(ledger.deposit)', 'totalAmount')
+    .where('ledger.agentId = :agentId', { agentId })
     .getRawOne();
 
   const balance = await this.ledgerRepository
