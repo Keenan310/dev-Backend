@@ -281,10 +281,10 @@ let AgentService = class AgentService {
             const AgentLedgerData = {
                 agentId: agent.agentId,
                 trxtype: updateAgentBalanceDto.trxtype,
-                debit: updateAgentBalanceDto.amount,
+                debit: updateAgentBalanceDto.debit,
                 refId: updateAgentBalanceDto.refId,
                 ticketcost: updateAgentBalanceDto.ticketcost,
-                netfare: updateAgentBalanceDto.amount,
+                netfare: updateAgentBalanceDto.debit,
                 pnr: updateAgentBalanceDto.pnr,
                 details: updateAgentBalanceDto.details,
                 companyname: agent.company
@@ -295,7 +295,7 @@ let AgentService = class AgentService {
             const AgentLedgerData = {
                 agentId: agent.agentId,
                 trxtype: updateAgentBalanceDto.trxtype,
-                credit: updateAgentBalanceDto.amount,
+                credit: updateAgentBalanceDto.credit,
                 refId: updateAgentBalanceDto.refId,
                 details: updateAgentBalanceDto.details,
                 ticketcost: updateAgentBalanceDto.ticketcost,

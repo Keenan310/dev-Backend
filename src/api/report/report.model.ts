@@ -7,9 +7,11 @@ export class AgentLedgerModel {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty()
   @Column()
   agentId: string;
 
+  @ApiProperty()
   @Column()
   trxtype: string;
 

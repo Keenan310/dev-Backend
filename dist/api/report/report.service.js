@@ -43,6 +43,7 @@ let ReportService = class ReportService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
+        adminLedgerModel['profit'] = adminLedgerModel['netfare'] - adminLedgerModel['ticketprice'];
         await this.adminLedgerRepository.save(adminLedgerModel);
     }
     async editAdminLedger(header, id, updateAdminLedgerDto) {
@@ -51,6 +52,13 @@ let ReportService = class ReportService {
             throw new common_1.UnauthorizedException();
         }
         await this.adminLedgerRepository.update(+id, updateAdminLedgerDto);
+    }
+    async editAgentLedgerByAdmin(header, id, updateAgentBalanceUpdate) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        await this.adminLedgerRepository.update(+id, updateAgentBalanceUpdate);
     }
     async findAllReportAdmin(header, startDate, endDate) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
@@ -503,6 +511,7 @@ let ReportService = class ReportService {
             'ledger.id',
             'ledger.created_at',
             'ledger.description',
+            'ledger.deposit',
             'ledger.pnr',
             'ledger.ticketprice',
             'ledger.supplier',
@@ -519,6 +528,24 @@ let ReportService = class ReportService {
             startDate,
             endDate,
         })
+            .andWhere('ledger.deposit = 0')
+            .orderBy('ledger.id', 'DESC')
+            .getRawMany();
+        const depositLedger = await this.adminLedgerRepository
+            .createQueryBuilder('ledger')
+            .select([
+            'ledger.id',
+            'ledger.created_at',
+            'ledger.description',
+            'ledger.deposit',
+            'ledger.agentcode',
+            'ledger.status'
+        ])
+            .where('ledger.created_at BETWEEN :startDate AND :endDate', {
+            startDate,
+            endDate,
+        })
+            .andWhere('ledger.deposit = 0')
             .orderBy('ledger.id', 'DESC')
             .getRawMany();
         const sell = await this.adminLedgerRepository
@@ -527,23 +554,25 @@ let ReportService = class ReportService {
         const lossProfit = await this.adminLedgerRepository
             .createQueryBuilder('ledger')
             .select('SUM(ledger.netfare) - SUM(ledger.ticketprice)', 'totalamount').getRawOne();
-        const deposit = await this.ledgerRepository
+        const deposit = await this.adminLedgerRepository
             .createQueryBuilder('ledger')
-            .select('SUM(ledger.credit)', 'totalAmount')
-            .where('ledger.trxtype = :trxtype', { trxtype: 'deposit' }).getRawOne();
+            .select('SUM(ledger.deposit)', 'totalAmount')
+            .getRawOne();
         const expense = await this.adminExpenseRepository
             .createQueryBuilder('expense')
             .select('SUM(expense.amount)', 'totalAmount').getRawOne();
         const totalTicket = await this.adminLedgerRepository
             .createQueryBuilder('ledger')
-            .select('SUM(ledger.netfare)', 'totalAmount').getRawOne();
+            .select('SUM(ledger.ticketprice)', 'totalAmount').getRawOne();
         const totalIncome = lossProfit?.totalProfit - expense.totalAmount;
         const ledgerData = {
             lossProfit: lossProfit?.totalProfit || 0,
             ledger: ledger,
+            deespoit: depositLedger,
             totalExpense: expense.totalAmount || 0,
             totalIncome: totalIncome || 0,
             totalSell: sell?.totalAmount || 0,
+            totalTicketCost: totalTicket?.totalAmount || 0,
             totalDeposit: deposit?.totalAmount || 0,
         };
         return ledgerData;
@@ -553,17 +582,15 @@ let ReportService = class ReportService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        const totalSell = await this.ledgerRepository
+        const totalSell = await this.adminLedgerRepository
             .createQueryBuilder('ledger')
-            .select('SUM(ledger.debit)', 'totalAmount')
-            .where('ledger.trxtype = :trxtype', { trxtype: 'ticket' })
-            .andWhere('ledger.agentId = :agentId', { agentId })
+            .select('SUM(ledger.netfare)', 'totalAmount')
+            .where('ledger.agentId = :agentId', { agentId })
             .getRawOne();
-        const totalDeposit = await this.ledgerRepository
+        const totalDeposit = await this.adminLedgerRepository
             .createQueryBuilder('ledger')
-            .select('SUM(ledger.credit)', 'totalAmount')
-            .where('ledger.trxtype = :trxtype', { trxtype: 'deposit' })
-            .andWhere('ledger.agentId = :agentId', { agentId })
+            .select('SUM(ledger.deposit)', 'totalAmount')
+            .where('ledger.agentId = :agentId', { agentId })
             .getRawOne();
         const balance = await this.ledgerRepository
             .createQueryBuilder('ledger')

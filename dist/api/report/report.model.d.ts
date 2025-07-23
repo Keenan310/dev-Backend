@@ -15,6 +15,20 @@ export declare class AgentLedgerModel {
     updated_at: Date;
     uid: string;
 }
+export declare class AgentLedgerDto {
+    trxtype: string;
+    debit: number;
+    credit: number;
+    refId: string;
+    details: string;
+    remarks: string;
+    ticketcost: number;
+    netfare: number;
+    pnr: string;
+}
+declare const UpdateAgentLedgerDto_base: import("@nestjs/common").Type<Partial<AgentLedgerDto>>;
+export declare class UpdateAgentLedgerDto extends UpdateAgentLedgerDto_base {
+}
 export declare class AdminLedger {
     id: number;
     description: string;
@@ -23,6 +37,8 @@ export declare class AdminLedger {
     supplier: string;
     agentcode: string;
     netfare: number;
+    profit: number;
+    depositAmount: number;
     status: string;
     created_at: Date;
     updated_at: Date;

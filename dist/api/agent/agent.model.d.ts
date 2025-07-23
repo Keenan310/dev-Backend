@@ -52,7 +52,8 @@ export declare class AgentMarkUpUpdate {
     markup: number;
 }
 export declare class AgentBalanceUpdate {
-    amount: number;
+    debit: number;
+    credit: number;
     trxtype: string;
     refId: string;
     details: string;

@@ -194,7 +194,12 @@ export class AgentBalanceUpdate{
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  amount : number;
+  debit : number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  credit : number;
 
   @ApiProperty()
   @IsNotEmpty()

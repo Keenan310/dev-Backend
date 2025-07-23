@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const report_service_1 = require("./report.service");
 const swagger_1 = require("@nestjs/swagger");
 const report_model_1 = require("./report.model");
+const agent_model_1 = require("../agent/agent.model");
 let ReportController = class ReportController {
     constructor(reportService) {
         this.reportService = reportService;
@@ -29,6 +30,9 @@ let ReportController = class ReportController {
     }
     editAdminLedger(header, id, adminledgerDto) {
         return this.reportService.editAdminLedger(header, +id, adminledgerDto);
+    }
+    editAgentLedgerByAdmin(header, id, updateAgentLedgerDto) {
+        return this.reportService.editAgentLedgerByAdmin(header, +id, updateAgentLedgerDto);
     }
     findAllAdminLedger(header, startDate, endDate) {
         return this.reportService.findAllAdminLedger(header, startDate, endDate);
@@ -96,6 +100,16 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, report_model_1.UpdateAdminLedgerDto]),
     __metadata("design:returntype", void 0)
 ], ReportController.prototype, "editAdminLedger", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, common_1.Patch)('admin/ledger/single/:id'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, agent_model_1.AgentBalanceUpdate]),
+    __metadata("design:returntype", void 0)
+], ReportController.prototype, "editAgentLedgerByAdmin", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Get)('admin/report/ledger/:startDate/:endDate'),

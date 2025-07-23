@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AdminExpenseModel = exports.UpdateAdminLedgerDto = exports.AdminLedger = exports.AgentLedgerModel = void 0;
+exports.AdminExpenseModel = exports.UpdateAdminLedgerDto = exports.AdminLedger = exports.UpdateAgentLedgerDto = exports.AgentLedgerDto = exports.AgentLedgerModel = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const typeorm_1 = require("typeorm");
 let AgentLedgerModel = class AgentLedgerModel {
@@ -20,10 +20,12 @@ __decorate([
     __metadata("design:type", Number)
 ], AgentLedgerModel.prototype, "id", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], AgentLedgerModel.prototype, "agentId", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], AgentLedgerModel.prototype, "trxtype", void 0);
@@ -79,6 +81,48 @@ __decorate([
 exports.AgentLedgerModel = AgentLedgerModel = __decorate([
     (0, typeorm_1.Entity)('agent_ledger')
 ], AgentLedgerModel);
+class AgentLedgerDto {
+}
+exports.AgentLedgerDto = AgentLedgerDto;
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], AgentLedgerDto.prototype, "trxtype", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2, default: 0.0 }),
+    __metadata("design:type", Number)
+], AgentLedgerDto.prototype, "debit", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2, default: 0.0 }),
+    __metadata("design:type", Number)
+], AgentLedgerDto.prototype, "credit", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], AgentLedgerDto.prototype, "refId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], AgentLedgerDto.prototype, "details", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], AgentLedgerDto.prototype, "remarks", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], AgentLedgerDto.prototype, "ticketcost", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], AgentLedgerDto.prototype, "netfare", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], AgentLedgerDto.prototype, "pnr", void 0);
+class UpdateAgentLedgerDto extends (0, swagger_1.PartialType)(AgentLedgerDto) {
+}
+exports.UpdateAgentLedgerDto = UpdateAgentLedgerDto;
 let AdminLedger = class AdminLedger {
 };
 exports.AdminLedger = AdminLedger;
@@ -116,6 +160,15 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2 }),
     __metadata("design:type", Number)
 ], AdminLedger.prototype, "netfare", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2 }),
+    __metadata("design:type", Number)
+], AdminLedger.prototype, "profit", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, typeorm_1.Column)({ name: 'deposit', type: 'decimal', precision: 10, scale: 2 }),
+    __metadata("design:type", Number)
+], AdminLedger.prototype, "depositAmount", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, typeorm_1.Column)({ type: 'varchar', length: 50 }),

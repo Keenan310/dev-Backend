@@ -2,6 +2,7 @@ import { Controller, Get, Param, Headers, Query, NotAcceptableException, Post, B
 import { ReportService } from './report.service';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto, UpdateAgentLedgerDto } from './report.model';
+import { AgentBalanceUpdate } from '../agent/agent.model';
 
 @ApiTags("Report Module")
 @Controller()
@@ -40,7 +41,7 @@ export class ReportController {
   editAgentLedgerByAdmin(
     @Headers() header: Headers,
     @Param('id') id: string,
-    @Body() updateAgentLedgerDto: UpdateAgentLedgerDto) {
+    @Body() updateAgentLedgerDto: AgentBalanceUpdate) {
     return this.reportService.editAgentLedgerByAdmin(header, +id, updateAgentLedgerDto);
   }
 

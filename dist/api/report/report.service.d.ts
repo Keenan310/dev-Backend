@@ -1,7 +1,7 @@
 import { AgentLedgerModel, AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto } from './report.model';
 import { Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
-import { AgentModel } from '../agent/agent.model';
+import { AgentBalanceUpdate, AgentModel } from '../agent/agent.model';
 import { BookingModel } from '../booking/booking.model';
 import { DepositModel } from '../deposit/deposit.model';
 import { AuthService } from '../auth/auth.service';
@@ -20,6 +20,7 @@ export declare class ReportService {
     addAdminExpsense(header: any, adminExpenseModel: AdminExpenseModel): Promise<AdminExpenseModel>;
     addAdminLedger(header: any, adminLedgerModel: AdminLedger): Promise<void>;
     editAdminLedger(header: any, id: number, updateAdminLedgerDto: UpdateAdminLedgerDto): Promise<void>;
+    editAgentLedgerByAdmin(header: any, id: number, updateAgentBalanceUpdate: AgentBalanceUpdate): Promise<void>;
     findAllReportAdmin(header: any, startDate: Date, endDate: Date): Promise<{
         name: string;
         value: any;
@@ -84,9 +85,11 @@ export declare class ReportService {
     findAllAdminLedger(header: any, startDate: Date, endDate: Date): Promise<{
         lossProfit: any;
         ledger: any[];
+        deespoit: any[];
         totalExpense: any;
         totalIncome: number;
         totalSell: any;
+        totalTicketCost: any;
         totalDeposit: any;
     }>;
     findSingleAgentLedgerAdmin(header: any, agentId: string): Promise<{

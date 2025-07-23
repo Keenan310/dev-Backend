@@ -3,7 +3,7 @@ import { AgentLedgerModel, AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto,
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
-import { AgentModel } from '../agent/agent.model';
+import { AgentBalanceUpdate, AgentModel } from '../agent/agent.model';
 import { BookingModel } from '../booking/booking.model';
 import { DepositModel } from '../deposit/deposit.model';
 import { AuthService } from '../auth/auth.service';
@@ -56,14 +56,14 @@ export class ReportService {
 
   }
 
-  async editAgentLedgerByAdmin(header : any, id:number, updateAgentLedgerDto : UpdateAgentLedgerDto){
+  async editAgentLedgerByAdmin(header : any, id:number, updateAgentBalanceUpdate : AgentBalanceUpdate){
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
     if(!verifyAdminId){
         throw new UnauthorizedException();
     }
 
-    await this.adminLedgerRepository.update(+id, updateAgentLedgerDto);
+    await this.adminLedgerRepository.update(+id, updateAgentBalanceUpdate);
 
   }
   
@@ -622,6 +622,25 @@ export class ReportService {
       startDate,
       endDate,
     })
+    .andWhere('ledger.deposit = 0')
+    .orderBy('ledger.id', 'DESC')
+    .getRawMany();
+
+    const depositLedger = await this.adminLedgerRepository
+    .createQueryBuilder('ledger')
+    .select([
+      'ledger.id',
+      'ledger.created_at',
+      'ledger.description',
+      'ledger.deposit',
+      'ledger.agentcode',
+      'ledger.status'
+    ])
+    .where('ledger.created_at BETWEEN :startDate AND :endDate', {
+      startDate,
+      endDate,
+    })
+    .andWhere('ledger.deposit = 0')
     .orderBy('ledger.id', 'DESC')
     .getRawMany();
 
@@ -634,7 +653,7 @@ export class ReportService {
     .createQueryBuilder('ledger')
     .select('SUM(ledger.netfare) - SUM(ledger.ticketprice)', 'totalamount').getRawOne();
 
-    const deposit = await this.ledgerRepository
+    const deposit = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
     .select('SUM(ledger.deposit)', 'totalAmount')
     .getRawOne();
@@ -652,6 +671,7 @@ export class ReportService {
     const ledgerData={
       lossProfit: lossProfit?.totalProfit || 0,
       ledger: ledger,
+      deespoit: depositLedger,
       totalExpense: expense.totalAmount || 0,
       totalIncome: totalIncome || 0,
       totalSell: sell?.totalAmount || 0,
