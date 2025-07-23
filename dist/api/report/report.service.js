@@ -568,7 +568,7 @@ let ReportService = class ReportService {
         const ledgerData = {
             lossProfit: lossProfit?.totalProfit || 0,
             ledger: ledger,
-            deespoit: depositLedger,
+            depsoit: depositLedger,
             totalExpense: expense.totalAmount || 0,
             totalIncome: totalIncome || 0,
             totalSell: sell?.totalAmount || 0,

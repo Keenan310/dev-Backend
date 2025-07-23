@@ -11,7 +11,7 @@ export declare class ReportController {
     findAllAdminLedger(header: string, startDate: Date, endDate: Date): Promise<{
         lossProfit: any;
         ledger: any[];
-        deespoit: any[];
+        depsoit: any[];
         totalExpense: any;
         totalIncome: number;
         totalSell: any;

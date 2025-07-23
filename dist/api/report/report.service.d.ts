@@ -85,7 +85,7 @@ export declare class ReportService {
     findAllAdminLedger(header: any, startDate: Date, endDate: Date): Promise<{
         lossProfit: any;
         ledger: any[];
-        deespoit: any[];
+        depsoit: any[];
         totalExpense: any;
         totalIncome: number;
         totalSell: any;
