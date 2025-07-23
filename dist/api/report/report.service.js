@@ -58,7 +58,7 @@ let ReportService = class ReportService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        await this.adminLedgerRepository.update(+id, updateAgentBalanceUpdate);
+        await this.ledgerRepository.update(+id, updateAgentBalanceUpdate);
     }
     async findAllReportAdmin(header, startDate, endDate) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
@@ -545,7 +545,7 @@ let ReportService = class ReportService {
             startDate,
             endDate,
         })
-            .andWhere('ledger.deposit = 0')
+            .andWhere('ledger.deposit > 0')
             .orderBy('ledger.id', 'DESC')
             .getRawMany();
         const sell = await this.adminLedgerRepository

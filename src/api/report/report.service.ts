@@ -63,7 +63,7 @@ export class ReportService {
         throw new UnauthorizedException();
     }
 
-    await this.adminLedgerRepository.update(+id, updateAgentBalanceUpdate);
+    await this.ledgerRepository.update(+id, updateAgentBalanceUpdate);
 
   }
   
@@ -640,7 +640,7 @@ export class ReportService {
       startDate,
       endDate,
     })
-    .andWhere('ledger.deposit = 0')
+    .andWhere('ledger.deposit > 0')
     .orderBy('ledger.id', 'DESC')
     .getRawMany();
 
