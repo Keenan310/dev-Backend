@@ -152,7 +152,7 @@ __decorate([
 ], AdminLedger.prototype, "supplier", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
-    (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
+    (0, typeorm_1.Column)({ name: 'agentId', type: 'varchar', length: 10 }),
     __metadata("design:type", String)
 ], AdminLedger.prototype, "agentcode", void 0);
 __decorate([

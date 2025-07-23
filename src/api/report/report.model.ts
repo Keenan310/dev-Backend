@@ -109,7 +109,7 @@ export class AdminLedger {
   supplier: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ name: 'agentId', type: 'varchar', length: 10 })
   agentcode: string;
 
   @ApiProperty()

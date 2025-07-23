@@ -501,10 +501,6 @@ let ReportService = class ReportService {
         return ledgerData;
     }
     async findAllAdminLedger(header, startDate, endDate) {
-        const verifyAdminId = await this.authService.verifyAdminToken(header);
-        if (!verifyAdminId) {
-            throw new common_1.UnauthorizedException();
-        }
         const ledger = await this.adminLedgerRepository
             .createQueryBuilder('ledger')
             .select([
@@ -516,11 +512,11 @@ let ReportService = class ReportService {
             'ledger.ticketprice',
             'ledger.supplier',
             'ledger.netfare',
-            'ledger.agentcode',
+            'ledger.agentId as agentcode',
             'ledger.status'
         ])
             .addSelect(`SUM(ledger.netfare - ledger.ticketprice) OVER (
-        PARTITION BY ledger.agentcode
+        PARTITION BY ledger.agentId
         ORDER BY ledger.id
         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
       )`, 'profit')
@@ -538,7 +534,7 @@ let ReportService = class ReportService {
             'ledger.created_at',
             'ledger.description',
             'ledger.deposit',
-            'ledger.agentcode',
+            'ledger.agentId as agentcode',
             'ledger.status'
         ])
             .where('ledger.created_at BETWEEN :startDate AND :endDate', {
