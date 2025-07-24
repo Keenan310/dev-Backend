@@ -7,6 +7,7 @@ import { AuthService } from '../auth/auth.service';
 import { AirlinesService } from '../airlines/airlines.service';
 import { AirportsService } from '../airports/airports.service';
 import { FlightSearchModel } from '../flight/dto/search-flight.dto';
+import { CurrencyConverter } from '../currency/entities/currency.entity';
 
 @Injectable()
 export class GroupfareService {
@@ -16,6 +17,8 @@ export class GroupfareService {
     private readonly groupFareRepository: Repository<GroupFareModel>,
     @InjectRepository(AgentModel)
     private readonly agentRepository: Repository<AgentModel>,
+    @InjectRepository(CurrencyConverter)
+    private readonly currencyConverterRepository: Repository<CurrencyConverter>,
     private readonly authService: AuthService,
     private readonly airlinesService: AirlinesService,
     private readonly airportsService: AirportsService,
@@ -54,8 +57,9 @@ export class GroupfareService {
 
     const groupdata = await this.groupFareRepository.find();
 
+    let agent: any;
     if(groupdata.length > 0){
-      const flightParserPromises = groupdata.map(group => this.flightParser(group));
+      const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
       return await Promise.all(flightParserPromises);
     }else{
       return groupdata;
@@ -71,8 +75,8 @@ export class GroupfareService {
 
     const groupdata = await this.groupFareRepository.find();
 
-    if(groupdata.length > 0){
-      const flightParserPromises = groupdata.map(group => this.flightParser(group));
+    if(groupdata?.length > 0){
+      const flightParserPromises = groupdata.map(group => this.flightParser(agent,group));
       return await Promise.all(flightParserPromises);
     }else{
       return groupdata;
@@ -88,7 +92,8 @@ export class GroupfareService {
         DepDate: flightDto.segments[0].depdate+'',
       }});
 
-      const flightParserPromises = groupdata.map(group => this.flightParser(group));
+      let agent: any;
+      const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
       const AllGrouFare = await Promise.all(flightParserPromises);
 
     return AllGrouFare;
@@ -110,15 +115,15 @@ export class GroupfareService {
         }
       });
 
-      const flightParserPromises = groupdata.map(group => this.flightParser(group));
+      const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
       const AllGrouFare = await Promise.all(flightParserPromises);
 
     return AllGrouFare;
   }
 
-  async findOne(uid: string) {
+  async findOne(agent: AgentModel, uid: string) {
     const data = await this.groupFareRepository.findOne({ where: {uid: uid} });
-    return this.flightParser(data);
+    return this.flightParser(agent, data);
   }
 
   async findOneAdmin(header:any, uid: string) {
@@ -160,8 +165,7 @@ export class GroupfareService {
     return this.groupFareRepository.delete(groupfaredata.id);
   }
 
-  async flightParser(resultData: any){
-
+  async flightParser(agent: AgentModel, resultData: any){
     let Segments = [];
     let Duration: number=0;
     if(resultData.segment === 1){
@@ -303,6 +307,11 @@ export class GroupfareService {
         break;
     }
 
+    const conversionData = await this.currencyConverterRepository.findOne({
+                where: {alternate: agent.currency}});
+
+            const converstionrate = conversionData?.exchange_rate || 1;
+
     const Basic = {
       "OfferId": resultData.uid,
       "System": "GroupFare",
@@ -316,9 +325,10 @@ export class GroupfareService {
       "Cabinclass": Class,
       "BaseFare": resultData.BaseFare,
       "Taxes": resultData.Taxes,
-      "NetFare": resultData.NetFare,
-      "GrossFare": resultData.NetFare,
+      "NetFare": resultData.NetFare * converstionrate,
+      "GrossFare": resultData.NetFare * converstionrate,
       "Comission": 0,
+      "Currency": agent?.currency || 'INR',
       "TimeLimit": '',
       "Refundable": false,
       "PriceBreakDown": PriceBreakdown,

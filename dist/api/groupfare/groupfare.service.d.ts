@@ -5,13 +5,15 @@ import { AuthService } from '../auth/auth.service';
 import { AirlinesService } from '../airlines/airlines.service';
 import { AirportsService } from '../airports/airports.service';
 import { FlightSearchModel } from '../flight/dto/search-flight.dto';
+import { CurrencyConverter } from '../currency/entities/currency.entity';
 export declare class GroupfareService {
     private readonly groupFareRepository;
     private readonly agentRepository;
+    private readonly currencyConverterRepository;
     private readonly authService;
     private readonly airlinesService;
     private readonly airportsService;
-    constructor(groupFareRepository: Repository<GroupFareModel>, agentRepository: Repository<AgentModel>, authService: AuthService, airlinesService: AirlinesService, airportsService: AirportsService);
+    constructor(groupFareRepository: Repository<GroupFareModel>, agentRepository: Repository<AgentModel>, currencyConverterRepository: Repository<CurrencyConverter>, authService: AuthService, airlinesService: AirlinesService, airportsService: AirportsService);
     create(header: any, createGroupfareDto: GroupFareModel): Promise<GroupFareModel>;
     findAllAdmin(header: any): Promise<GroupFareModel[] | {
         OfferId: any;
@@ -26,9 +28,10 @@ export declare class GroupfareService {
         Cabinclass: string;
         BaseFare: any;
         Taxes: any;
-        NetFare: any;
-        GrossFare: any;
+        NetFare: number;
+        GrossFare: number;
         Comission: number;
+        Currency: string;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: {
@@ -64,9 +67,10 @@ export declare class GroupfareService {
         Cabinclass: string;
         BaseFare: any;
         Taxes: any;
-        NetFare: any;
-        GrossFare: any;
+        NetFare: number;
+        GrossFare: number;
         Comission: number;
+        Currency: string;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: {
@@ -102,9 +106,10 @@ export declare class GroupfareService {
         Cabinclass: string;
         BaseFare: any;
         Taxes: any;
-        NetFare: any;
-        GrossFare: any;
+        NetFare: number;
+        GrossFare: number;
         Comission: number;
+        Currency: string;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: {
@@ -140,9 +145,10 @@ export declare class GroupfareService {
         Cabinclass: string;
         BaseFare: any;
         Taxes: any;
-        NetFare: any;
-        GrossFare: any;
+        NetFare: number;
+        GrossFare: number;
         Comission: number;
+        Currency: string;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: {
@@ -165,7 +171,7 @@ export declare class GroupfareService {
             Segments: any[];
         }[];
     }[]>;
-    findOne(uid: string): Promise<{
+    findOne(agent: AgentModel, uid: string): Promise<{
         OfferId: any;
         System: string;
         FarePolicy: string;
@@ -178,9 +184,10 @@ export declare class GroupfareService {
         Cabinclass: string;
         BaseFare: any;
         Taxes: any;
-        NetFare: any;
-        GrossFare: any;
+        NetFare: number;
+        GrossFare: number;
         Comission: number;
+        Currency: string;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: {
@@ -206,7 +213,7 @@ export declare class GroupfareService {
     findOneAdmin(header: any, uid: string): Promise<GroupFareModel>;
     update(header: any, uid: string, updateGroupfareDto: GroupFareModelUpdate): Promise<import("typeorm").UpdateResult>;
     remove(header: any, uid: string): Promise<import("typeorm").DeleteResult>;
-    flightParser(resultData: any): Promise<{
+    flightParser(agent: AgentModel, resultData: any): Promise<{
         OfferId: any;
         System: string;
         FarePolicy: string;
@@ -219,9 +226,10 @@ export declare class GroupfareService {
         Cabinclass: string;
         BaseFare: any;
         Taxes: any;
-        NetFare: any;
-        GrossFare: any;
+        NetFare: number;
+        GrossFare: number;
         Comission: number;
+        Currency: string;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: {

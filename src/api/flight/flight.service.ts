@@ -74,7 +74,7 @@ export class FlightService {
     if(System === 'Sabre'){
        RevalidationData = await this.sabreService.revalidation(agent, revalidationDto);
     }else if(System === 'GroupFare'){
-       RevalidationData =  await this.groupFareService.findOne(revalidationDto.OfferId);
+       RevalidationData =  await this.groupFareService.findOne(agent, revalidationDto.OfferId);
     }else if(System === 'AlHind'){
        RevalidationData =  await this.alhindAPI.priceCheck(agent, revalidationDto);
     }else{

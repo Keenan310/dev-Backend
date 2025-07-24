@@ -25,12 +25,13 @@ const mail_service_1 = require("../../mail/mail.service");
 const booking_model_1 = require("../booking/booking.model");
 const auth_utils_1 = require("../auth/auth.utils");
 const auth_model_1 = require("../auth/auth.model");
+const currency_entity_1 = require("../currency/entities/currency.entity");
 let GroupfareModule = class GroupfareModule {
 };
 exports.GroupfareModule = GroupfareModule;
 exports.GroupfareModule = GroupfareModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([groupfare_model_1.GroupFareModel, booking_model_1.BookingModel, agent_model_1.AgentModel, staff_model_1.StaffModel, admin_model_1.AdminModel, airlines_model_1.AirlinesModel, airports_model_1.AirportsModel, auth_model_1.OTPModel])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([groupfare_model_1.GroupFareModel, booking_model_1.BookingModel, agent_model_1.AgentModel, staff_model_1.StaffModel, admin_model_1.AdminModel, airlines_model_1.AirlinesModel, airports_model_1.AirportsModel, auth_model_1.OTPModel, currency_entity_1.CurrencyConverter])],
         controllers: [groupfare_controller_1.GroupfareController],
         providers: [groupfare_service_1.GroupfareService, auth_service_1.AuthService, jwt_1.JwtService, auth_utils_1.AuthUtils, airlines_service_1.AirlinesService, airports_service_1.AirportsService, mail_service_1.MailService],
     })

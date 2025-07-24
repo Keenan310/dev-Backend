@@ -17,9 +17,10 @@ export declare class GroupfareController {
         Cabinclass: string;
         BaseFare: any;
         Taxes: any;
-        NetFare: any;
-        GrossFare: any;
+        NetFare: number;
+        GrossFare: number;
         Comission: number;
+        Currency: string;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: {
@@ -55,9 +56,10 @@ export declare class GroupfareController {
         Cabinclass: string;
         BaseFare: any;
         Taxes: any;
-        NetFare: any;
-        GrossFare: any;
+        NetFare: number;
+        GrossFare: number;
         Comission: number;
+        Currency: string;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: {
@@ -93,9 +95,10 @@ export declare class GroupfareController {
         Cabinclass: string;
         BaseFare: any;
         Taxes: any;
-        NetFare: any;
-        GrossFare: any;
+        NetFare: number;
+        GrossFare: number;
         Comission: number;
+        Currency: string;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: {

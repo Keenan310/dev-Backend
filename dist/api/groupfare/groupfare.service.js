@@ -21,10 +21,12 @@ const typeorm_2 = require("typeorm");
 const auth_service_1 = require("../auth/auth.service");
 const airlines_service_1 = require("../airlines/airlines.service");
 const airports_service_1 = require("../airports/airports.service");
+const currency_entity_1 = require("../currency/entities/currency.entity");
 let GroupfareService = class GroupfareService {
-    constructor(groupFareRepository, agentRepository, authService, airlinesService, airportsService) {
+    constructor(groupFareRepository, agentRepository, currencyConverterRepository, authService, airlinesService, airportsService) {
         this.groupFareRepository = groupFareRepository;
         this.agentRepository = agentRepository;
+        this.currencyConverterRepository = currencyConverterRepository;
         this.authService = authService;
         this.airlinesService = airlinesService;
         this.airportsService = airportsService;
@@ -54,8 +56,9 @@ let GroupfareService = class GroupfareService {
             throw new common_1.UnauthorizedException();
         }
         const groupdata = await this.groupFareRepository.find();
+        let agent;
         if (groupdata.length > 0) {
-            const flightParserPromises = groupdata.map(group => this.flightParser(group));
+            const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
             return await Promise.all(flightParserPromises);
         }
         else {
@@ -68,8 +71,8 @@ let GroupfareService = class GroupfareService {
             throw new common_1.UnauthorizedException();
         }
         const groupdata = await this.groupFareRepository.find();
-        if (groupdata.length > 0) {
-            const flightParserPromises = groupdata.map(group => this.flightParser(group));
+        if (groupdata?.length > 0) {
+            const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
             return await Promise.all(flightParserPromises);
         }
         else {
@@ -82,7 +85,8 @@ let GroupfareService = class GroupfareService {
                 ArrTo: flightDto.segments[0].arrto,
                 DepDate: flightDto.segments[0].depdate + '',
             } });
-        const flightParserPromises = groupdata.map(group => this.flightParser(group));
+        let agent;
+        const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
         const AllGrouFare = await Promise.all(flightParserPromises);
         return AllGrouFare;
     }
@@ -97,13 +101,13 @@ let GroupfareService = class GroupfareService {
                 DepDate: searchGF.depdate
             }
         });
-        const flightParserPromises = groupdata.map(group => this.flightParser(group));
+        const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
         const AllGrouFare = await Promise.all(flightParserPromises);
         return AllGrouFare;
     }
-    async findOne(uid) {
+    async findOne(agent, uid) {
         const data = await this.groupFareRepository.findOne({ where: { uid: uid } });
-        return this.flightParser(data);
+        return this.flightParser(agent, data);
     }
     async findOneAdmin(header, uid) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
@@ -134,7 +138,7 @@ let GroupfareService = class GroupfareService {
         }
         return this.groupFareRepository.delete(groupfaredata.id);
     }
-    async flightParser(resultData) {
+    async flightParser(agent, resultData) {
         let Segments = [];
         let Duration = 0;
         if (resultData.segment === 1) {
@@ -271,6 +275,10 @@ let GroupfareService = class GroupfareService {
                 Class = "Economy";
                 break;
         }
+        const conversionData = await this.currencyConverterRepository.findOne({
+            where: { alternate: agent.currency }
+        });
+        const converstionrate = conversionData?.exchange_rate || 1;
         const Basic = {
             "OfferId": resultData.uid,
             "System": "GroupFare",
@@ -284,9 +292,10 @@ let GroupfareService = class GroupfareService {
             "Cabinclass": Class,
             "BaseFare": resultData.BaseFare,
             "Taxes": resultData.Taxes,
-            "NetFare": resultData.NetFare,
-            "GrossFare": resultData.NetFare,
+            "NetFare": resultData.NetFare * converstionrate,
+            "GrossFare": resultData.NetFare * converstionrate,
             "Comission": 0,
+            "Currency": agent?.currency || 'INR',
             "TimeLimit": '',
             "Refundable": false,
             "PriceBreakDown": PriceBreakdown,
@@ -300,7 +309,9 @@ exports.GroupfareService = GroupfareService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(groupfare_model_1.GroupFareModel)),
     __param(1, (0, typeorm_1.InjectRepository)(agent_model_1.AgentModel)),
+    __param(2, (0, typeorm_1.InjectRepository)(currency_entity_1.CurrencyConverter)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         auth_service_1.AuthService,
         airlines_service_1.AirlinesService,

@@ -16,9 +16,10 @@ import { MailService } from 'src/mail/mail.service';
 import { BookingModel } from '../booking/booking.model';
 import { AuthUtils } from '../auth/auth.utils';
 import { OTPModel } from '../auth/auth.model';
+import { CurrencyConverter } from '../currency/entities/currency.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([GroupFareModel, BookingModel, AgentModel, StaffModel, AdminModel, AirlinesModel, AirportsModel, OTPModel])],
+  imports: [TypeOrmModule.forFeature([GroupFareModel, BookingModel, AgentModel, StaffModel, AdminModel, AirlinesModel, AirportsModel, OTPModel, CurrencyConverter])],
   controllers: [GroupfareController],
   providers: [GroupfareService, AuthService, JwtService, AuthUtils, AirlinesService, AirportsService, MailService],
 })
