@@ -97,7 +97,7 @@ let AlhindAPI = class AlhindAPI {
             'Content-Type': 'application/json',
         };
         try {
-            const response = await axios_1.default.post(`https://b2b.keenantravel.com/api.php`, data, { headers });
+            const response = await axios_1.default.post(`https://b2b.keenantravel.com/search.php`, data, { headers });
             const result = response?.data;
             return this.flightUtils(result, agent, flightDto);
         }
