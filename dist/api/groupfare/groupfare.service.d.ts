@@ -18,11 +18,7 @@ export declare class GroupfareService {
     findAllAdmin(header: any): Promise<GroupFareModel[] | {
         OfferId: any;
         System: string;
-        FarePolicy: string;
-        InstantPayment: boolean;
-        IssuePermit: string;
         TripType: string;
-        FareType: string;
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
@@ -57,11 +53,7 @@ export declare class GroupfareService {
     findAllAgent(header: any): Promise<GroupFareModel[] | {
         OfferId: any;
         System: string;
-        FarePolicy: string;
-        InstantPayment: boolean;
-        IssuePermit: string;
         TripType: string;
-        FareType: string;
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
@@ -96,11 +88,7 @@ export declare class GroupfareService {
     findBySearchFlight(flightDto: FlightSearchModel): Promise<{
         OfferId: any;
         System: string;
-        FarePolicy: string;
-        InstantPayment: boolean;
-        IssuePermit: string;
         TripType: string;
-        FareType: string;
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
@@ -135,11 +123,7 @@ export declare class GroupfareService {
     findBySearch(header: any, searchGF: GroupFareSearch): Promise<{
         OfferId: any;
         System: string;
-        FarePolicy: string;
-        InstantPayment: boolean;
-        IssuePermit: string;
         TripType: string;
-        FareType: string;
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
@@ -174,11 +158,7 @@ export declare class GroupfareService {
     findOne(agent: AgentModel, uid: string): Promise<{
         OfferId: any;
         System: string;
-        FarePolicy: string;
-        InstantPayment: boolean;
-        IssuePermit: string;
         TripType: string;
-        FareType: string;
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
@@ -216,11 +196,7 @@ export declare class GroupfareService {
     flightParser(agent: AgentModel, resultData: any): Promise<{
         OfferId: any;
         System: string;
-        FarePolicy: string;
-        InstantPayment: boolean;
-        IssuePermit: string;
         TripType: string;
-        FareType: string;
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;

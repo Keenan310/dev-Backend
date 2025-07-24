@@ -7,11 +7,7 @@ export declare class GroupfareController {
     findAllAdmin(header: Headers): Promise<GroupFareModel[] | {
         OfferId: any;
         System: string;
-        FarePolicy: string;
-        InstantPayment: boolean;
-        IssuePermit: string;
         TripType: string;
-        FareType: string;
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
@@ -46,11 +42,7 @@ export declare class GroupfareController {
     findAllAgent(header: string): Promise<GroupFareModel[] | {
         OfferId: any;
         System: string;
-        FarePolicy: string;
-        InstantPayment: boolean;
-        IssuePermit: string;
         TripType: string;
-        FareType: string;
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
@@ -85,11 +77,7 @@ export declare class GroupfareController {
     findBySearch(header: string, searchGF: GroupFareSearch): Promise<{
         OfferId: any;
         System: string;
-        FarePolicy: string;
-        InstantPayment: boolean;
-        IssuePermit: string;
         TripType: string;
-        FareType: string;
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;

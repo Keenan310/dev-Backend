@@ -307,19 +307,18 @@ export class GroupfareService {
         break;
     }
 
-    const conversionData = await this.currencyConverterRepository.findOne({
-                where: {alternate: agent.currency}});
+    const conversionData = await this.currencyConverterRepository.findOne({where: {alternate: agent?.currency}});
 
-            const converstionrate = conversionData?.exchange_rate || 1;
+    const converstionrate = conversionData?.exchange_rate || 1;
 
     const Basic = {
       "OfferId": resultData.uid,
       "System": "GroupFare",
-      "FarePolicy": "sito",
-      "InstantPayment": true,
-      "IssuePermit": "manual",
+     // "FarePolicy": "sito",
+     // "InstantPayment": true,
+      //"IssuePermit": "manual",
       "TripType": "Oneway",
-      "FareType": "Special",
+      //"FareType": "Special",
       "Carrier": resultData.Carrier,
       "CarrierName": await this.airlinesService.getAirlinesName(resultData.Carrier),
       "Cabinclass": Class,
