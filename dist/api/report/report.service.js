@@ -511,7 +511,6 @@ let ReportService = class ReportService {
             'ledger.id',
             'ledger.created_at',
             'ledger.description',
-            'ledger.deposit',
             'ledger.pnr',
             'ledger.ticketprice',
             'ledger.supplier',
