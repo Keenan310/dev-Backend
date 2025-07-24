@@ -563,7 +563,7 @@ let ReportService = class ReportService {
         const totalTicket = await this.adminLedgerRepository
             .createQueryBuilder('ledger')
             .select('SUM(ledger.ticketprice)', 'totalAmount').getRawOne();
-        const totalIncome = lossProfit?.totalProfit - expense.totalAmount;
+        const totalIncome = lossProfit?.totalAmount - expense.totalAmount;
         const ledgerData = {
             lossProfit: lossProfit?.totalAmount || 0,
             ledger: ledger,
