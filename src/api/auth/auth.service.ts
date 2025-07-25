@@ -258,6 +258,9 @@ export class AuthService {
 
     if(existAgent){
         delete existAgent.password;
+        existAgent['otp'] = await this.generateOTP();
+        await this.agentRepository.update(existAgent.id, existAgent);
+        
         existAgent['usertype'] = 'agent';
         existAgent["staffdata"] = [];
 
@@ -271,11 +274,12 @@ export class AuthService {
           staffdata: {}
         };
         const token = this.jwtService.sign(payload);
-        existAgent['otp'] = await this.generateOTP();
-        await this.agentRepository.update(existAgent.id, existAgent);
         return {access_token: token}
     }else if(existStaff){
         const existAgent = await this.agentRepository.findOne({where: { agentId: existStaff.agentId }});
+        existStaff['otp'] = await this.generateOTP();
+        await this.staffRepository.update(existStaff.id, existStaff);
+        
         delete existStaff.password;
         delete existAgent.password;
         existAgent['usertype'] = 'staff';
@@ -297,8 +301,6 @@ export class AuthService {
           }
         };
         const token = this.jwtService.sign(payload);
-        existStaff['otp'] = await this.generateOTP();
-        await this.staffRepository.update(existStaff.id, existStaff);
         return {access_token: token}
 
     }else{
