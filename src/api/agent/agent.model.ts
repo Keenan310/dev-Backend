@@ -111,6 +111,9 @@ export class AgentModel {
   @Column()
   ip: string;
 
+  @Column()
+  otp: string;
+
   @CreateDateColumn()
   created_at: Date;
 

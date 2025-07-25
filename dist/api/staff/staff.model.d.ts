@@ -7,6 +7,7 @@ export declare class StaffModel {
     password: string;
     role: string;
     status: string;
+    otp: string;
     created_at: Date;
     updated_at: Date;
     uid: string;

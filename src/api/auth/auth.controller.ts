@@ -11,14 +11,14 @@ export class AuthController {
   @ApiOperation({ summary: 'Agent sign in', description: 'Only agent can sign in here' })
   @Post('signin')
   signin(@Body() authModel: AuthModel,) {
-    return this.authService.agentsignin(authModel);
+    return this.authService.agentLogin(authModel);
   }
 
   @ApiOperation({ summary: 'Admin sign in', description: 'Only admin can sign in' })
   @Post('admin/signin')
   adminsignin(
     @Body() authModel: AuthModel) {
-    return this.authService.adminsignin(authModel);
+    return this.authService.adminLogin(authModel);
   }
 
   @ApiOperation({ summary: 'Agent forget Password', description: 'Only agent can' })
@@ -34,5 +34,19 @@ export class AuthController {
     @Param('otp') code : string,
     @Param('newpassword') newpassword : string) {
     return this.authService.verifyOTPUpdatePassword(code, newpassword);
+  }
+
+  @ApiOperation({ summary: 'Agent verify OTP', description: 'Only Agent can' })
+  @Post('agent/verify/:otp')
+  verifyLoginOTPAgent(
+    @Param('otp') code : string) {
+    return this.authService.verifyOTPAgentLogin(code);
+  }
+
+  @ApiOperation({ summary: 'Agent verify OTP', description: 'Only Agent can' })
+  @Post('admin/verify/:otp')
+  verifyLoginOTPAdmin(
+    @Param('otp') code : string) {
+    return this.authService.verifyOTPAdminLogin(code);
   }
 }

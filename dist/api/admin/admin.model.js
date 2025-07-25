@@ -73,6 +73,10 @@ __decorate([
 ], AdminModel.prototype, "role", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], AdminModel.prototype, "otp", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
     __metadata("design:type", Date)
 ], AdminModel.prototype, "created_at", void 0);
 __decorate([

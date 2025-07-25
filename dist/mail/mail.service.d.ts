@@ -8,6 +8,7 @@ export declare class MailService {
     private transporter;
     constructor(agentRepository: Repository<AgentModel>);
     OTPSend(agentData: AgentModel, OTPcode: number): Promise<void>;
+    OTPSend2FA(email: string, OTPcode: string): Promise<void>;
     forgetPasswordMail(agentData: AgentModel): Promise<void>;
     resetPasswordMail(agentData: AgentModel, newPassword: string): Promise<void>;
     signUpMail(agentData: AgentModel): Promise<void>;

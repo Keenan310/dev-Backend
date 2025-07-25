@@ -8,6 +8,7 @@ export declare class AdminModel {
     phone: string;
     status: string;
     role: string;
+    otp: string;
     created_at: Date;
     updated_at: Date;
     uid: string;

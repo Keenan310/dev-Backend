@@ -53,6 +53,9 @@ export class AdminModel {
   role: string;
 
   @Column()
+  otp: string;
+
+  @Column()
   created_at: Date;
 
   @Column()

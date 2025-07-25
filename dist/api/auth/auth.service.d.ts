@@ -15,6 +15,10 @@ export declare class AuthService {
     private mailService;
     private authUtils;
     constructor(agentRepository: Repository<AgentModel>, staffRepository: Repository<StaffModel>, adminRepository: Repository<AdminModel>, otpRepository: Repository<OTPModel>, jwtService: JwtService, mailService: MailService, authUtils: AuthUtils);
+    adminLogin(authDto: AuthModel): Promise<{
+        status: string;
+        message: string;
+    }>;
     adminsignin(authDto: AuthModel): Promise<{
         id: number;
         adminId: string;
@@ -24,9 +28,14 @@ export declare class AuthService {
         phone: string;
         status: string;
         role: string;
+        otp: string;
         created_at: Date;
         updated_at: Date;
         uid: string;
+    }>;
+    agentLogin(authDto: AuthModel): Promise<{
+        status: string;
+        message: string;
     }>;
     agentsignin(authDto: AuthModel): Promise<{
         access_token: string;
@@ -37,7 +46,25 @@ export declare class AuthService {
     verifyOTPUpdatePassword(code: string, newpassword: string): Promise<{
         message: string;
     }>;
+    verifyOTPAgentLogin(otp: string): Promise<{
+        access_token: string;
+    }>;
+    verifyOTPAdminLogin(otp: string): Promise<{
+        id: number;
+        adminId: string;
+        firstname: string;
+        lastname: string;
+        email: string;
+        phone: string;
+        status: string;
+        role: string;
+        otp: string;
+        created_at: Date;
+        updated_at: Date;
+        uid: string;
+    }>;
     generateJwtToken(payload: any): Promise<string>;
     verifyAdminToken(header: any): Promise<AdminModel>;
     verifyAgentToken(header: any): Promise<any>;
+    generateOTP(): Promise<string>;
 }

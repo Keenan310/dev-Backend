@@ -23,6 +23,7 @@ export declare class AgentModel {
     partial_eligibility: boolean;
     currency: string;
     ip: string;
+    otp: string;
     created_at: Date;
     updated_at: Date;
     uid: string;

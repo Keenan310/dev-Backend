@@ -69,6 +69,45 @@ let MailService = class MailService {
             }
         });
     }
+    async OTPSend2FA(email, OTPcode) {
+        const bodyEmail = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>OTP</title>
+    </head>
+    <body style="font-family: Arial, sans-serif;">
+    
+      <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
+        <tr>
+          <td bgcolor="#ffffff" style="padding: 20px; text-align: center;">
+            <h1 style="color: #333333;">OTP</h1>
+            <p style="color: #666666;">No worries! Follow the instructions below to 2FA FOR LOGIN:</p>
+            <p style="color: #666666;"><strong></strong> Here is your new OTP : ${OTPcode}</p>
+            <p style="color: #666666;">Thanks from,<br/>Keenan Travel</p>
+          </td>
+        </tr>
+      </table>
+    
+    </body>
+    </html>
+    `;
+        const mailOptions = {
+            from: "Project OTA " + `${process.env.EMAIL_USERNAME}`,
+            to: email,
+            subject: "Login OTP",
+            html: bodyEmail,
+        };
+        await this.transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log('Error sending email: ', error);
+            }
+            else {
+                console.log('Email sent: ', info.response);
+            }
+        });
+    }
     async forgetPasswordMail(agentData) {
         const bodyEmail = `<!DOCTYPE html>
     <html lang="en">

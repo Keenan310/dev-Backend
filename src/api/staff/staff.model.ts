@@ -35,6 +35,9 @@ export class StaffModel {
   @Column()
   status: string;
 
+  @Column()
+  otp: string;
+
   @CreateDateColumn()
   created_at: Date;
 

@@ -22,16 +22,22 @@ let AuthController = class AuthController {
         this.authService = authService;
     }
     signin(authModel) {
-        return this.authService.agentsignin(authModel);
+        return this.authService.agentLogin(authModel);
     }
     adminsignin(authModel) {
-        return this.authService.adminsignin(authModel);
+        return this.authService.adminLogin(authModel);
     }
     forgetPasswordAgent(email) {
         return this.authService.agentForgetPassword(email);
     }
     verifyOTPagent(code, newpassword) {
         return this.authService.verifyOTPUpdatePassword(code, newpassword);
+    }
+    verifyLoginOTPAgent(code) {
+        return this.authService.verifyOTPAgentLogin(code);
+    }
+    verifyLoginOTPAdmin(code) {
+        return this.authService.verifyOTPAdminLogin(code);
     }
 };
 exports.AuthController = AuthController;
@@ -68,6 +74,22 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "verifyOTPagent", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Agent verify OTP', description: 'Only Agent can' }),
+    (0, common_1.Post)('agent/verify/:otp'),
+    __param(0, (0, common_1.Param)('otp')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "verifyLoginOTPAgent", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Agent verify OTP', description: 'Only Agent can' }),
+    (0, common_1.Post)('admin/verify/:otp'),
+    __param(0, (0, common_1.Param)('otp')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "verifyLoginOTPAdmin", null);
 exports.AuthController = AuthController = __decorate([
     (0, swagger_1.ApiTags)("Auth"),
     (0, common_1.Controller)('auth'),
