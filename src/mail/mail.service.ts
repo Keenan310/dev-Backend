@@ -155,7 +155,7 @@ export class MailService {
             <p style="color: #666666;">Congratulations ! Your new company registration is successfull.</p>
             <p style="color: #666666;">Looks ! <strong>Your account status is pending.</strong> Our Team will review your application.</p>
             <p style="color: #666666;">We will shortly let you know the decision.</p>
-            <p style="color: #666666;">Thanks for joining ETrip Zone. </p>
+            <p style="color: #666666;">Thanks for joining Keenan Travel. </p>
             <p style="color: #666666;">Thank you, <br/>${agentData.company}</p>
           </td>
         </tr>
@@ -194,7 +194,7 @@ export class MailService {
             <h3 style="color: #333333;">Sign Up Decision !</h3>
             <p style="color: #666666;">After reviewing your application.</p>
             <p style="color: #666666;"><strong>Your account status is now ${agentData.status} .</strong></p>
-            <p style="color: #666666;">Thanks for staying with ETrip Zone. </p>
+            <p style="color: #666666;">Thanks for staying with Keenan Travel. </p>
             <p style="color: #666666;">Thank you, <br/>${agentData.company}</p>
           </td>
         </tr>
@@ -424,7 +424,7 @@ export class MailService {
             <p style="color: #666666;">After reviewing your deposit request.</p>
             <p style="color: #666666;">We saw you meet our bonus policy.</p>
             <p style="color: #666666;"><strong>Your bonus amount ${depositBonus.credit} Added To your wallet.</strong></p>
-            <p style="color: #666666;">Thanks for staying with eTrip Zone. </p>
+            <p style="color: #666666;">Thanks for staying with Keenan Travel. </p>
             <p style="color: #666666;">Thank you, <br/>${agentData.company}</p>
           </td>
         </tr>
@@ -465,7 +465,7 @@ export class MailService {
             <h3 style="color: #333333;">Booking Confirmation !</h3>
             <p style="color: #666666;">Booking Refrence: ${bookingData.bookingId}</p>
             <p style="color: #666666;"><strong>Your account status is now ${bookingData.status} .</strong></p>
-            <p style="color: #666666;">Thanks for staying with ETrip Zone. </p>
+            <p style="color: #666666;">Thanks for staying with Keenan Travel. </p>
             <p style="color: #666666;">Thank you, <br/>${bookingData.companyname}</p>
           </td>
         </tr>
@@ -505,7 +505,7 @@ export class MailService {
             <h3 style="color: #333333;">Ticket Issue Request !</h3>
             <p style="color: #666666;">Booking Refrence: ${bookingData.bookingId}</p>
             <p style="color: #666666;"><strong>We are processing your ticket. wait for while</strong></p>
-            <p style="color: #666666;">Thanks for staying with ETrip Zone. </p>
+            <p style="color: #666666;">Thanks for staying with Keenan Travel. </p>
             <p style="color: #666666;">Thank you, <br/>${agentData.company}</p>
           </td>
         </tr>
@@ -545,7 +545,7 @@ export class MailService {
             <h3 style="color: #333333;">Ticket Issue Request Rejected !</h3>
             <p style="color: #666666;">Booking Refrence: ${bookingData.bookingId}</p>
             <p style="color: #666666;"><strong>We are refunding your balance.</strong></p>
-            <p style="color: #666666;">Thanks for staying with ETrip Zone. </p>
+            <p style="color: #666666;">Thanks for staying with Keenan Travel. </p>
             <p style="color: #666666;">Thank you, <br/>${agentData.company}</p>
           </td>
         </tr>
@@ -588,7 +588,7 @@ export class MailService {
             <h3 style="color: #333333;">Void Requested !</h3>
             <p style="color: #666666;">Booking Refrence: ${bookingData.bookingId}</p>
             <p style="color: #666666;"><strong>Your Booking Void request is processing . Let us review</strong></p>
-            <p style="color: #666666;">Thanks for staying with ETrip Zone. </p>
+            <p style="color: #666666;">Thanks for staying with Keenan Travel. </p>
             <p style="color: #666666;">Thank you, <br/>${agentData.company}</p>
           </td>
         </tr>
@@ -627,7 +627,7 @@ export class MailService {
             <p style="color: #666666;">After reviewing your application.</p>
             <p style="color: #666666;"><strong>Your void request is ${bookingData.status} .</strong></p>
             <p style="color: #666666;"><strong>We added your voided amount in your walley .</strong></p>
-            <p style="color: #666666;">Thanks for staying with ETrip Zone. </p>
+            <p style="color: #666666;">Thanks for staying with Keenan Travel. </p>
             <p style="color: #666666;">Thank you, <br/>${agentData.company}</p>
           </td>
         </tr>
