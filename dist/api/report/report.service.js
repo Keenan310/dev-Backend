@@ -552,7 +552,7 @@ let ReportService = class ReportService {
             .select('SUM(ledger.netfare)', 'totalAmount').getRawOne();
         const lossProfit = await this.adminLedgerRepository
             .createQueryBuilder('ledger')
-            .select('SUM(ledger.profit)', 'totalAmount').getRawOne();
+            .select('SUM(ledger.netfare) - SUM(ledger.ticketprice)', 'totalAmount').getRawOne();
         const deposit = await this.adminLedgerRepository
             .createQueryBuilder('ledger')
             .select('SUM(ledger.deposit)', 'totalAmount')

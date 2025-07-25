@@ -614,8 +614,7 @@ export class ReportService {
         PARTITION BY ledger.agentId
         ORDER BY ledger.id
         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-      )`,
-      'profit'
+      )`, 'profit'
     )
     .where('ledger.created_at BETWEEN :startDate AND :endDate', {
       startDate,
@@ -650,7 +649,7 @@ export class ReportService {
 
     const lossProfit = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
-    .select('SUM(ledger.profit)', 'totalAmount').getRawOne();
+    .select('SUM(ledger.netfare) - SUM(ledger.ticketprice)', 'totalAmount').getRawOne();
 
     const deposit = await this.adminLedgerRepository
     .createQueryBuilder('ledger')

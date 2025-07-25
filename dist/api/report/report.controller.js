@@ -28,8 +28,8 @@ let ReportController = class ReportController {
     addAdminLedger(header, adminledgerModel) {
         return this.reportService.addAdminLedger(header, adminledgerModel);
     }
-    editAdminLedger(header, id, adminledgerDto) {
-        return this.reportService.editAdminLedger(header, +id, adminledgerDto);
+    editAdminLedger(header, id, adminLedgerDto) {
+        return this.reportService.editAdminLedger(header, +id, adminLedgerDto);
     }
     editAgentLedgerByAdmin(header, id, updateAgentLedgerDto) {
         return this.reportService.editAgentLedgerByAdmin(header, +id, updateAgentLedgerDto);

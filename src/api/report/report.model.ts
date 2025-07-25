@@ -116,8 +116,8 @@ export class AdminLedger {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   netfare: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  profit: number;
+  // @Column({ type: 'decimal', precision: 10, scale: 2 })
+  // profit: number;
 
   @ApiProperty()
   @Column({ name: 'deposit', type: 'decimal', precision: 10, scale: 2 })

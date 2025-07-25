@@ -37,7 +37,6 @@ export declare class AdminLedger {
     supplier: string;
     agentcode: string;
     netfare: number;
-    profit: number;
     depositAmount: number;
     status: string;
     created_at: Date;

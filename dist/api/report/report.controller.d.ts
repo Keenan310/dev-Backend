@@ -6,7 +6,7 @@ export declare class ReportController {
     constructor(reportService: ReportService);
     addExpsense(header: Headers, adminExpenseModel: AdminExpenseModel): Promise<AdminExpenseModel>;
     addAdminLedger(header: Headers, adminledgerModel: AdminLedger): Promise<void>;
-    editAdminLedger(header: Headers, id: string, adminledgerDto: UpdateAdminLedgerDto): Promise<void>;
+    editAdminLedger(header: Headers, id: string, adminLedgerDto: UpdateAdminLedgerDto): Promise<void>;
     editAgentLedgerByAdmin(header: Headers, id: string, updateAgentLedgerDto: AgentBalanceUpdate): Promise<void>;
     findAllAdminLedger(header: string, startDate: Date, endDate: Date): Promise<{
         lossProfit: any;

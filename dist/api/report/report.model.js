@@ -161,10 +161,6 @@ __decorate([
     __metadata("design:type", Number)
 ], AdminLedger.prototype, "netfare", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2 }),
-    __metadata("design:type", Number)
-], AdminLedger.prototype, "profit", void 0);
-__decorate([
     (0, swagger_1.ApiProperty)(),
     (0, typeorm_1.Column)({ name: 'deposit', type: 'decimal', precision: 10, scale: 2 }),
     __metadata("design:type", Number)

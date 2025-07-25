@@ -32,8 +32,8 @@ export class ReportController {
   editAdminLedger(
     @Headers() header: Headers,
     @Param('id') id: string,
-    @Body() adminledgerDto: UpdateAdminLedgerDto) {
-    return this.reportService.editAdminLedger(header, +id, adminledgerDto);
+    @Body() adminLedgerDto: UpdateAdminLedgerDto) {
+    return this.reportService.editAdminLedger(header, +id, adminLedgerDto);
   }
 
   @ApiBearerAuth('access_token')
