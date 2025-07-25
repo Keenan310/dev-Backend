@@ -21,7 +21,7 @@ export declare class ReportController {
     findSingleLedgerAdmin(header: string, agentId: string): Promise<{
         totalSell: any;
         totalDeposit: any;
-        lastBalance: any;
+        lastBalance: number;
     }>;
     findAgentSingelAllLedger(header: Headers, agentId?: string, page?: number, limit?: number): Promise<{
         limit: number;

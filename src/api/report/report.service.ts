@@ -606,15 +606,16 @@ export class ReportService {
       'ledger.ticketprice',
       'ledger.supplier',
       'ledger.netfare',
-      'ledger.agentId as agentcode',
-      'ledger.status'
+      'ledger.status',
     ])
+    .addSelect('ledger.agentId', 'agentcode') // aliasing agentId as agentcode
     .addSelect(
       `SUM(ledger.netfare - ledger.ticketprice) OVER (
         PARTITION BY ledger.agentId
         ORDER BY ledger.id
         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-      )`, 'profit'
+      )`,
+      'profit'
     )
     .where('ledger.created_at BETWEEN :startDate AND :endDate', {
       startDate,
@@ -701,16 +702,18 @@ export class ReportService {
     .where('ledger.agentId = :agentId', { agentId })
     .getRawOne();
 
-  const balance = await this.ledgerRepository
-    .createQueryBuilder('ledger')
-    .select('SUM(ledger.credit) - SUM(ledger.debit)', 'totalAmount')
-    .where('ledger.agentId = :agentId', { agentId })
-    .getRawOne();
+  // const balance = await this.ledgerRepository
+  //   .createQueryBuilder('ledger')
+  //   .select('SUM(ledger.credit) - SUM(ledger.debit)', 'totalAmount')
+  //   .where('ledger.agentId = :agentId', { agentId })
+  //   .getRawOne();
+
+   const totalbalance = totalDeposit?.totalAmount - totalSell?.totalAmount;
 
     const ledgerData={
       totalSell: totalSell?.totalAmount || 0,
       totalDeposit: totalDeposit.totalAmount || 0,
-      lastBalance: balance?.totalAmount || 0,
+      lastBalance: totalbalance || 0,
     }
 
     return ledgerData;
