@@ -271,7 +271,7 @@ export class AuthService {
           staffdata: {}
         };
         const token = this.jwtService.sign(payload);
-        existAgent['otp'] = '83202309320';
+        existAgent['otp'] = await this.generateOTP();
         await this.agentRepository.update(existAgent.id, existAgent);
         return {access_token: token}
     }else if(existStaff){
@@ -297,7 +297,7 @@ export class AuthService {
           }
         };
         const token = this.jwtService.sign(payload);
-        existStaff['otp'] = '8372382202309320';
+        existStaff['otp'] = await this.generateOTP();
         await this.staffRepository.update(existStaff.id, existStaff);
         return {access_token: token}
 
@@ -316,6 +316,10 @@ export class AuthService {
     if (existAdmin.status != 'active') {
       throw new HttpException(`${existAdmin.status} pending`, HttpStatus.CONFLICT);
     }
+
+      const otpNew = await this.generateOTP();
+      existAdmin['otp'] = otpNew;
+      await this.adminRepository.update(existAdmin.id, existAdmin);
 
       delete existAdmin.id;
       delete existAdmin.otp;

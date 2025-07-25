@@ -241,7 +241,7 @@ let AuthService = class AuthService {
                 staffdata: {}
             };
             const token = this.jwtService.sign(payload);
-            existAgent['otp'] = '83202309320';
+            existAgent['otp'] = await this.generateOTP();
             await this.agentRepository.update(existAgent.id, existAgent);
             return { access_token: token };
         }
@@ -267,7 +267,7 @@ let AuthService = class AuthService {
                 }
             };
             const token = this.jwtService.sign(payload);
-            existStaff['otp'] = '8372382202309320';
+            existStaff['otp'] = await this.generateOTP();
             await this.staffRepository.update(existStaff.id, existStaff);
             return { access_token: token };
         }
@@ -283,6 +283,9 @@ let AuthService = class AuthService {
         if (existAdmin.status != 'active') {
             throw new common_1.HttpException(`${existAdmin.status} pending`, common_1.HttpStatus.CONFLICT);
         }
+        const otpNew = await this.generateOTP();
+        existAdmin['otp'] = otpNew;
+        await this.adminRepository.update(existAdmin.id, existAdmin);
         delete existAdmin.id;
         delete existAdmin.otp;
         const payload = { adminUId: existAdmin.uid };
