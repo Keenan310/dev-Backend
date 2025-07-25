@@ -4,6 +4,7 @@ export declare class BankListModel {
     bankname: string;
     accountname: string;
     accountnumber: string;
+    iban: string;
     branch: string;
     routingno: string;
     logo: string;

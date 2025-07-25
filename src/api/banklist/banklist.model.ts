@@ -35,6 +35,12 @@ export class BankListModel{
     @Column()
     @IsNotEmpty()
     @IsString()
+    iban: string;
+
+    @ApiProperty()
+    @Column()
+    @IsNotEmpty()
+    @IsString()
     branch: string;
 
     @ApiProperty()
