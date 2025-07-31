@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Headers } from '@nestjs/common';
 import { GroupfareService } from './groupfare.service';
-import { GroupFareModel, GroupFareModelUpdate, GroupFareSearch } from './groupfare.model';
+import { GroupFareDto, GroupFareModel, GroupFareModelUpdate, GroupFareSearch } from './groupfare.model';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('GroupFare Modules')
@@ -13,9 +13,9 @@ export class GroupfareController {
   @Post()
   create(
     @Headers() header: Headers,
-    @Body() createGroupfareDto: GroupFareModel) {
+    @Body() groupFare: GroupFareDto) {
     
-    return this.groupfareService.create(header, createGroupfareDto);
+    return this.groupfareService.create(header, groupFare);
   }
 
   @ApiBearerAuth('access_token')

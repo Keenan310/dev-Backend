@@ -1,10 +1,10 @@
 import { GroupfareService } from './groupfare.service';
-import { GroupFareModel, GroupFareModelUpdate, GroupFareSearch } from './groupfare.model';
+import { GroupFareDto, GroupFareModel, GroupFareModelUpdate, GroupFareSearch } from './groupfare.model';
 export declare class GroupfareController {
     private readonly groupfareService;
     constructor(groupfareService: GroupfareService);
-    create(header: Headers, createGroupfareDto: GroupFareModel): Promise<GroupFareModel>;
-    findAllAdmin(header: Headers): Promise<GroupFareModel[] | {
+    create(header: Headers, groupFare: GroupFareDto): Promise<any>;
+    findAllAdmin(header: Headers): Promise<GroupFareModel[] | (any[] | {
         OfferId: any;
         System: string;
         TripType: string;
@@ -37,8 +37,8 @@ export declare class GroupfareController {
             Duration: number;
             Segments: any[];
         }[];
-    }[]>;
-    findAllAgent(header: string): Promise<GroupFareModel[] | {
+    })[]>;
+    findAllAgent(header: string): Promise<GroupFareModel[] | (any[] | {
         OfferId: any;
         System: string;
         TripType: string;
@@ -71,8 +71,8 @@ export declare class GroupfareController {
             Duration: number;
             Segments: any[];
         }[];
-    }[]>;
-    findBySearch(header: string, searchGF: GroupFareSearch): Promise<{
+    })[]>;
+    findBySearch(header: string, searchGF: GroupFareSearch): Promise<(any[] | {
         OfferId: any;
         System: string;
         TripType: string;
@@ -105,7 +105,7 @@ export declare class GroupfareController {
             Duration: number;
             Segments: any[];
         }[];
-    }[]>;
+    })[]>;
     findOneAdmin(header: Headers, uid: string): Promise<GroupFareModel>;
     update(header: Headers, uid: string, updateGroupfareDto: GroupFareModelUpdate): Promise<import("typeorm").UpdateResult>;
     remove(header: Headers, uid: string): Promise<import("typeorm").DeleteResult>;

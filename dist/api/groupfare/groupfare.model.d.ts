@@ -34,6 +34,8 @@ export declare class GroupFareModel {
     updated_at: Date;
     uid: string;
 }
+export declare class GroupFareDto {
+}
 export declare class GroupFareModelUpdate {
     Carrier: string;
     DepFrom: string;

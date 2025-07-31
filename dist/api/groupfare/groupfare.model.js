@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GroupFareSearch = exports.GroupFareModelUpdate = exports.GroupFareModel = void 0;
+exports.GroupFareSearch = exports.GroupFareModelUpdate = exports.GroupFareDto = exports.GroupFareModel = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 const typeorm_1 = require("typeorm");
@@ -222,6 +222,9 @@ __decorate([
 exports.GroupFareModel = GroupFareModel = __decorate([
     (0, typeorm_1.Entity)('groupfare')
 ], GroupFareModel);
+class GroupFareDto {
+}
+exports.GroupFareDto = GroupFareDto;
 class GroupFareModelUpdate {
 }
 exports.GroupFareModelUpdate = GroupFareModelUpdate;

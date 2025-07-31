@@ -21,8 +21,8 @@ let GroupfareController = class GroupfareController {
     constructor(groupfareService) {
         this.groupfareService = groupfareService;
     }
-    create(header, createGroupfareDto) {
-        return this.groupfareService.create(header, createGroupfareDto);
+    create(header, groupFare) {
+        return this.groupfareService.create(header, groupFare);
     }
     findAllAdmin(header) {
         return this.groupfareService.findAllAdmin(header);
@@ -50,7 +50,7 @@ __decorate([
     __param(0, (0, common_1.Headers)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, groupfare_model_1.GroupFareModel]),
+    __metadata("design:paramtypes", [Object, groupfare_model_1.GroupFareDto]),
     __metadata("design:returntype", void 0)
 ], GroupfareController.prototype, "create", null);
 __decorate([

@@ -175,6 +175,10 @@ export class GroupFareModel {
   uid: string;
 }
 
+export class GroupFareDto{
+
+}
+
 export class GroupFareModelUpdate {
 
     @ApiProperty({default: 'EK'})
@@ -281,7 +285,6 @@ export class GroupFareModelUpdate {
     @ApiProperty({default: '565'})
     @Column()
     FlightNumber1: string;
-
 }
 
 export class GroupFareSearch{

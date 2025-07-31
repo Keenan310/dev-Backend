@@ -8,14 +8,13 @@ import { FlightSearchModel } from '../flight/dto/search-flight.dto';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
 export declare class GroupfareService {
     private readonly groupFareRepository;
-    private readonly agentRepository;
     private readonly currencyConverterRepository;
     private readonly authService;
     private readonly airlinesService;
     private readonly airportsService;
-    constructor(groupFareRepository: Repository<GroupFareModel>, agentRepository: Repository<AgentModel>, currencyConverterRepository: Repository<CurrencyConverter>, authService: AuthService, airlinesService: AirlinesService, airportsService: AirportsService);
-    create(header: any, createGroupfareDto: GroupFareModel): Promise<GroupFareModel>;
-    findAllAdmin(header: any): Promise<GroupFareModel[] | {
+    constructor(groupFareRepository: Repository<GroupFareModel>, currencyConverterRepository: Repository<CurrencyConverter>, authService: AuthService, airlinesService: AirlinesService, airportsService: AirportsService);
+    create(header: any, data: any): Promise<any>;
+    findAllAdmin(header: any): Promise<GroupFareModel[] | (any[] | {
         OfferId: any;
         System: string;
         TripType: string;
@@ -48,8 +47,8 @@ export declare class GroupfareService {
             Duration: number;
             Segments: any[];
         }[];
-    }[]>;
-    findAllAgent(header: any): Promise<GroupFareModel[] | {
+    })[]>;
+    findAllAgent(header: any): Promise<GroupFareModel[] | (any[] | {
         OfferId: any;
         System: string;
         TripType: string;
@@ -82,8 +81,8 @@ export declare class GroupfareService {
             Duration: number;
             Segments: any[];
         }[];
-    }[]>;
-    findBySearchFlight(flightDto: FlightSearchModel): Promise<{
+    })[]>;
+    findBySearchFlight(flightDto: FlightSearchModel): Promise<(any[] | {
         OfferId: any;
         System: string;
         TripType: string;
@@ -116,8 +115,8 @@ export declare class GroupfareService {
             Duration: number;
             Segments: any[];
         }[];
-    }[]>;
-    findBySearch(header: any, searchGF: GroupFareSearch): Promise<{
+    })[]>;
+    findBySearch(header: any, searchGF: GroupFareSearch): Promise<(any[] | {
         OfferId: any;
         System: string;
         TripType: string;
@@ -150,8 +149,8 @@ export declare class GroupfareService {
             Duration: number;
             Segments: any[];
         }[];
-    }[]>;
-    findOne(agent: AgentModel, uid: string): Promise<{
+    })[]>;
+    findOne(agent: AgentModel, uid: string): Promise<any[] | {
         OfferId: any;
         System: string;
         TripType: string;
@@ -188,7 +187,7 @@ export declare class GroupfareService {
     findOneAdmin(header: any, uid: string): Promise<GroupFareModel>;
     update(header: any, uid: string, updateGroupfareDto: GroupFareModelUpdate): Promise<import("typeorm").UpdateResult>;
     remove(header: any, uid: string): Promise<import("typeorm").DeleteResult>;
-    flightParser(agent: AgentModel, resultData: any): Promise<{
+    flightParser(agent: AgentModel, resultData: any): Promise<any[] | {
         OfferId: any;
         System: string;
         TripType: string;
