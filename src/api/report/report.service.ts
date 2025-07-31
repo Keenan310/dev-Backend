@@ -610,11 +610,7 @@ export class ReportService {
     ])
     .addSelect('ledger.agentId', 'agentcode') // aliasing agentId as agentcode
     .addSelect(
-      `SUM(ledger.netfare - ledger.ticketprice) OVER (
-        PARTITION BY ledger.agentId
-        ORDER BY ledger.id
-        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-      )`,
+      `SUM(ledger.netfare - ledger.ticketprice)`,
       'profit'
     )
     .where('ledger.created_at BETWEEN :startDate AND :endDate', {
