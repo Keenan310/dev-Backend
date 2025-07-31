@@ -30,16 +30,14 @@ export class GroupfareService {
         throw new UnauthorizedException();
     }
 
-    const groupfare = await this.groupFareRepository.find({
-      order: { id: 'DESC' }, take : 1,
-    });
+    const groupfare = await this.groupFareRepository.find({order: { id: 'DESC' }, take : 1});
 
     let groupId: string;
     if(groupfare.length == 1){
       let old_group_id = (groupfare[0].GroupId).replace("KTG",'');
       groupId = "KTG" + (parseInt(old_group_id) + 1);
     }else{
-      groupId = 'POG1000';
+      groupId = 'KTG1000';
     }
 
     createGroupfareDto['GroupId'] = groupId;
@@ -168,6 +166,42 @@ export class GroupfareService {
   async flightParser(agent: AgentModel, resultData: any){
     let Segments = [];
     let Duration: number=0;
+
+    const PriceBreakdown = [
+      {
+        "PaxType": "ADT",
+        "BaseFare": resultData.BaseFare,
+        "Taxes": resultData.Taxes,
+        "TotalFare": resultData.NetFare,
+        "PaxCount": 1,
+        "Bag": [
+          {
+            "Airline": resultData.Carrier,
+            "Allowance": resultData.Baggage
+          }
+        ]
+      }
+    ];
+
+    let Class : string;
+    switch (resultData.Cabinclass) {
+      case 'P':
+        Class = "First";
+        break;
+      case 'J':
+        Class = "Premium Business";
+        break;
+      case 'C':
+        Class = "Business";
+        break;
+      case 'S':
+        Class = "Premium Economy";
+        break;
+      case 'Y':
+        Class = "Economy";
+        break;
+    }
+
     if(resultData.segment === 1){
 
       Segments = [
@@ -267,48 +301,11 @@ export class GroupfareService {
         "DepFrom": resultData.DepFrom,
         "ArrTo": resultData.ArrTo,
         "Duration": Duration,
-        "Transit": resultData.Transit,
         "Segments": Segments
       }
     ];
 
-    const PriceBreakdown = [
-      {
-        "PaxType": "ADT",
-        "BaseFare": resultData.BaseFare,
-        "Taxes": resultData.Taxes,
-        "TotalFare": resultData.NetFare,
-        "PaxCount": 1,
-        "Bag": [
-          {
-            "Airline": resultData.Carrier,
-            "Allowance": resultData.Baggage
-          }
-        ]
-      }
-    ];
-
-    let Class : string;
-    switch (resultData.Cabinclass) {
-      case 'P':
-        Class = "First";
-        break;
-      case 'J':
-        Class = "Premium Business";
-        break;
-      case 'C':
-        Class = "Business";
-        break;
-      case 'S':
-        Class = "Premium Economy";
-        break;
-      case 'Y':
-        Class = "Economy";
-        break;
-    }
-
     const conversionData = await this.currencyConverterRepository.findOne({where: {alternate: agent?.currency}});
-
     const converstionrate = conversionData?.exchange_rate || 1;
 
     const Basic = {
@@ -336,4 +333,6 @@ export class GroupfareService {
 
     return Basic;
   }
+
+  
 }

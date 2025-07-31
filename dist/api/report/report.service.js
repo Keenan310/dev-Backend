@@ -516,18 +516,14 @@ let ReportService = class ReportService {
             'ledger.supplier',
             'ledger.netfare',
             'ledger.status',
+            'ledger.agentId AS agentcode',
+            '(ledger.netfare - ledger.ticketprice) AS profit'
         ])
-            .addSelect('ledger.agentId', 'agentcode')
-            .addSelect(`SUM(ledger.netfare - ledger.ticketprice) OVER (
-        PARTITION BY ledger.agentId
-        ORDER BY ledger.id
-        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-      )`, 'profit')
             .where('ledger.created_at BETWEEN :startDate AND :endDate', {
             startDate,
             endDate,
         })
-            .andWhere('ledger.deposit = 0')
+            .andWhere('ledger.deposit <= 0')
             .orderBy('ledger.id', 'DESC')
             .getRawMany();
         const depositLedger = await this.adminLedgerRepository

@@ -46,7 +46,6 @@ export declare class GroupfareService {
             DepFrom: any;
             ArrTo: any;
             Duration: number;
-            Transit: any;
             Segments: any[];
         }[];
     }[]>;
@@ -81,7 +80,6 @@ export declare class GroupfareService {
             DepFrom: any;
             ArrTo: any;
             Duration: number;
-            Transit: any;
             Segments: any[];
         }[];
     }[]>;
@@ -116,7 +114,6 @@ export declare class GroupfareService {
             DepFrom: any;
             ArrTo: any;
             Duration: number;
-            Transit: any;
             Segments: any[];
         }[];
     }[]>;
@@ -151,7 +148,6 @@ export declare class GroupfareService {
             DepFrom: any;
             ArrTo: any;
             Duration: number;
-            Transit: any;
             Segments: any[];
         }[];
     }[]>;
@@ -186,7 +182,6 @@ export declare class GroupfareService {
             DepFrom: any;
             ArrTo: any;
             Duration: number;
-            Transit: any;
             Segments: any[];
         }[];
     }>;
@@ -224,7 +219,6 @@ export declare class GroupfareService {
             DepFrom: any;
             ArrTo: any;
             Duration: number;
-            Transit: any;
             Segments: any[];
         }[];
     }>;

@@ -607,17 +607,14 @@ export class ReportService {
       'ledger.supplier',
       'ledger.netfare',
       'ledger.status',
+      'ledger.agentId AS agentcode',
+      '(ledger.netfare - ledger.ticketprice) AS profit'
     ])
-    .addSelect('ledger.agentId', 'agentcode') // aliasing agentId as agentcode
-    .addSelect(
-      `SUM(ledger.netfare - ledger.ticketprice)`,
-      'profit'
-    )
     .where('ledger.created_at BETWEEN :startDate AND :endDate', {
       startDate,
       endDate,
     })
-    .andWhere('ledger.deposit = 0')
+    .andWhere('ledger.deposit <= 0')
     .orderBy('ledger.id', 'DESC')
     .getRawMany();
 

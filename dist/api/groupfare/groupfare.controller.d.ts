@@ -35,7 +35,6 @@ export declare class GroupfareController {
             DepFrom: any;
             ArrTo: any;
             Duration: number;
-            Transit: any;
             Segments: any[];
         }[];
     }[]>;
@@ -70,7 +69,6 @@ export declare class GroupfareController {
             DepFrom: any;
             ArrTo: any;
             Duration: number;
-            Transit: any;
             Segments: any[];
         }[];
     }[]>;
@@ -105,7 +103,6 @@ export declare class GroupfareController {
             DepFrom: any;
             ArrTo: any;
             Duration: number;
-            Transit: any;
             Segments: any[];
         }[];
     }[]>;
