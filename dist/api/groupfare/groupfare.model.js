@@ -25,194 +25,140 @@ __decorate([
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "GroupId", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: 'EK' }),
     (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MaxLength)(2),
     __metadata("design:type", String)
-], GroupFareModel.prototype, "Carrier", void 0);
+], GroupFareModel.prototype, "TripType", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: 'ERTYGH' }),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "PNR", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: 'DAC' }),
     (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsAlpha)(),
-    (0, class_validator_1.MaxLength)(3),
     __metadata("design:type", String)
-], GroupFareModel.prototype, "DepFrom", void 0);
+], GroupFareModel.prototype, "Carrier", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: 'DXB' }),
     (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MaxLength)(3),
-    (0, class_validator_1.IsAlpha)(),
     __metadata("design:type", String)
-], GroupFareModel.prototype, "ArrTo", void 0);
+], GroupFareModel.prototype, "RouteFrom", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: '2024-06-01' }),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MaxLength)(10),
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], GroupFareModel.prototype, "RouteTo", void 0);
+__decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "DepDate", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: '30000' }),
     (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], GroupFareModel.prototype, "BaseFare", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ default: '10000' }),
-    (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], GroupFareModel.prototype, "Taxes", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ default: 'Economy' }),
-    (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], GroupFareModel.prototype, "Cabinclass", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ default: '30000' }),
-    (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], GroupFareModel.prototype, "NetFare", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: 'false' }),
     (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsBoolean)(),
-    __metadata("design:type", Boolean)
-], GroupFareModel.prototype, "Refundable", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ default: '' }),
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], GroupFareModel.prototype, "TimeLimit", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ default: '20 KG' }),
-    (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "Baggage", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: '50' }),
     (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
+    __metadata("design:type", String)
 ], GroupFareModel.prototype, "seatsAvailable", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: 'M' }),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "mealCode", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: 'Y' }),
     (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], GroupFareModel.prototype, "cabinCode", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ default: 1 }),
-    (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], GroupFareModel.prototype, "segment", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: 'DAC' }),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.MaxLength)(3),
-    (0, class_validator_1.IsAlpha)(),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "DepartureFrom", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: 'DXB' }),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.MaxLength)(3),
-    (0, class_validator_1.IsAlpha)(),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "ArrivalTo", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: '2024-06-01T04:40:00' }),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "DepTime", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: '2024-06-01T023:40:00' }),
     (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "ArrTime", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: '535' }),
     (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "FlightNumber", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: '50' }),
-    (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsInt)(),
-    __metadata("design:type", Number)
-], GroupFareModel.prototype, "Duration", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ default: 'DXB' }),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "DepartureFrom1", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: 'JFK' }),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "ArrivalTo1", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: '2024-06-01T04:40:00' }),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "DepTime1", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: '2024-06-01T04:40:00' }),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "ArrTime1", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: '565' }),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], GroupFareModel.prototype, "FlightNumber1", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ default: '50' }),
     (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsInt)(),
-    __metadata("design:type", Number)
-], GroupFareModel.prototype, "Duration1", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ default: '50' }),
-    (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], GroupFareModel.prototype, "Transit", void 0);
+], GroupFareModel.prototype, "rDepFrom", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], GroupFareModel.prototype, "rSegment", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], GroupFareModel.prototype, "rArrTo", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], GroupFareModel.prototype, "rFlightNo", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], GroupFareModel.prototype, "rDepTime", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], GroupFareModel.prototype, "rArrTime", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], GroupFareModel.prototype, "rDepFrom1", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], GroupFareModel.prototype, "rArrTo1", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], GroupFareModel.prototype, "rFlightNo1", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], GroupFareModel.prototype, "rDepTime1", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], GroupFareModel.prototype, "rArrTime1", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", String)
 ], GroupFareModel.prototype, "created_at", void 0);
 __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", String)
 ], GroupFareModel.prototype, "updated_at", void 0);
 __decorate([
     (0, typeorm_1.Column)(),

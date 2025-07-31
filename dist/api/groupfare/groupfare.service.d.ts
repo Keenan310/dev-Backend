@@ -1,10 +1,9 @@
-import { GroupFareModel, GroupFareModelUpdate, GroupFareSearch } from './groupfare.model';
+import { GroupFareModel } from './groupfare.model';
 import { AgentModel } from '../agent/agent.model';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { AirlinesService } from '../airlines/airlines.service';
 import { AirportsService } from '../airports/airports.service';
-import { FlightSearchModel } from '../flight/dto/search-flight.dto';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
 export declare class GroupfareService {
     private readonly groupFareRepository;
@@ -82,74 +81,6 @@ export declare class GroupfareService {
             Segments: any[];
         }[];
     })[]>;
-    findBySearchFlight(flightDto: FlightSearchModel): Promise<(any[] | {
-        OfferId: any;
-        System: string;
-        TripType: string;
-        Carrier: any;
-        CarrierName: string;
-        Cabinclass: string;
-        BaseFare: any;
-        Taxes: any;
-        NetFare: number;
-        GrossFare: number;
-        Comission: number;
-        Currency: string;
-        TimeLimit: string;
-        Refundable: boolean;
-        PriceBreakDown: {
-            PaxType: string;
-            BaseFare: any;
-            Taxes: any;
-            TotalFare: any;
-            PaxCount: number;
-            Bag: {
-                Airline: any;
-                Allowance: any;
-            }[];
-        }[];
-        AllLegsInfo: {
-            DepDate: any;
-            DepFrom: any;
-            ArrTo: any;
-            Duration: number;
-            Segments: any[];
-        }[];
-    })[]>;
-    findBySearch(header: any, searchGF: GroupFareSearch): Promise<(any[] | {
-        OfferId: any;
-        System: string;
-        TripType: string;
-        Carrier: any;
-        CarrierName: string;
-        Cabinclass: string;
-        BaseFare: any;
-        Taxes: any;
-        NetFare: number;
-        GrossFare: number;
-        Comission: number;
-        Currency: string;
-        TimeLimit: string;
-        Refundable: boolean;
-        PriceBreakDown: {
-            PaxType: string;
-            BaseFare: any;
-            Taxes: any;
-            TotalFare: any;
-            PaxCount: number;
-            Bag: {
-                Airline: any;
-                Allowance: any;
-            }[];
-        }[];
-        AllLegsInfo: {
-            DepDate: any;
-            DepFrom: any;
-            ArrTo: any;
-            Duration: number;
-            Segments: any[];
-        }[];
-    })[]>;
     findOne(agent: AgentModel, uid: string): Promise<any[] | {
         OfferId: any;
         System: string;
@@ -185,7 +116,6 @@ export declare class GroupfareService {
         }[];
     }>;
     findOneAdmin(header: any, uid: string): Promise<GroupFareModel>;
-    update(header: any, uid: string, updateGroupfareDto: GroupFareModelUpdate): Promise<import("typeorm").UpdateResult>;
     remove(header: any, uid: string): Promise<import("typeorm").DeleteResult>;
     flightParser(agent: AgentModel, resultData: any): Promise<any[] | {
         OfferId: any;

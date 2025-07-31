@@ -6,7 +6,6 @@ import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { AirlinesService } from '../airlines/airlines.service';
 import { AirportsService } from '../airports/airports.service';
-import { FlightSearchModel } from '../flight/dto/search-flight.dto';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
 
 @Injectable()
@@ -23,11 +22,11 @@ export class GroupfareService {
   ){}
   async create(header: any, data: any) {
 
-    // const verifyAdminId = await this.authService.verifyAdminToken(header);
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    // if(!verifyAdminId){
-    //     throw new UnauthorizedException();
-    // }
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
 
     const groupfare = await this.groupFareRepository.find({order: { id: 'DESC' }, take : 1});
 
@@ -42,29 +41,32 @@ export class GroupfareService {
     if(data.length === 1){
       const createGroupfareDto = data?.[0];
       createGroupfareDto['GroupId'] = groupId;
+      createGroupfareDto['TripType'] = 'O';
       return  this.groupFareRepository.save(createGroupfareDto);
     }else if(data?.length == 2){
       const createGroupfareDto = data?.[0];
       createGroupfareDto['GroupId'] = groupId;
+      createGroupfareDto['TripType'] = 'R';
       this.groupFareRepository.save(createGroupfareDto);
 
       const createGroupfareDto1 = data?.[1];
       createGroupfareDto1['GroupId'] = groupId;
       return  this.groupFareRepository.save(createGroupfareDto1);
     }else{
-      console.log("LOl")
+
     }
   }
 
   async findAllAdmin(header: any) {
 
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
+    // const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
+    // if(!verifyAdminId){
+    //     throw new UnauthorizedException();
+    // }
 
     const groupdata = await this.groupFareRepository.find();
+
 
     let agent: any;
     if(groupdata.length > 0){
@@ -92,44 +94,6 @@ export class GroupfareService {
     }
   }
 
-  async findBySearchFlight(flightDto: FlightSearchModel) {
-
-    const groupdata =  await this.groupFareRepository.find(
-      { where: {
-        DepFrom: flightDto.segments[0].depfrom,
-        ArrTo: flightDto.segments[0].arrto,
-        DepDate: flightDto.segments[0].depdate+'',
-      }});
-
-      let agent: any;
-      const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
-      const AllGrouFare = await Promise.all(flightParserPromises);
-
-    return AllGrouFare;
-  }
-
-  async findBySearch(header: any, searchGF: GroupFareSearch) {
-
-    const agent = await this.authService.verifyAgentToken(header);
-
-    if(!agent){
-        throw new UnauthorizedException();
-    }
-
-    const groupdata =  await this.groupFareRepository.find(
-      { where: {
-          DepFrom: searchGF.depfrom,
-          ArrTo: searchGF.arrto,
-          DepDate: searchGF.depdate
-        }
-      });
-
-      const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
-      const AllGrouFare = await Promise.all(flightParserPromises);
-
-    return AllGrouFare;
-  }
-
   async findOne(agent: AgentModel, uid: string) {
     const data = await this.groupFareRepository.findOne({ where: {uid: uid} });
     return this.flightParser(agent, data);
@@ -143,21 +107,6 @@ export class GroupfareService {
     }
 
     return await this.groupFareRepository.findOneBy({uid: uid });
-  }
-
-  async update(header: any, uid: string, updateGroupfareDto: GroupFareModelUpdate) {
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
-
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
-
-    const groupfaredata = await this.groupFareRepository.findOneBy({uid: uid});
-    if(!groupfaredata){
-      throw new  NotFoundException();
-    }
-
-    return this.groupFareRepository.update(groupfaredata.id, updateGroupfareDto);
   }
 
   async remove(header: any, uid: string) {
@@ -604,7 +553,7 @@ export class GroupfareService {
       };
       return Basic;
     }else{
-        return [];
+      return [];
     }
   }
 }

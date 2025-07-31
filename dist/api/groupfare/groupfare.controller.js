@@ -30,14 +30,8 @@ let GroupfareController = class GroupfareController {
     findAllAgent(header) {
         return this.groupfareService.findAllAgent(header);
     }
-    findBySearch(header, searchGF) {
-        return this.groupfareService.findBySearch(header, searchGF);
-    }
     findOneAdmin(header, uid) {
         return this.groupfareService.findOneAdmin(header, uid);
-    }
-    update(header, uid, updateGroupfareDto) {
-        return this.groupfareService.update(header, uid, updateGroupfareDto);
     }
     remove(header, uid) {
         return this.groupfareService.remove(header, uid);
@@ -71,15 +65,6 @@ __decorate([
 ], GroupfareController.prototype, "findAllAgent", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
-    (0, common_1.Post)('search'),
-    __param(0, (0, common_1.Headers)()),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, groupfare_model_1.GroupFareSearch]),
-    __metadata("design:returntype", void 0)
-], GroupfareController.prototype, "findBySearch", null);
-__decorate([
-    (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Get)('admin/:uid'),
     __param(0, (0, common_1.Headers)()),
     __param(1, (0, common_1.Param)('uid')),
@@ -87,16 +72,6 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], GroupfareController.prototype, "findOneAdmin", null);
-__decorate([
-    (0, swagger_1.ApiBearerAuth)('access_token'),
-    (0, common_1.Patch)(':uid'),
-    __param(0, (0, common_1.Headers)()),
-    __param(1, (0, common_1.Param)('uid')),
-    __param(2, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, groupfare_model_1.GroupFareModelUpdate]),
-    __metadata("design:returntype", void 0)
-], GroupfareController.prototype, "update", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Delete)(':uid'),

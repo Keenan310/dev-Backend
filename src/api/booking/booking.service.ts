@@ -76,18 +76,7 @@ export class BookingService {
 
     const groupData = await this.groupFareRepository.findOneBy({uid: bookingDto?.FlightInfo?.OfferId});
 
-    const agentLedger = await this.agentLedgerRepository
-    .createQueryBuilder()
-    .select('SUM(amount)', 'sum')
-    .where('agentId = :agentId', { agentId: agentdata.agentId })
-    .getRawOne();
-
-    const agentLedgerValue =  agentLedger.sum != null ? agentLedger.sum : 0;
-    if(agentLedgerValue <= groupData.NetFare){
-        throw new NotAcceptableException("Insufficient Amount. Please Top Up");
-    }else if(agentLedgerValue >= groupData.NetFare){
-
-        const details = groupData.Carrier+' ' + groupData.DepFrom+'-'+groupData.ArrTo+' Ticket Purchase '+ groupData.NetFare + '. PNR : '+ groupData.PNR+' .';
+      const details = groupData.Carrier+' ' + groupData.RouteFrom+'-'+groupData.RouteTo+' Ticket Purchase '+ groupData.NetFare + '. PNR : '+ groupData.PNR+' .';
 
        const generatedUUID: string = uuidv4();
         const AgentLedgerData = {
@@ -101,8 +90,6 @@ export class BookingService {
         }
 
       await this.agentLedgerRepository.save(AgentLedgerData);
-
-    }
 
     let Booking_PNR: string = groupData.PNR;
     const bookingData = {

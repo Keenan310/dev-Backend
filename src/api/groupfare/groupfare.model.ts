@@ -11,164 +11,107 @@ export class GroupFareModel {
   @Column()
   GroupId: string;
 
-  @ApiProperty({default: 'EK'})
   @Column()
-  @IsString()
-  @MaxLength(2)
-  Carrier: string;
+  TripType: string;
 
-  @ApiProperty({default: 'ERTYGH'})
   @Column()
   PNR: string;
 
-  @ApiProperty({default: 'DAC'})
   @Column()
-  @IsString()
-  @IsAlpha()
-  @MaxLength(3)
-  DepFrom: string;
+  Carrier: string;
 
-  @ApiProperty({default: 'DXB'})
   @Column()
-  @IsString()
-  @MaxLength(3)
-  @IsAlpha()
-  ArrTo: string;
+  RouteFrom: string;
 
-  @ApiProperty({default: '2024-06-01'})
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(10)
+  @Column()
+  RouteTo: string;
+
   @Column()
   DepDate: string;
 
-  @ApiProperty({default: '30000'})
   @Column()
-  @IsNumber()
-  BaseFare: number;
-
-  @ApiProperty({default: '10000'})
-  @Column()
-  @IsNumber()
-  Taxes: number;
-
-  @ApiProperty({default: 'Economy'})
-  @Column()
-  @IsString()
-  Cabinclass: string;
-
-  @ApiProperty({default: '30000'})
-  @Column()
-  @IsNumber()
   NetFare: number;
 
-  @ApiProperty({default: 'false'})
   @Column()
-  @IsBoolean()
-  Refundable: boolean;
-
-  @ApiProperty({default: ''})
-  @Column()
-  TimeLimit: String;
-
-  @ApiProperty({default: '20 KG'})
-  @Column()
-  @IsString()
   Baggage: string;
 
-  @ApiProperty({default: '50'})
   @Column()
-  @IsNumber()
-  seatsAvailable: number;
+  seatsAvailable: string;
 
-  @ApiProperty({default: 'M'})
   @Column()
   mealCode: string;
 
-  @ApiProperty({default: 'Y'})
   @Column()
-  cabinCode: string;
-
-  @ApiProperty({default: 1})
-  @Column()
-  @IsNumber()
   segment: number;
 
-  @ApiProperty({default: 'DAC'})
-  @IsNotEmpty()
-  @MaxLength(3)
-  @IsAlpha()
   @Column()
   DepartureFrom: string;
 
-  @ApiProperty({default: 'DXB'})
-  @IsNotEmpty()
-  @MaxLength(3)
-  @IsAlpha()
   @Column()
   ArrivalTo: string;
 
-  @ApiProperty({default: '2024-06-01T04:40:00'})
-  @IsNotEmpty()
-  @IsString()
   @Column()
   DepTime: string;
 
-  @ApiProperty({default: '2024-06-01T023:40:00'})
   @Column()
-  @IsNotEmpty()
-  @IsString()
   ArrTime: string;
 
-  @ApiProperty({default: '535'})
   @Column()
-  @IsNotEmpty()
-  @IsString()
   FlightNumber: string;
 
-  @ApiProperty({default: '50'})
-  @Column()
-  @IsNotEmpty()
-  @IsInt()
-  Duration: number;
-
-  @ApiProperty({default: 'DXB'})
   @Column()
   DepartureFrom1: string;
 
-  @ApiProperty({default: 'JFK'})
   @Column()
   ArrivalTo1: string;
 
-  @ApiProperty({default: '2024-06-01T04:40:00'})
   @Column()
   DepTime1: string;
 
-  @ApiProperty({default: '2024-06-01T04:40:00'})
   @Column()
   ArrTime1: string;
 
-  @ApiProperty({default: '565'})
   @Column()
   FlightNumber1: string;
 
-  @ApiProperty({default: '50'})
   @Column()
-  @IsNotEmpty()
-  @IsInt()
-  Duration1: number;
+  rDepFrom: string;
 
-  @ApiProperty({default: '50'})
   @Column()
-  @IsNotEmpty()
-  @IsString()
-  Transit: string;
+  rSegment: string;
+
+  @Column()
+  rArrTo: string;
+
+  @Column()
+  rFlightNo: string;
+
+  @Column()
+  rDepTime: string;
+
+  @Column()
+  rArrTime: string;
+
+  @Column()
+  rDepFrom1: string;
+
+  @Column()
+  rArrTo1: string;
+
+  @Column()
+  rFlightNo1: string;
+
+  @Column()
+  rDepTime1: string;
+
+  @Column()
+  rArrTime1: string;
 
   @CreateDateColumn()
-  created_at: Date;
+  created_at: string;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updated_at: string;
 
   @Column()
   @Generated("uuid")

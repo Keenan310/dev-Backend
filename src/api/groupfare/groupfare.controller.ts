@@ -32,28 +32,11 @@ export class GroupfareController {
   }
 
   @ApiBearerAuth('access_token')
-  @Post('search')
-  findBySearch(
-    @Headers() header: string,
-    @Body() searchGF : GroupFareSearch) {
-    return this.groupfareService.findBySearch(header, searchGF);
-  }
-
-  @ApiBearerAuth('access_token')
   @Get('admin/:uid')
   findOneAdmin(
     @Headers() header: Headers,
     @Param('uid') uid: string) {
     return this.groupfareService.findOneAdmin(header, uid);
-  }
-
-  @ApiBearerAuth('access_token')
-  @Patch(':uid')
-  update(
-    @Headers() header: Headers, 
-    @Param('uid') uid: string,
-    @Body() updateGroupfareDto: GroupFareModelUpdate) {
-    return this.groupfareService.update(header, uid, updateGroupfareDto);
   }
 
   @ApiBearerAuth('access_token')

@@ -30,6 +30,10 @@ let GroupfareService = class GroupfareService {
         this.airportsService = airportsService;
     }
     async create(header, data) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
         const groupfare = await this.groupFareRepository.find({ order: { id: 'DESC' }, take: 1 });
         let groupId;
         if (groupfare.length == 1) {
@@ -42,25 +46,22 @@ let GroupfareService = class GroupfareService {
         if (data.length === 1) {
             const createGroupfareDto = data?.[0];
             createGroupfareDto['GroupId'] = groupId;
+            createGroupfareDto['TripType'] = 'O';
             return this.groupFareRepository.save(createGroupfareDto);
         }
         else if (data?.length == 2) {
             const createGroupfareDto = data?.[0];
             createGroupfareDto['GroupId'] = groupId;
+            createGroupfareDto['TripType'] = 'R';
             this.groupFareRepository.save(createGroupfareDto);
             const createGroupfareDto1 = data?.[1];
             createGroupfareDto1['GroupId'] = groupId;
             return this.groupFareRepository.save(createGroupfareDto1);
         }
         else {
-            console.log("LOl");
         }
     }
     async findAllAdmin(header) {
-        const verifyAdminId = await this.authService.verifyAdminToken(header);
-        if (!verifyAdminId) {
-            throw new common_1.UnauthorizedException();
-        }
         const groupdata = await this.groupFareRepository.find();
         let agent;
         if (groupdata.length > 0) {
@@ -85,32 +86,6 @@ let GroupfareService = class GroupfareService {
             return groupdata;
         }
     }
-    async findBySearchFlight(flightDto) {
-        const groupdata = await this.groupFareRepository.find({ where: {
-                DepFrom: flightDto.segments[0].depfrom,
-                ArrTo: flightDto.segments[0].arrto,
-                DepDate: flightDto.segments[0].depdate + '',
-            } });
-        let agent;
-        const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
-        const AllGrouFare = await Promise.all(flightParserPromises);
-        return AllGrouFare;
-    }
-    async findBySearch(header, searchGF) {
-        const agent = await this.authService.verifyAgentToken(header);
-        if (!agent) {
-            throw new common_1.UnauthorizedException();
-        }
-        const groupdata = await this.groupFareRepository.find({ where: {
-                DepFrom: searchGF.depfrom,
-                ArrTo: searchGF.arrto,
-                DepDate: searchGF.depdate
-            }
-        });
-        const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
-        const AllGrouFare = await Promise.all(flightParserPromises);
-        return AllGrouFare;
-    }
     async findOne(agent, uid) {
         const data = await this.groupFareRepository.findOne({ where: { uid: uid } });
         return this.flightParser(agent, data);
@@ -121,17 +96,6 @@ let GroupfareService = class GroupfareService {
             throw new common_1.UnauthorizedException();
         }
         return await this.groupFareRepository.findOneBy({ uid: uid });
-    }
-    async update(header, uid, updateGroupfareDto) {
-        const verifyAdminId = await this.authService.verifyAdminToken(header);
-        if (!verifyAdminId) {
-            throw new common_1.UnauthorizedException();
-        }
-        const groupfaredata = await this.groupFareRepository.findOneBy({ uid: uid });
-        if (!groupfaredata) {
-            throw new common_1.NotFoundException();
-        }
-        return this.groupFareRepository.update(groupfaredata.id, updateGroupfareDto);
     }
     async remove(header, uid) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);

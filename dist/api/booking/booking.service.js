@@ -72,29 +72,18 @@ let BookingService = class BookingService {
             bookingId = "KTB" + (parseInt(old_booking_id) + 1);
         }
         const groupData = await this.groupFareRepository.findOneBy({ uid: bookingDto?.FlightInfo?.OfferId });
-        const agentLedger = await this.agentLedgerRepository
-            .createQueryBuilder()
-            .select('SUM(amount)', 'sum')
-            .where('agentId = :agentId', { agentId: agentdata.agentId })
-            .getRawOne();
-        const agentLedgerValue = agentLedger.sum != null ? agentLedger.sum : 0;
-        if (agentLedgerValue <= groupData.NetFare) {
-            throw new common_1.NotAcceptableException("Insufficient Amount. Please Top Up");
-        }
-        else if (agentLedgerValue >= groupData.NetFare) {
-            const details = groupData.Carrier + ' ' + groupData.DepFrom + '-' + groupData.ArrTo + ' Ticket Purchase ' + groupData.NetFare + '. PNR : ' + groupData.PNR + ' .';
-            const generatedUUID = (0, uuid_1.v4)();
-            const AgentLedgerData = {
-                agentId: agentdata.agentId,
-                trxtype: 'ticket',
-                debit: -groupData.NetFare,
-                refId: bookingId,
-                details: details,
-                compnayname: agentdata.company,
-                uid: generatedUUID
-            };
-            await this.agentLedgerRepository.save(AgentLedgerData);
-        }
+        const details = groupData.Carrier + ' ' + groupData.RouteFrom + '-' + groupData.RouteTo + ' Ticket Purchase ' + groupData.NetFare + '. PNR : ' + groupData.PNR + ' .';
+        const generatedUUID = (0, uuid_1.v4)();
+        const AgentLedgerData = {
+            agentId: agentdata.agentId,
+            trxtype: 'ticket',
+            debit: -groupData.NetFare,
+            refId: bookingId,
+            details: details,
+            compnayname: agentdata.company,
+            uid: generatedUUID
+        };
+        await this.agentLedgerRepository.save(AgentLedgerData);
         let Booking_PNR = groupData.PNR;
         const bookingData = {
             agentId: agentId,
