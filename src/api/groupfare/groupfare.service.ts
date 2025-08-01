@@ -22,11 +22,11 @@ export class GroupfareService {
   ){}
   async create(header: any, data: any) {
 
-    // const verifyAdminId = await this.authService.verifyAdminToken(header);
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    // if(!verifyAdminId){
-    //     throw new UnauthorizedException();
-    // }
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
 
     const groupfare = await this.groupFareRepository.find({order: { id: 'DESC' }, take : 1});
 
@@ -317,23 +317,23 @@ export class GroupfareService {
           {
           "MarketingCarrier": Leg.Carrier,
           "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
-          "MarketingFlightNumber": Leg.FlightNumber,
+          "MarketingFlightNumber": Leg.FlightNumber1,
           "OperatingCarrier": await this.airlinesService.getAirlinesName(Leg.Carrier),
-          "OperatingFlightNumber": Leg.FlightNumber,
+          "OperatingFlightNumber": Leg.FlightNumber1,
           "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
-          "DepFrom": Leg.DepartureFrom,
-          "DepAirPort": await this.airportsService.getAirportName(Leg.DepartureFrom),
-          "DepLocation": await this.airportsService.getAirportLocation(Leg.DepartureFrom),
+          "DepFrom": Leg.rDepFrom,
+          "DepAirPort": await this.airportsService.getAirportName(Leg.rDepFrom),
+          "DepLocation": await this.airportsService.getAirportLocation(Leg.rDepFrom),
           "DepDateAdjustment": 0,
-          "DepTime": Leg.DepTime,
-          "ArrTo": Leg.ArrivalTo,
-          "ArrAirPort": await this.airportsService.getAirportName(Leg.ArrivalTo),
-          "ArrLocation": await this.airportsService.getAirportLocation(Leg.ArrivalTo),
+          "DepTime": Leg.rDepTime,
+          "ArrTo": Leg.rArrTo,
+          "ArrAirPort": await this.airportsService.getAirportName(Leg.rArrTo),
+          "ArrLocation": await this.airportsService.getAirportLocation(Leg.rArrTo),
           "ArrDateAdjustment": 0,
-          "ArrTime": Leg.ArrTime,
+          "ArrTime": Leg.rArrTime,
           "OperatedBy": await this.airlinesService.getAirlinesName(Leg.Carrier),
           "StopCount": 0,
-          "Duration": Leg.Duration,
+          "Duration": 0,
           "SegmentCode": {
             "bookingCode": "X",
             "cabinCode": Leg.cabinCode,
@@ -404,23 +404,23 @@ export class GroupfareService {
           {
           "MarketingCarrier": Leg.Carrier,
           "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
-          "MarketingFlightNumber": Leg.FlightNumber,
+          "MarketingFlightNumber": Leg.rFlightNo,
           "OperatingCarrier": Leg.Carrier,
-          "OperatingFlightNumber": Leg.FlightNumber,
+          "OperatingFlightNumber": Leg.rFlightNo,
           "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
-          "DepFrom": Leg.DepartureFrom,
-          "DepAirPort": await this.airportsService.getAirportName(Leg.DepartureFrom),
+          "DepFrom": Leg.rDepFrom,
+          "DepAirPort": await this.airportsService.getAirportName(Leg.rDepFrom),
           "DepLocation": await this.airportsService.getAirportLocation(Leg.DepartureFrom),
           "DepDateAdjustment": 0,
-          "DepTime": Leg.DepTime,
-          "ArrTo": Leg.ArrivalTo,
-          "ArrAirPort": await this.airportsService.getAirportName(Leg.ArrivalTo),
-          "ArrLocation": await this.airportsService.getAirportLocation(Leg.ArrivalTo),
+          "DepTime": Leg.rDepTime,
+          "ArrTo": Leg.rArrTo,
+          "ArrAirPort": await this.airportsService.getAirportName(Leg.rArrTo),
+          "ArrLocation": await this.airportsService.getAirportLocation(Leg.rArrTo),
           "ArrDateAdjustment": 0,
-          "ArrTime": Leg.ArrTime,
+          "ArrTime": Leg.rArrTime,
           "OperatedBy": await this.airlinesService.getAirlinesName(Leg.Carrier),
           "StopCount": 0,
-          "Duration": Leg.Duration,
+          "Duration": 0,
           "SegmentCode": {
             "bookingCode": "X",
             "cabinCode": Leg.cabinCode,
@@ -431,20 +431,20 @@ export class GroupfareService {
           {
             "MarketingCarrier": Leg.Carrier,
             "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
-            "MarketingFlightNumber": Leg.FlightNumber1,
+            "MarketingFlightNumber": Leg.rFlightNo1,
             "OperatingCarrier": Leg.Carrier,
-            "OperatingFlightNumber": Leg.FlightNumber1,
+            "OperatingFlightNumber": Leg.rFlightNo1,
             "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
-            "DepFrom": Leg.DepartureFrom1,
-            "DepAirPort": await this.airportsService.getAirportName(Leg.DepartureFrom1),
-            "DepLocation": await this.airportsService.getAirportLocation(Leg.DepartureFrom1),
+            "DepFrom": Leg.rDepFrom1,
+            "DepAirPort": await this.airportsService.getAirportName(Leg.rDepFrom1),
+            "DepLocation": await this.airportsService.getAirportLocation(Leg.rDepFrom1),
             "DepDateAdjustment": 0,
-            "DepTime": Leg.DepTime1,
-            "ArrTo": Leg.ArrivalTo1,
-            "ArrAirPort": await this.airportsService.getAirportName(Leg.ArrivalTo1),
-            "ArrLocation": await this.airportsService.getAirportLocation(Leg.ArrivalTo1),
+            "DepTime": Leg.rDepTime1,
+            "ArrTo": Leg.rArrTo1,
+            "ArrAirPort": await this.airportsService.getAirportName(Leg.rArrTo1),
+            "ArrLocation": await this.airportsService.getAirportLocation(Leg.rArrTo1),
             "ArrDateAdjustment": 0,
-            "ArrTime": Leg.ArrTime1,
+            "ArrTime": Leg.rArrTime1,
             "OperatedBy": await this.airlinesService.getAirlinesName(Leg.Carrier),
             "StopCount": 0,
             "Duration": 0,
