@@ -13,15 +13,15 @@ export declare class GroupfareService {
     private readonly airportsService;
     constructor(groupFareRepository: Repository<GroupFareModel>, currencyConverterRepository: Repository<CurrencyConverter>, authService: AuthService, airlinesService: AirlinesService, airportsService: AirportsService);
     create(header: any, data: any): Promise<any>;
-    findAllAdmin(header: any): Promise<GroupFareModel[] | (any[] | {
+    findAllAdmin(header: any): Promise<(any[] | {
         OfferId: any;
         System: string;
         TripType: string;
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
-        BaseFare: any;
-        Taxes: any;
+        BaseFare: number;
+        Taxes: number;
         NetFare: number;
         GrossFare: number;
         Comission: number;
@@ -30,9 +30,9 @@ export declare class GroupfareService {
         Refundable: boolean;
         PriceBreakDown: {
             PaxType: string;
-            BaseFare: any;
-            Taxes: any;
-            TotalFare: any;
+            BaseFare: number;
+            Taxes: number;
+            TotalFare: number;
             PaxCount: number;
             Bag: {
                 Airline: any;
@@ -54,8 +54,8 @@ export declare class GroupfareService {
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
-        BaseFare: any;
-        Taxes: any;
+        BaseFare: number;
+        Taxes: number;
         NetFare: number;
         GrossFare: number;
         Comission: number;
@@ -64,9 +64,9 @@ export declare class GroupfareService {
         Refundable: boolean;
         PriceBreakDown: {
             PaxType: string;
-            BaseFare: any;
-            Taxes: any;
-            TotalFare: any;
+            BaseFare: number;
+            Taxes: number;
+            TotalFare: number;
             PaxCount: number;
             Bag: {
                 Airline: any;
@@ -88,8 +88,8 @@ export declare class GroupfareService {
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
-        BaseFare: any;
-        Taxes: any;
+        BaseFare: number;
+        Taxes: number;
         NetFare: number;
         GrossFare: number;
         Comission: number;
@@ -98,9 +98,9 @@ export declare class GroupfareService {
         Refundable: boolean;
         PriceBreakDown: {
             PaxType: string;
-            BaseFare: any;
-            Taxes: any;
-            TotalFare: any;
+            BaseFare: number;
+            Taxes: number;
+            TotalFare: number;
             PaxCount: number;
             Bag: {
                 Airline: any;
@@ -124,8 +124,8 @@ export declare class GroupfareService {
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
-        BaseFare: any;
-        Taxes: any;
+        BaseFare: number;
+        Taxes: number;
         NetFare: number;
         GrossFare: number;
         Comission: number;
@@ -134,9 +134,9 @@ export declare class GroupfareService {
         Refundable: boolean;
         PriceBreakDown: {
             PaxType: string;
-            BaseFare: any;
-            Taxes: any;
-            TotalFare: any;
+            BaseFare: number;
+            Taxes: number;
+            TotalFare: number;
             PaxCount: number;
             Bag: {
                 Airline: any;

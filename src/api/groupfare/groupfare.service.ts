@@ -47,11 +47,21 @@ export class GroupfareService {
       const createGroupfareDto = data?.[0];
       createGroupfareDto['GroupId'] = groupId;
       createGroupfareDto['TripType'] = 'R';
+      createGroupfareDto['rSegment'] = data?.[1].segment;
+      createGroupfareDto['rDate'] = data?.[1].DepDate;
+      createGroupfareDto['rDepFrom'] = data?.[1].DepartureFrom;
+      createGroupfareDto['rArrTo'] = data?.[1].ArrivalTo;
+      createGroupfareDto['rDepTime'] = data?.[1].DepTime;
+      createGroupfareDto['rArrTime'] = data?.[1].ArrTime;
+      createGroupfareDto['rFlightNo'] = data?.[1].FlightNumber;
+      createGroupfareDto['rDepFrom1'] = data?.[1].DepartureFrom1;
+      createGroupfareDto['rArrTo1'] = data?.[1].ArrivalTo;
+      createGroupfareDto['rDepTime1'] = data?.[1].DepTime1;
+      createGroupfareDto['rArrTime1'] = data?.[1].ArrTime1;
+      createGroupfareDto['rFlightNo1'] = data?.[1].FlightNumber1;
       this.groupFareRepository.save(createGroupfareDto);
 
-      const createGroupfareDto1 = data?.[1];
-      createGroupfareDto1['GroupId'] = groupId;
-      return  this.groupFareRepository.save(createGroupfareDto1);
+      return  this.groupFareRepository.save(createGroupfareDto);
     }else{
 
     }
@@ -59,21 +69,20 @@ export class GroupfareService {
 
   async findAllAdmin(header: any) {
 
-    // const verifyAdminId = await this.authService.verifyAdminToken(header);
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    // if(!verifyAdminId){
-    //     throw new UnauthorizedException();
-    // }
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
 
     const groupdata = await this.groupFareRepository.find();
-
 
     let agent: any;
     if(groupdata.length > 0){
       const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
       return await Promise.all(flightParserPromises);
     }else{
-      return groupdata;
+      return [];
     }
   }
 
@@ -125,163 +134,138 @@ export class GroupfareService {
 
   async flightParser(agent: AgentModel, resultData: any){
 
-    if(resultData?.length === 1){
-      let Segments = [];
-      let Leg1 = resultData[0];
-      let Duration: number=0;
-
-      const PriceBreakdown = [
+    let Leg = resultData;
+    const conversionData = await this.currencyConverterRepository.findOne({where: {alternate: agent?.currency}});
+    const converstionrate = conversionData?.exchange_rate || 1;
+    const NetFareConv = Leg.NetFare * converstionrate;
+    const PriceBreakdown = [
         {
           "PaxType": "ADT",
-          "BaseFare": Leg1.BaseFare,
-          "Taxes": Leg1.Taxes,
-          "TotalFare": Leg1.NetFare,
+          "BaseFare": Leg.NetFare * converstionrate,
+          "Taxes": 0,
+          "TotalFare": Leg.NetFare * converstionrate,
           "PaxCount": 1,
           "Bag": [
             {
-              "Airline": Leg1.Carrier,
-              "Allowance": Leg1.Baggage
+              "Airline": Leg.Carrier,
+              "Allowance": Leg.Baggage
             }
           ]
         }
       ];
+    if(resultData?.TripType === 'O'){
+      let Segments = [];
 
-      let Class : string;
-      switch (Leg1.Cabinclass) {
-        case 'P':
-          Class = "First";
-          break;
-        case 'J':
-          Class = "Premium Business";
-          break;
-        case 'C':
-          Class = "Business";
-          break;
-        case 'S':
-          Class = "Premium Economy";
-          break;
-        case 'Y':
-          Class = "Economy";
-          break;
-      }
-
-      if(Leg1?.segment === 1){
+      if(Leg?.segment === 1){
 
         Segments = [
           {
-          "MarketingCarrier": Leg1.Carrier,
-          "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg1.Carrier),
-          "MarketingFlightNumber": Leg1.FlightNumber,
-          "OperatingCarrier": await this.airlinesService.getAirlinesName(Leg1.Carrier),
-          "OperatingFlightNumber": Leg1.FlightNumber,
-          "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg1.Carrier),
-          "DepFrom": Leg1.DepartureFrom,
-          "DepAirPort": await this.airportsService.getAirportName(Leg1.DepartureFrom),
-          "DepLocation": await this.airportsService.getAirportLocation(Leg1.DepartureFrom),
+          "MarketingCarrier": Leg.Carrier,
+          "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "MarketingFlightNumber": Leg.FlightNumber,
+          "OperatingCarrier": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "OperatingFlightNumber": Leg.FlightNumber,
+          "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "DepFrom": Leg.DepartureFrom,
+          "DepAirPort": await this.airportsService.getAirportName(Leg.DepartureFrom),
+          "DepLocation": await this.airportsService.getAirportLocation(Leg.DepartureFrom),
           "DepDateAdjustment": 0,
-          "DepTime": Leg1.DepTime,
-          "ArrTo": Leg1.ArrivalTo,
-          "ArrAirPort": await this.airportsService.getAirportName(Leg1.ArrivalTo),
-          "ArrLocation": await this.airportsService.getAirportLocation(Leg1.ArrivalTo),
+          "DepTime": Leg.DepTime,
+          "ArrTo": Leg.ArrivalTo,
+          "ArrAirPort": await this.airportsService.getAirportName(Leg.ArrivalTo),
+          "ArrLocation": await this.airportsService.getAirportLocation(Leg.ArrivalTo),
           "ArrDateAdjustment": 0,
-          "ArrTime": Leg1.ArrTime,
-          "OperatedBy": await this.airlinesService.getAirlinesName(Leg1.Carrier),
+          "ArrTime": Leg.ArrTime,
+          "OperatedBy": await this.airlinesService.getAirlinesName(Leg.Carrier),
           "StopCount": 0,
-          "Duration": Leg1.Duration,
+          "Duration": Leg.Duration,
           "SegmentCode": {
             "bookingCode": "X",
-            "cabinCode": Leg1.cabinCode,
-            "mealCode": Leg1.mealCode,
-            "seatsAvailable": Leg1.seatsAvailable
+            "cabinCode": Leg.cabinCode,
+            "mealCode": Leg.mealCode,
+            "seatsAvailable": Leg.seatsAvailable
           }
           }
         ];
-        Duration = 0;
-      }else if((Leg1?.segment === 2)){
+      }else if((Leg?.segment === 2)){
         Segments = [
           {
-          "MarketingCarrier": Leg1.Carrier,
-          "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg1.Carrier),
-          "MarketingFlightNumber": Leg1.FlightNumber,
-          "OperatingCarrier": Leg1.Carrier,
-          "OperatingFlightNumber": Leg1.FlightNumber,
-          "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg1.Carrier),
-          "DepFrom": Leg1.DepartureFrom,
-          "DepAirPort": await this.airportsService.getAirportName(Leg1.DepartureFrom),
-          "DepLocation": await this.airportsService.getAirportLocation(Leg1.DepartureFrom),
+          "MarketingCarrier": Leg.Carrier,
+          "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "MarketingFlightNumber": Leg.FlightNumber,
+          "OperatingCarrier": Leg.Carrier,
+          "OperatingFlightNumber": Leg.FlightNumber,
+          "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "DepFrom": Leg.DepartureFrom,
+          "DepAirPort": await this.airportsService.getAirportName(Leg.DepartureFrom),
+          "DepLocation": await this.airportsService.getAirportLocation(Leg.DepartureFrom),
           "DepDateAdjustment": 0,
-          "DepTime": Leg1.DepTime,
-          "ArrTo": Leg1.ArrivalTo,
-          "ArrAirPort": await this.airportsService.getAirportName(Leg1.ArrivalTo),
-          "ArrLocation": await this.airportsService.getAirportLocation(Leg1.ArrivalTo),
+          "DepTime": Leg.DepTime,
+          "ArrTo": Leg.ArrivalTo,
+          "ArrAirPort": await this.airportsService.getAirportName(Leg.ArrivalTo),
+          "ArrLocation": await this.airportsService.getAirportLocation(Leg.ArrivalTo),
           "ArrDateAdjustment": 0,
-          "ArrTime": Leg1.ArrTime,
-          "OperatedBy": await this.airlinesService.getAirlinesName(Leg1.Carrier),
+          "ArrTime": Leg.ArrTime,
+          "OperatedBy": await this.airlinesService.getAirlinesName(Leg.Carrier),
           "StopCount": 0,
-          "Duration": Leg1.Duration,
+          "Duration": Leg.Duration,
           "SegmentCode": {
             "bookingCode": "X",
-            "cabinCode": Leg1.cabinCode,
-            "mealCode": Leg1.mealCode,
-            "seatsAvailable": Leg1.seatsAvailable
+            "cabinCode": Leg.cabinCode,
+            "mealCode": Leg.mealCode,
+            "seatsAvailable": Leg.seatsAvailable
           }
           },
           {
-            "MarketingCarrier": Leg1.Carrier,
-            "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg1.Carrier),
-            "MarketingFlightNumber": Leg1.FlightNumber1,
-            "OperatingCarrier": Leg1.Carrier,
-            "OperatingFlightNumber": Leg1.FlightNumber1,
-            "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg1.Carrier),
-            "DepFrom": Leg1.DepartureFrom1,
-            "DepAirPort": await this.airportsService.getAirportName(Leg1.DepartureFrom1),
-            "DepLocation": await this.airportsService.getAirportLocation(Leg1.DepartureFrom1),
+            "MarketingCarrier": Leg.Carrier,
+            "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+            "MarketingFlightNumber": Leg.FlightNumber1,
+            "OperatingCarrier": Leg.Carrier,
+            "OperatingFlightNumber": Leg.FlightNumber1,
+            "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+            "DepFrom": Leg.DepartureFrom1,
+            "DepAirPort": await this.airportsService.getAirportName(Leg.DepartureFrom1),
+            "DepLocation": await this.airportsService.getAirportLocation(Leg.DepartureFrom1),
             "DepDateAdjustment": 0,
-            "DepTime": Leg1.DepTime1,
-            "ArrTo": Leg1.ArrivalTo1,
-            "ArrAirPort": await this.airportsService.getAirportName(Leg1.ArrivalTo1),
-            "ArrLocation": await this.airportsService.getAirportLocation(Leg1.ArrivalTo1),
+            "DepTime": Leg.DepTime1,
+            "ArrTo": Leg.ArrivalTo1,
+            "ArrAirPort": await this.airportsService.getAirportName(Leg.ArrivalTo1),
+            "ArrLocation": await this.airportsService.getAirportLocation(Leg.ArrivalTo1),
             "ArrDateAdjustment": 0,
-            "ArrTime": Leg1.ArrTime1,
-            "OperatedBy": await this.airlinesService.getAirlinesName(Leg1.Carrier),
+            "ArrTime": Leg.ArrTime1,
+            "OperatedBy": await this.airlinesService.getAirlinesName(Leg.Carrier),
             "StopCount": 0,
-            "Duration": Leg1.Duration1,
+            "Duration": Leg.Duration1,
             "SegmentCode": {
               "bookingCode": "X",
-              "cabinCode": Leg1.cabinCode,
-              "mealCode": Leg1.mealCode,
-              "seatsAvailable": Leg1.seatsAvailable
+              "cabinCode": Leg.cabinCode,
+              "mealCode": Leg.mealCode,
+              "seatsAvailable": Leg.seatsAvailable
             }
             }
         ];
-
-        Duration = 0;
       }
-
       const AllLegs = [
         {
-          "DepDate": Leg1.DepDate,
-          "DepFrom": Leg1.DepFrom,
-          "ArrTo": Leg1.ArrTo,
-          "Duration": Duration,
+          "DepDate": Leg.DepDate,
+          "DepFrom": Leg.DepFrom,
+          "ArrTo": Leg.ArrTo,
+          "Duration": 0,
           "Segments": Segments
         }
       ];
 
-      const conversionData = await this.currencyConverterRepository.findOne({where: {alternate: agent?.currency}});
-      const converstionrate = conversionData?.exchange_rate || 1;
-
       const Basic = {
-        "OfferId": Leg1.uid,
+        "OfferId": Leg.uid,
         "System": "GroupFare",
         "TripType": "Oneway",
-        "Carrier": Leg1.Carrier,
-        "CarrierName": await this.airlinesService.getAirlinesName(Leg1.Carrier),
-        "Cabinclass": Class,
-        "BaseFare": Leg1.BaseFare,
-        "Taxes": Leg1.Taxes,
-        "NetFare": Leg1.NetFare * converstionrate,
-        "GrossFare": Leg1.NetFare * converstionrate,
+        "Carrier": Leg.Carrier,
+        "CarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+        "Cabinclass": 'Economy',
+        "BaseFare": NetFareConv,
+        "Taxes": 0,
+        "NetFare": NetFareConv,
+        "GrossFare": NetFareConv,
         "Comission": 0,
         "Currency": agent?.currency || 'INR',
         "TimeLimit": '',
@@ -290,260 +274,215 @@ export class GroupfareService {
         "AllLegsInfo": AllLegs
       };
       return Basic;
-    }else if(resultData?.length === 2){
+    }else if(resultData?.TripType === 'R'){
       let Segments = [];
       let Segments1 = [];
-      let Duration: number=0;
 
-      let Leg1 = resultData[0];
-      let Leg2 = resultData[1];
-
-      const PriceBreakdown = [
-        {
-          "PaxType": "ADT",
-          "BaseFare": Leg1.BaseFare,
-          "Taxes": Leg1.Taxes,
-          "TotalFare": Leg1.NetFare,
-          "PaxCount": 1,
-          "Bag": [
-            {
-              "Airline": Leg1.Carrier,
-              "Allowance": Leg1.Baggage
-            }
-          ]
-        }
-      ];
-
-      let Class : string;
-      switch (Leg1.Cabinclass) {
-        case 'P':
-          Class = "First";
-          break;
-        case 'J':
-          Class = "Premium Business";
-          break;
-        case 'C':
-          Class = "Business";
-          break;
-        case 'S':
-          Class = "Premium Economy";
-          break;
-        case 'Y':
-          Class = "Economy";
-          break;
-      }
-
-      if(Leg2?.segment === 1){
+      if(Leg?.segment === 1){
 
         Segments = [
           {
-          "MarketingCarrier": Leg1.Carrier,
-          "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg1.Carrier),
-          "MarketingFlightNumber": Leg1.FlightNumber,
-          "OperatingCarrier": await this.airlinesService.getAirlinesName(Leg1.Carrier),
-          "OperatingFlightNumber": Leg1.FlightNumber,
-          "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg1.Carrier),
-          "DepFrom": Leg1.DepartureFrom,
-          "DepAirPort": await this.airportsService.getAirportName(Leg1.DepartureFrom),
-          "DepLocation": await this.airportsService.getAirportLocation(Leg1.DepartureFrom),
+          "MarketingCarrier": Leg.Carrier,
+          "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "MarketingFlightNumber": Leg.FlightNumber,
+          "OperatingCarrier": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "OperatingFlightNumber": Leg.FlightNumber,
+          "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "DepFrom": Leg.DepartureFrom,
+          "DepAirPort": await this.airportsService.getAirportName(Leg.DepartureFrom),
+          "DepLocation": await this.airportsService.getAirportLocation(Leg.DepartureFrom),
           "DepDateAdjustment": 0,
-          "DepTime": Leg1.DepTime,
-          "ArrTo": Leg1.ArrivalTo,
-          "ArrAirPort": await this.airportsService.getAirportName(Leg1.ArrivalTo),
-          "ArrLocation": await this.airportsService.getAirportLocation(Leg1.ArrivalTo),
+          "DepTime": Leg.DepTime,
+          "ArrTo": Leg.ArrivalTo,
+          "ArrAirPort": await this.airportsService.getAirportName(Leg.ArrivalTo),
+          "ArrLocation": await this.airportsService.getAirportLocation(Leg.ArrivalTo),
           "ArrDateAdjustment": 0,
-          "ArrTime": Leg1.ArrTime,
-          "OperatedBy": await this.airlinesService.getAirlinesName(Leg1.Carrier),
+          "ArrTime": Leg.ArrTime,
+          "OperatedBy": await this.airlinesService.getAirlinesName(Leg.Carrier),
           "StopCount": 0,
           "Duration": 0,
           "SegmentCode": {
             "bookingCode": "X",
-            "cabinCode": Leg1.cabinCode,
-            "mealCode": Leg1.mealCode,
-            "seatsAvailable": Leg1.seatsAvailable
+            "cabinCode": Leg.cabinCode,
+            "mealCode": Leg.mealCode,
+            "seatsAvailable": Leg.seatsAvailable
           }
           }
         ];
 
         Segments1 = [
           {
-          "MarketingCarrier": Leg2.Carrier,
-          "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg2.Carrier),
-          "MarketingFlightNumber": Leg2.FlightNumber,
-          "OperatingCarrier": await this.airlinesService.getAirlinesName(Leg2.Carrier),
-          "OperatingFlightNumber": Leg2.FlightNumber,
-          "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg2.Carrier),
-          "DepFrom": Leg2.DepartureFrom,
-          "DepAirPort": await this.airportsService.getAirportName(Leg2.DepartureFrom),
-          "DepLocation": await this.airportsService.getAirportLocation(Leg2.DepartureFrom),
+          "MarketingCarrier": Leg.Carrier,
+          "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "MarketingFlightNumber": Leg.FlightNumber,
+          "OperatingCarrier": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "OperatingFlightNumber": Leg.FlightNumber,
+          "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "DepFrom": Leg.DepartureFrom,
+          "DepAirPort": await this.airportsService.getAirportName(Leg.DepartureFrom),
+          "DepLocation": await this.airportsService.getAirportLocation(Leg.DepartureFrom),
           "DepDateAdjustment": 0,
-          "DepTime": Leg2.DepTime,
-          "ArrTo": Leg2.ArrivalTo,
-          "ArrAirPort": await this.airportsService.getAirportName(Leg2.ArrivalTo),
-          "ArrLocation": await this.airportsService.getAirportLocation(Leg2.ArrivalTo),
+          "DepTime": Leg.DepTime,
+          "ArrTo": Leg.ArrivalTo,
+          "ArrAirPort": await this.airportsService.getAirportName(Leg.ArrivalTo),
+          "ArrLocation": await this.airportsService.getAirportLocation(Leg.ArrivalTo),
           "ArrDateAdjustment": 0,
-          "ArrTime": Leg2.ArrTime,
-          "OperatedBy": await this.airlinesService.getAirlinesName(Leg2.Carrier),
+          "ArrTime": Leg.ArrTime,
+          "OperatedBy": await this.airlinesService.getAirlinesName(Leg.Carrier),
           "StopCount": 0,
-          "Duration": Leg2.Duration,
+          "Duration": Leg.Duration,
           "SegmentCode": {
             "bookingCode": "X",
-            "cabinCode": Leg2.cabinCode,
-            "mealCode": Leg2.mealCode,
-            "seatsAvailable": Leg2.seatsAvailable
+            "cabinCode": Leg.cabinCode,
+            "mealCode": Leg.mealCode,
+            "seatsAvailable": Leg.seatsAvailable
           }
           }
         ];
-        Duration = 0;
-      }else if((Leg2?.segment === 2)){
+      }else if((Leg?.segment === 2)){
         Segments = [
           {
-          "MarketingCarrier": Leg2.Carrier,
-          "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg2.Carrier),
-          "MarketingFlightNumber": Leg2.FlightNumber,
-          "OperatingCarrier": Leg2.Carrier,
-          "OperatingFlightNumber": Leg2.FlightNumber,
-          "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg2.Carrier),
-          "DepFrom": Leg1.DepartureFrom,
-          "DepAirPort": await this.airportsService.getAirportName(Leg2.DepartureFrom),
-          "DepLocation": await this.airportsService.getAirportLocation(Leg2.DepartureFrom),
+          "MarketingCarrier": Leg.Carrier,
+          "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "MarketingFlightNumber": Leg.FlightNumber,
+          "OperatingCarrier": Leg.Carrier,
+          "OperatingFlightNumber": Leg.FlightNumber,
+          "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "DepFrom": Leg.DepartureFrom,
+          "DepAirPort": await this.airportsService.getAirportName(Leg.DepartureFrom),
+          "DepLocation": await this.airportsService.getAirportLocation(Leg.DepartureFrom),
           "DepDateAdjustment": 0,
-          "DepTime": Leg2.DepTime,
-          "ArrTo": Leg2.ArrivalTo,
-          "ArrAirPort": await this.airportsService.getAirportName(Leg2.ArrivalTo),
-          "ArrLocation": await this.airportsService.getAirportLocation(Leg2.ArrivalTo),
+          "DepTime": Leg.DepTime,
+          "ArrTo": Leg.ArrivalTo,
+          "ArrAirPort": await this.airportsService.getAirportName(Leg.ArrivalTo),
+          "ArrLocation": await this.airportsService.getAirportLocation(Leg.ArrivalTo),
           "ArrDateAdjustment": 0,
-          "ArrTime": Leg2.ArrTime,
-          "OperatedBy": await this.airlinesService.getAirlinesName(Leg2.Carrier),
+          "ArrTime": Leg.ArrTime,
+          "OperatedBy": await this.airlinesService.getAirlinesName(Leg.Carrier),
           "StopCount": 0,
           "Duration": 0,
           "SegmentCode": {
             "bookingCode": "X",
-            "cabinCode": Leg2.cabinCode,
-            "mealCode": Leg2.mealCode,
-            "seatsAvailable": Leg2.seatsAvailable
+            "cabinCode": Leg.cabinCode,
+            "mealCode": Leg.mealCode,
+            "seatsAvailable": Leg.seatsAvailable
           }
           },
           {
-            "MarketingCarrier": Leg2.Carrier,
-            "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg2.Carrier),
-            "MarketingFlightNumber": Leg2.FlightNumber1,
-            "OperatingCarrier": Leg2.Carrier,
-            "OperatingFlightNumber": Leg2.FlightNumber1,
-            "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg2.Carrier),
-            "DepFrom": Leg2.DepartureFrom1,
-            "DepAirPort": await this.airportsService.getAirportName(Leg2.DepartureFrom1),
-            "DepLocation": await this.airportsService.getAirportLocation(Leg2.DepartureFrom1),
+            "MarketingCarrier": Leg.Carrier,
+            "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+            "MarketingFlightNumber": Leg.FlightNumber1,
+            "OperatingCarrier": Leg.Carrier,
+            "OperatingFlightNumber": Leg.FlightNumber1,
+            "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+            "DepFrom": Leg.DepartureFrom1,
+            "DepAirPort": await this.airportsService.getAirportName(Leg.DepartureFrom1),
+            "DepLocation": await this.airportsService.getAirportLocation(Leg.DepartureFrom1),
             "DepDateAdjustment": 0,
-            "DepTime": Leg2.DepTime1,
-            "ArrTo": Leg2.ArrivalTo1,
-            "ArrAirPort": await this.airportsService.getAirportName(Leg2.ArrivalTo1),
-            "ArrLocation": await this.airportsService.getAirportLocation(Leg2.ArrivalTo1),
+            "DepTime": Leg.DepTime1,
+            "ArrTo": Leg.ArrivalTo1,
+            "ArrAirPort": await this.airportsService.getAirportName(Leg.ArrivalTo1),
+            "ArrLocation": await this.airportsService.getAirportLocation(Leg.ArrivalTo1),
             "ArrDateAdjustment": 0,
-            "ArrTime": Leg2.ArrTime1,
-            "OperatedBy": await this.airlinesService.getAirlinesName(Leg2.Carrier),
+            "ArrTime": Leg.ArrTime1,
+            "OperatedBy": await this.airlinesService.getAirlinesName(Leg.Carrier),
             "StopCount": 0,
             "Duration": 0,
             "SegmentCode": {
               "bookingCode": "X",
-              "cabinCode": Leg2.cabinCode,
-              "mealCode": Leg2.mealCode,
-              "seatsAvailable": Leg2.seatsAvailable
+              "cabinCode": Leg.cabinCode,
+              "mealCode": Leg.mealCode,
+              "seatsAvailable": Leg.seatsAvailable
             }
           }
         ];
 
         Segments1 = [
           {
-          "MarketingCarrier": Leg2.Carrier,
-          "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg2.Carrier),
-          "MarketingFlightNumber": Leg2.FlightNumber,
-          "OperatingCarrier": Leg2.Carrier,
-          "OperatingFlightNumber": Leg2.FlightNumber,
-          "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg2.Carrier),
-          "DepFrom": Leg2.DepartureFrom,
-          "DepAirPort": await this.airportsService.getAirportName(Leg2.DepartureFrom),
-          "DepLocation": await this.airportsService.getAirportLocation(Leg2.DepartureFrom),
+          "MarketingCarrier": Leg.Carrier,
+          "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "MarketingFlightNumber": Leg.FlightNumber,
+          "OperatingCarrier": Leg.Carrier,
+          "OperatingFlightNumber": Leg.FlightNumber,
+          "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+          "DepFrom": Leg.DepartureFrom,
+          "DepAirPort": await this.airportsService.getAirportName(Leg.DepartureFrom),
+          "DepLocation": await this.airportsService.getAirportLocation(Leg.DepartureFrom),
           "DepDateAdjustment": 0,
-          "DepTime": Leg2.DepTime,
-          "ArrTo": Leg2.ArrivalTo,
-          "ArrAirPort": await this.airportsService.getAirportName(Leg2.ArrivalTo),
-          "ArrLocation": await this.airportsService.getAirportLocation(Leg2.ArrivalTo),
+          "DepTime": Leg.DepTime,
+          "ArrTo": Leg.ArrivalTo,
+          "ArrAirPort": await this.airportsService.getAirportName(Leg.ArrivalTo),
+          "ArrLocation": await this.airportsService.getAirportLocation(Leg.ArrivalTo),
           "ArrDateAdjustment": 0,
-          "ArrTime": Leg2.ArrTime,
-          "OperatedBy": await this.airlinesService.getAirlinesName(Leg2.Carrier),
+          "ArrTime": Leg.ArrTime,
+          "OperatedBy": await this.airlinesService.getAirlinesName(Leg.Carrier),
           "StopCount": 0,
-          "Duration": Leg2.Duration,
+          "Duration": Leg.Duration,
           "SegmentCode": {
             "bookingCode": "X",
-            "cabinCode": Leg2.cabinCode,
-            "mealCode": Leg2.mealCode,
-            "seatsAvailable": Leg2.seatsAvailable
+            "cabinCode": Leg.cabinCode,
+            "mealCode": Leg.mealCode,
+            "seatsAvailable": Leg.seatsAvailable
           }
           },
           {
-            "MarketingCarrier": Leg2.Carrier,
-            "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg2.Carrier),
-            "MarketingFlightNumber": Leg2.FlightNumber1,
-            "OperatingCarrier": Leg2.Carrier,
-            "OperatingFlightNumber": Leg2.FlightNumber1,
-            "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg2.Carrier),
-            "DepFrom": Leg2.DepartureFrom1,
-            "DepAirPort": await this.airportsService.getAirportName(Leg2.DepartureFrom1),
-            "DepLocation": await this.airportsService.getAirportLocation(Leg2.DepartureFrom1),
+            "MarketingCarrier": Leg.Carrier,
+            "MarketingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+            "MarketingFlightNumber": Leg.FlightNumber1,
+            "OperatingCarrier": Leg.Carrier,
+            "OperatingFlightNumber": Leg.FlightNumber1,
+            "OperatingCarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+            "DepFrom": Leg.DepartureFrom1,
+            "DepAirPort": await this.airportsService.getAirportName(Leg.DepartureFrom1),
+            "DepLocation": await this.airportsService.getAirportLocation(Leg.DepartureFrom1),
             "DepDateAdjustment": 0,
-            "DepTime": Leg2.DepTime1,
-            "ArrTo": Leg2.ArrivalTo1,
-            "ArrAirPort": await this.airportsService.getAirportName(Leg2.ArrivalTo1),
-            "ArrLocation": await this.airportsService.getAirportLocation(Leg2.ArrivalTo1),
+            "DepTime": Leg.DepTime1,
+            "ArrTo": Leg.ArrivalTo1,
+            "ArrAirPort": await this.airportsService.getAirportName(Leg.ArrivalTo1),
+            "ArrLocation": await this.airportsService.getAirportLocation(Leg.ArrivalTo1),
             "ArrDateAdjustment": 0,
-            "ArrTime": Leg2.ArrTime1,
-            "OperatedBy": await this.airlinesService.getAirlinesName(Leg2.Carrier),
+            "ArrTime": Leg.ArrTime1,
+            "OperatedBy": await this.airlinesService.getAirlinesName(Leg.Carrier),
             "StopCount": 0,
             "Duration": 0,
             "SegmentCode": {
               "bookingCode": "X",
-              "cabinCode": Leg2.cabinCode,
-              "mealCode": Leg2.mealCode,
-              "seatsAvailable": Leg2.seatsAvailable
+              "cabinCode": Leg.cabinCode,
+              "mealCode": Leg.mealCode,
+              "seatsAvailable": Leg.seatsAvailable
             }
           }
         ];
-
-        Duration = 0;
       }
 
       const AllLegs = [
         {
-          "DepDate": Leg1.DepDate,
-          "DepFrom": Leg1.DepFrom,
-          "ArrTo": Leg1.ArrTo,
-          "Duration": Duration,
+          "DepDate": Leg.DepDate,
+          "DepFrom": Leg.RouteFrom,
+          "ArrTo": Leg.RouteTo,
+          "Duration": 0,
           "Segments": Segments
         },
         {
-          "DepDate": Leg2.DepDate,
-          "DepFrom": Leg2.DepFrom,
-          "ArrTo": Leg2.ArrTo,
-          "Duration": Duration,
+          "DepDate": Leg.rDepDate,
+          "DepFrom": Leg.RouteTo,
+          "ArrTo": Leg.RouteFrom,
+          "Duration": 0,
           "Segments": Segments1
         }
       ];
 
-      const conversionData = await this.currencyConverterRepository.findOne({where: {alternate: agent?.currency}});
-      const converstionrate = conversionData?.exchange_rate || 1;
-
       const Basic = {
-        "OfferId": Leg1.uid,
+        "OfferId": Leg.uid,
         "System": "GroupFare",
         "TripType": "Oneway",
-        "Carrier": Leg1.Carrier,
-        "CarrierName": await this.airlinesService.getAirlinesName(Leg1.Carrier),
-        "Cabinclass": Class,
-        "BaseFare": Leg1.BaseFare,
-        "Taxes": Leg1.Taxes,
-        "NetFare": Leg1.NetFare * converstionrate,
-        "GrossFare": Leg1.NetFare * converstionrate,
+        "Carrier": Leg.Carrier,
+        "CarrierName": await this.airlinesService.getAirlinesName(Leg.Carrier),
+        "Cabinclass": 'Economy',
+        "BaseFare": NetFareConv,
+        "Taxes": 0,
+        "NetFare": NetFareConv,
+        "GrossFare": NetFareConv,
         "Comission": 0,
         "Currency": agent?.currency || 'INR',
         "TimeLimit": '',

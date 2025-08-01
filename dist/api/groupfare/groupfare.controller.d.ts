@@ -4,15 +4,15 @@ export declare class GroupfareController {
     private readonly groupfareService;
     constructor(groupfareService: GroupfareService);
     create(header: Headers, groupFare: GroupFareDto): Promise<any>;
-    findAllAdmin(header: Headers): Promise<GroupFareModel[] | (any[] | {
+    findAllAdmin(header: Headers): Promise<(any[] | {
         OfferId: any;
         System: string;
         TripType: string;
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
-        BaseFare: any;
-        Taxes: any;
+        BaseFare: number;
+        Taxes: number;
         NetFare: number;
         GrossFare: number;
         Comission: number;
@@ -21,9 +21,9 @@ export declare class GroupfareController {
         Refundable: boolean;
         PriceBreakDown: {
             PaxType: string;
-            BaseFare: any;
-            Taxes: any;
-            TotalFare: any;
+            BaseFare: number;
+            Taxes: number;
+            TotalFare: number;
             PaxCount: number;
             Bag: {
                 Airline: any;
@@ -45,8 +45,8 @@ export declare class GroupfareController {
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
-        BaseFare: any;
-        Taxes: any;
+        BaseFare: number;
+        Taxes: number;
         NetFare: number;
         GrossFare: number;
         Comission: number;
@@ -55,9 +55,9 @@ export declare class GroupfareController {
         Refundable: boolean;
         PriceBreakDown: {
             PaxType: string;
-            BaseFare: any;
-            Taxes: any;
-            TotalFare: any;
+            BaseFare: number;
+            Taxes: number;
+            TotalFare: number;
             PaxCount: number;
             Bag: {
                 Airline: any;
