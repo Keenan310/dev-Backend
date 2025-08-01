@@ -22,11 +22,11 @@ export class GroupfareService {
   ){}
   async create(header: any, data: any) {
 
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
+    // const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
+    // if(!verifyAdminId){
+    //     throw new UnauthorizedException();
+    // }
 
     const groupfare = await this.groupFareRepository.find({order: { id: 'DESC' }, take : 1});
 
@@ -42,11 +42,15 @@ export class GroupfareService {
       const createGroupfareDto = data?.[0];
       createGroupfareDto['GroupId'] = groupId;
       createGroupfareDto['TripType'] = 'O';
+      createGroupfareDto['RouteFrom'] = createGroupfareDto.DepFrom;
+      createGroupfareDto['RouteTo'] = createGroupfareDto.ArrTo;
       return  this.groupFareRepository.save(createGroupfareDto);
-    }else if(data?.length == 2){
+    }else if(data?.length === 2){
       const createGroupfareDto = data?.[0];
       createGroupfareDto['GroupId'] = groupId;
       createGroupfareDto['TripType'] = 'R';
+      createGroupfareDto['RouteFrom'] = createGroupfareDto.DepFrom;
+      createGroupfareDto['RouteTo'] = createGroupfareDto.ArrTo;
       createGroupfareDto['rSegment'] = data?.[1].segment;
       createGroupfareDto['rDate'] = data?.[1].DepDate;
       createGroupfareDto['rDepFrom'] = data?.[1].DepartureFrom;
@@ -59,7 +63,6 @@ export class GroupfareService {
       createGroupfareDto['rDepTime1'] = data?.[1].DepTime1;
       createGroupfareDto['rArrTime1'] = data?.[1].ArrTime1;
       createGroupfareDto['rFlightNo1'] = data?.[1].FlightNumber1;
-      this.groupFareRepository.save(createGroupfareDto);
 
       return  this.groupFareRepository.save(createGroupfareDto);
     }else{
