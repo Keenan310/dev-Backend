@@ -35,8 +35,19 @@ let ReportService = class ReportService {
         this.authService = authService;
         this.dataSource = dataSource;
     }
-    async addAdminExpsense(header, adminExpenseModel) {
+    async addAdminExpense(header, adminExpenseModel) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
         return this.adminExpenseRepository.save(adminExpenseModel);
+    }
+    async editAdminExpense(header, id, UpdateAdminExpenseDto) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        return this.adminExpenseRepository.update(+id, UpdateAdminExpenseDto);
     }
     async addAdminLedger(header, adminLedgerModel) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);

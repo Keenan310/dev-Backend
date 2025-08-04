@@ -16,7 +16,7 @@ export class MailService {
 
     this.transporter = nodemailer.createTransport({
       host: `${process.env.EMAIL_HOST}`,
-      port: 587,
+      port: 465,
       secure: true,
       auth: {
         user: `${process.env.EMAIL_USERNAME}`,
@@ -51,7 +51,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
       subject: "OTP",
       html: bodyEmail,
@@ -91,7 +91,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: email,
       subject: "Login OTP",
       html: bodyEmail,
@@ -128,7 +128,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
       subject: "Pasword Recovery",
       html: bodyEmail,
@@ -166,7 +166,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
       subject: "Reset Pasword - as Request",
       html: bodyEmail,
@@ -205,7 +205,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
       subject: "Sign Up - Confimation",
       html: bodyEmail
@@ -244,7 +244,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
       subject: "Sign Up - Confimation",
       html: bodyEmail
@@ -342,7 +342,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
       subject: "Deposit Request",
       html: bodyEmail
@@ -383,7 +383,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
       subject: "Deposit Request",
       html: bodyEmail,
@@ -432,7 +432,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
       subject: "Desposit Confimation",
       html: bodyEmail,
@@ -474,7 +474,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email, 
       subject: "Deposit Bonus",
       html: bodyEmail,
@@ -515,7 +515,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
       subject: "Booking - Confimation",
       html: bodyEmail,
@@ -555,7 +555,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
       subject: "Ticket Issue Request",
       html: bodyEmail,
@@ -595,7 +595,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
       subject: "Ticket Issue Rejected",
       html: bodyEmail,
@@ -638,7 +638,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
       subject: "Void Request",
       html: bodyEmail,
@@ -677,7 +677,7 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Project OTA " +`${process.env.EMAIL_USERNAME}`,
+      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
       subject: "Void Request Decision",
       html: bodyEmail,

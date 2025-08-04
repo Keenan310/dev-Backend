@@ -53,4 +53,7 @@ export declare class AdminExpenseModel {
     updated_at: Date;
     uid: string;
 }
+declare const UpdateAdminExpenseDto_base: import("@nestjs/common").Type<Partial<AdminExpenseModel>>;
+export declare class UpdateAdminExpenseDto extends UpdateAdminExpenseDto_base {
+}
 export {};

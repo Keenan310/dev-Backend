@@ -22,8 +22,11 @@ let ReportController = class ReportController {
     constructor(reportService) {
         this.reportService = reportService;
     }
-    addExpsense(header, adminExpenseModel) {
-        return this.reportService.addAdminExpsense(header, adminExpenseModel);
+    addExpense(header, adminExpenseModel) {
+        return this.reportService.addAdminExpense(header, adminExpenseModel);
+    }
+    editExpense(header, id, adminExpenseModel) {
+        return this.reportService.editAdminExpense(header, +id, adminExpenseModel);
     }
     addAdminLedger(header, adminledgerModel) {
         return this.reportService.addAdminLedger(header, adminledgerModel);
@@ -80,7 +83,17 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, report_model_1.AdminExpenseModel]),
     __metadata("design:returntype", void 0)
-], ReportController.prototype, "addExpsense", null);
+], ReportController.prototype, "addExpense", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, common_1.Patch)('admin/expense/:id'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, report_model_1.AdminExpenseModel]),
+    __metadata("design:returntype", void 0)
+], ReportController.prototype, "editExpense", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Post)('admin/ledger'),

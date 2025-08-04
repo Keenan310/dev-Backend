@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AdminExpenseModel = exports.UpdateAdminLedgerDto = exports.AdminLedger = exports.UpdateAgentLedgerDto = exports.AgentLedgerDto = exports.AgentLedgerModel = void 0;
+exports.UpdateAdminExpenseDto = exports.AdminExpenseModel = exports.UpdateAdminLedgerDto = exports.AdminLedger = exports.UpdateAgentLedgerDto = exports.AgentLedgerDto = exports.AgentLedgerModel = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const typeorm_1 = require("typeorm");
 let AgentLedgerModel = class AgentLedgerModel {
@@ -217,4 +217,7 @@ __decorate([
 exports.AdminExpenseModel = AdminExpenseModel = __decorate([
     (0, typeorm_1.Entity)('admin_expense')
 ], AdminExpenseModel);
+class UpdateAdminExpenseDto extends (0, swagger_1.PartialType)(AdminExpenseModel) {
+}
+exports.UpdateAdminExpenseDto = UpdateAdminExpenseDto;
 //# sourceMappingURL=report.model.js.map

@@ -4,7 +4,8 @@ import { AgentBalanceUpdate } from '../agent/agent.model';
 export declare class ReportController {
     private readonly reportService;
     constructor(reportService: ReportService);
-    addExpsense(header: Headers, adminExpenseModel: AdminExpenseModel): Promise<AdminExpenseModel>;
+    addExpense(header: Headers, adminExpenseModel: AdminExpenseModel): Promise<AdminExpenseModel>;
+    editExpense(header: Headers, id: string, adminExpenseModel: AdminExpenseModel): Promise<import("typeorm").UpdateResult>;
     addAdminLedger(header: Headers, adminledgerModel: AdminLedger): Promise<void>;
     editAdminLedger(header: Headers, id: string, adminLedgerDto: UpdateAdminLedgerDto): Promise<void>;
     editAgentLedgerByAdmin(header: Headers, id: string, updateAgentLedgerDto: AgentBalanceUpdate): Promise<void>;
