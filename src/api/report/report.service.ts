@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { AgentLedgerModel, AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto, UpdateAgentLedgerDto } from './report.model';
+import { AgentLedgerModel, AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto, UpdateAgentLedgerDto, UpdateAdminExpenseDto } from './report.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
@@ -30,8 +30,23 @@ export class ReportService {
     private dataSource: DataSource
   ) {}
 
-  async addAdminExpsense(header : any, adminExpenseModel : AdminExpenseModel){
+  async addAdminExpense(header : any, adminExpenseModel : AdminExpenseModel){
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
+
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
     return this.adminExpenseRepository.save(adminExpenseModel);
+  }
+
+  async editAdminExpense(header : any, id:number, UpdateAdminExpenseDto : UpdateAdminExpenseDto){
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
+
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
+
+    return this.adminExpenseRepository.update(+id, UpdateAdminExpenseDto);
   }
 
   async addAdminLedger(header : any, adminLedgerModel : AdminLedger){

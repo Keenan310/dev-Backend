@@ -160,3 +160,5 @@ export class AdminExpenseModel{
   @Generated("uuid")
   uid: string;
 }
+
+export class UpdateAdminExpenseDto extends PartialType(AdminExpenseModel) {}

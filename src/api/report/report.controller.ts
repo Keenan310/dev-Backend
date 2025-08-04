@@ -13,10 +13,19 @@ export class ReportController {
 
   @ApiBearerAuth('access_token')
   @Post('admin/expense')
-  addExpsense(
+  addExpense(
     @Headers() header: Headers,
     @Body() adminExpenseModel: AdminExpenseModel) {
-    return this.reportService.addAdminExpsense(header, adminExpenseModel);
+    return this.reportService.addAdminExpense(header, adminExpenseModel);
+  }
+
+  @ApiBearerAuth('access_token')
+  @Patch('admin/expense/:id')
+  editExpense(
+    @Headers() header: Headers,
+    @Param('id') id: string,
+    @Body() adminExpenseModel: AdminExpenseModel) {
+    return this.reportService.editAdminExpense(header, +id, adminExpenseModel);
   }
 
   @ApiBearerAuth('access_token')
