@@ -603,7 +603,7 @@ export class ReportService {
     return ledgerData;
   }
 
-  async findAllAdminLedger(header: any, startDate: Date, endDate: Date) {
+  async findAllAdminLedger(header: any, startDate: Date, endDate: Date, agentId: string) {
 
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
@@ -611,7 +611,7 @@ export class ReportService {
         throw new UnauthorizedException();
     }
 
-    const ledger = await this.adminLedgerRepository
+    const ledgerQuery = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
     .select([
       'ledger.id',
@@ -630,10 +630,14 @@ export class ReportService {
       endDate,
     })
     .andWhere('ledger.deposit <= 0')
-    .orderBy('ledger.id', 'DESC')
-    .getRawMany();
 
-    const depositLedger = await this.adminLedgerRepository
+    if (agentId) {
+      ledgerQuery.andWhere('ledger.agentId = :agentId', { agentId });
+    }
+
+    const ledger = await ledgerQuery.orderBy('ledger.id', 'DESC').getRawMany();
+
+    const depositQuery = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
     .select([
       'ledger.id',
@@ -648,8 +652,12 @@ export class ReportService {
       endDate,
     })
     .andWhere('ledger.deposit > 0')
-    .orderBy('ledger.id', 'DESC')
-    .getRawMany();
+
+    if (agentId) {
+      depositQuery.andWhere('ledger.agentId = :agentId', { agentId });
+    }
+
+    const depositLedger = await depositQuery.orderBy('ledger.id', 'DESC').getRawMany();
 
 
     const sell = await this.adminLedgerRepository
@@ -697,7 +705,6 @@ export class ReportService {
         throw new UnauthorizedException();
     }
 
-
   const totalSell = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
     .select('SUM(ledger.netfare)', 'totalAmount')
@@ -709,12 +716,6 @@ export class ReportService {
     .select('SUM(ledger.deposit)', 'totalAmount')
     .where('ledger.agentId = :agentId', { agentId })
     .getRawOne();
-
-  // const balance = await this.ledgerRepository
-  //   .createQueryBuilder('ledger')
-  //   .select('SUM(ledger.credit) - SUM(ledger.debit)', 'totalAmount')
-  //   .where('ledger.agentId = :agentId', { agentId })
-  //   .getRawOne();
 
    const totalbalance = totalDeposit?.totalAmount - totalSell?.totalAmount;
 
@@ -759,5 +760,4 @@ export class ReportService {
 
     return ledger;
   }
-
 }

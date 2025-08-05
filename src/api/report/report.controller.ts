@@ -55,13 +55,16 @@ export class ReportController {
   }
 
   @ApiBearerAuth('access_token')
+  @ApiQuery({ name: 'agentId', required: false })
   @Get('admin/report/ledger/:startDate/:endDate')
   findAllAdminLedger(
     @Headers() header: string,
     @Param('startDate') startDate: Date,
     @Param('endDate') endDate: Date,
-  ) {
-    return this.reportService.findAllAdminLedger(header, startDate, endDate);
+    @Query('agentId') agentId: string
+
+  ){
+    return this.reportService.findAllAdminLedger(header, startDate, endDate, agentId);
   }
 
   @Get('admin/report/single/:agentId')
@@ -95,6 +98,7 @@ export class ReportController {
 
   @ApiBearerAuth('access_token')
   @Get('admin/report/:startDate/:endDate')
+  @ApiQuery({ name: 'filter', required: false })
   findAllReportAdmin(
     @Headers() header: Headers,
     @Param('startDate') startDate: Date,
