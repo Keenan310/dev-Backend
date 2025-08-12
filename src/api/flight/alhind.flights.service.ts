@@ -21,13 +21,8 @@ dotenv.config()
 @Injectable()
 export class AlhindAPI {
     constructor(
-      @InjectRepository(BookingModel)
-      private readonly bookingRepository: Repository<BookingModel>,
       @InjectRepository(CurrencyConverter)
       private readonly currencyConverterRepository: Repository<CurrencyConverter>,
-      private readonly passengerService: PassengerService,
-      private readonly bookingService: BookingService,
-      private readonly searchHistoryService: SearchhistoryService,
 
       private readonly airlinesService: AirlinesService,
       private readonly airportsService: AirportsService,
@@ -580,14 +575,12 @@ export class AlhindAPI {
 
     return FlightItenary;
 
-
   }
-
 
   async priceCheck(agent : AgentModel, revalidation: Revalidation){
     return revalidation;
   }
-  async getAirports(code: string) {
+    async getAirports(code: string) {
         const foundItem = airportsData.find(item => item.code === code);
         if (foundItem) {
           return foundItem;

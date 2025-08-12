@@ -18,10 +18,6 @@ const typeorm_1 = require("@nestjs/typeorm");
 const axios_1 = require("axios");
 const dotenv = require("dotenv");
 const typeorm_2 = require("typeorm");
-const passenger_service_1 = require("../passenger/passenger.service");
-const booking_model_1 = require("../booking/booking.model");
-const booking_service_1 = require("../booking/booking.service");
-const searchhistory_service_1 = require("../searchhistory/searchhistory.service");
 const airlines_service_1 = require("../airlines/airlines.service");
 const airports_service_1 = require("../airports/airports.service");
 const airports_data_1 = require("./data/airports.data");
@@ -29,12 +25,8 @@ const airlines_data_1 = require("./data/airlines.data");
 const currency_entity_1 = require("../currency/entities/currency.entity");
 dotenv.config();
 let AlhindAPI = class AlhindAPI {
-    constructor(bookingRepository, currencyConverterRepository, passengerService, bookingService, searchHistoryService, airlinesService, airportsService) {
-        this.bookingRepository = bookingRepository;
+    constructor(currencyConverterRepository, airlinesService, airportsService) {
         this.currencyConverterRepository = currencyConverterRepository;
-        this.passengerService = passengerService;
-        this.bookingService = bookingService;
-        this.searchHistoryService = searchHistoryService;
         this.airlinesService = airlinesService;
         this.airportsService = airportsService;
     }
@@ -547,13 +539,8 @@ let AlhindAPI = class AlhindAPI {
 exports.AlhindAPI = AlhindAPI;
 exports.AlhindAPI = AlhindAPI = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(booking_model_1.BookingModel)),
-    __param(1, (0, typeorm_1.InjectRepository)(currency_entity_1.CurrencyConverter)),
+    __param(0, (0, typeorm_1.InjectRepository)(currency_entity_1.CurrencyConverter)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository,
-        passenger_service_1.PassengerService,
-        booking_service_1.BookingService,
-        searchhistory_service_1.SearchhistoryService,
         airlines_service_1.AirlinesService,
         airports_service_1.AirportsService])
 ], AlhindAPI);
