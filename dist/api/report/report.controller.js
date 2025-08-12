@@ -37,8 +37,8 @@ let ReportController = class ReportController {
     editAgentLedgerByAdmin(header, id, updateAgentLedgerDto) {
         return this.reportService.editAgentLedgerByAdmin(header, +id, updateAgentLedgerDto);
     }
-    findAllAdminLedger(header, startDate, endDate) {
-        return this.reportService.findAllAdminLedger(header, startDate, endDate);
+    findAllAdminLedger(header, startDate, endDate, agentId) {
+        return this.reportService.findAllAdminLedger(header, startDate, endDate, agentId);
     }
     findSingleLedgerAdmin(header, agentId) {
         return this.reportService.findSingleAgentLedgerAdmin(header, agentId);
@@ -125,13 +125,15 @@ __decorate([
 ], ReportController.prototype, "editAgentLedgerByAdmin", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, swagger_1.ApiQuery)({ name: 'agentId', required: false }),
     (0, common_1.Get)('admin/report/ledger/:startDate/:endDate'),
     __param(0, (0, common_1.Headers)()),
     __param(1, (0, common_1.Param)('startDate')),
     __param(2, (0, common_1.Param)('endDate')),
+    __param(3, (0, common_1.Query)('agentId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Date,
-        Date]),
+        Date, String]),
     __metadata("design:returntype", void 0)
 ], ReportController.prototype, "findAllAdminLedger", null);
 __decorate([
@@ -164,6 +166,7 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Get)('admin/report/:startDate/:endDate'),
+    (0, swagger_1.ApiQuery)({ name: 'filter', required: false }),
     __param(0, (0, common_1.Headers)()),
     __param(1, (0, common_1.Param)('startDate')),
     __param(2, (0, common_1.Param)('endDate')),

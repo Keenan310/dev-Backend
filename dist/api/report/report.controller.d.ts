@@ -9,7 +9,7 @@ export declare class ReportController {
     addAdminLedger(header: Headers, adminledgerModel: AdminLedger): Promise<void>;
     editAdminLedger(header: Headers, id: string, adminLedgerDto: UpdateAdminLedgerDto): Promise<void>;
     editAgentLedgerByAdmin(header: Headers, id: string, updateAgentLedgerDto: AgentBalanceUpdate): Promise<void>;
-    findAllAdminLedger(header: string, startDate: Date, endDate: Date): Promise<{
+    findAllAdminLedger(header: string, startDate: Date, endDate: Date, agentId: string): Promise<{
         lossProfit: any;
         ledger: any[];
         depsoit: any[];

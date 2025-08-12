@@ -137,13 +137,15 @@ export class AlhindAPI {
                 TripType = 'Return';
             }
             const AllFareWithPrice = [];
-            for(const flights of AllFlights){
-                for(const flight of flights?.FlightFares){
-                    flights['PriceBreakDown'] = flight;
-                     delete flights.FlightFares;
-                    AllFareWithPrice.push(flights)
+            for (const mflights of AllFlights) {
+                for (const flight of mflights?.FlightFares ?? []) {
+                    const copy = { ...mflights, PriceBreakDown: flight };
+                    delete copy.FlightFares;
+                    AllFareWithPrice.push(copy);
                 }
             }
+
+            //return AllFareWithPrice;
 
             const conversionData = await this.currencyConverterRepository.findOne({
                 where: {alternate: agentdata.currency}});
@@ -153,12 +155,8 @@ export class AlhindAPI {
             for (const flights of AllFareWithPrice){
                 const ValidatingCarrier : string = flights?.TicketingCarrier;
                 const airlineData : any = await this.airlinesService.getAirlines(ValidatingCarrier);
-                const FareType: string = flights?.ProviderCode;
                 const AllPassenger : any[] = flights.PriceBreakDown?.Fares;
                 const CarrierName: string = airlineData?.marketing_name || 'N/F';
-                const Instant_Payment : boolean = false; //airlineData?.instantPayment;
-                const IssuePermit : boolean = false; //airlineData?.issuePermit;
-                const IsBookable : boolean = true; //airlineData?.bookable;
                 const equivalentAmount : number = Math.ceil(flights.PriceBreakDown?.AprxTotalBaseFare * converstionrate * 100)/ 100;
                 const Taxes : number = Math.ceil(flights.PriceBreakDown?.AprxTotalTax * converstionrate * 100)/100;
                 let TotalFare: number = Math.ceil(flights.PriceBreakDown?.TotalAmount * converstionrate * 100)/100;
@@ -207,7 +205,7 @@ export class AlhindAPI {
                 const Refundable : boolean = flights.PriceBreakDown?.RefundableInfo;
                 let TimeLimit : string = '';
                 let cabinclass : string = 'Y';
-                let Class = flights.PriceBreakDown?.FareName;
+                let Class = flights?.PriceBreakDown?.FareName;
 
                 const PriceBreakDown : any[] = AllPassenger?.map(allPassenger => {
                     const BaggageAllowance = flights?.FlightLegs[0]?.FreeBaggages;
