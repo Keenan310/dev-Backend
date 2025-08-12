@@ -37,7 +37,7 @@ export declare class FlightService {
         GrossFare: number;
         Comission: any;
         TimeLimit: string;
-        Refundable: any;
+        Refundable: boolean;
         PriceBreakDown: any;
         AllLegsInfo: any[];
     }[]>;

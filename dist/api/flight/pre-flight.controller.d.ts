@@ -18,7 +18,7 @@ export declare class PreFlightController {
         GrossFare: number;
         Comission: any;
         TimeLimit: string;
-        Refundable: any;
+        Refundable: boolean;
         PriceBreakDown: any;
         AllLegsInfo: any[];
     }[]>;

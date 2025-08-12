@@ -31,7 +31,7 @@ export declare class AlhindAPI {
         GrossFare: number;
         Comission: any;
         TimeLimit: string;
-        Refundable: any;
+        Refundable: boolean;
         PriceBreakDown: any;
         AllLegsInfo: any[];
     }[]>;
@@ -49,7 +49,7 @@ export declare class AlhindAPI {
         GrossFare: number;
         Comission: any;
         TimeLimit: string;
-        Refundable: any;
+        Refundable: boolean;
         PriceBreakDown: any;
         AllLegsInfo: any[];
     }[]>;

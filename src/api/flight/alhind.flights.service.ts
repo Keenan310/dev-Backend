@@ -391,7 +391,7 @@ export class AlhindAPI {
 
     const TripType = flighDto?.segments?.length === 1 ? 'Oneway' : 'Return';
 
-    const AllFlights: any[] = result.Journy.FlightOptions;
+    const AllFlights: any[] = result?.Journy?.FlightOptions || [];
 
     // ---- STEP 2: Flatten all fares with price ----
     const AllFareWithPrice = AllFlights.flatMap(mflights =>
@@ -433,6 +433,8 @@ export class AlhindAPI {
         const CarrierName = airlineData?.marketing_name || 'N/F';
         
         const { AprxTotalBaseFare, AprxTotalTax, TotalAmount, Fares, RefundableInfo, FareName, FID } = flights.PriceBreakDown;
+
+        const isRefundable = RefundableInfo != null && RefundableInfo.toLowerCase() === "Refundable";
 
         const equivalentAmount = Math.ceil(AprxTotalBaseFare * conversionRate * 100) / 100;
         const Taxes = Math.ceil(AprxTotalTax * conversionRate * 100) / 100;
@@ -570,7 +572,7 @@ export class AlhindAPI {
             GrossFare: TotalFare,
             Comission: ComissionPolicy,
             TimeLimit: '',
-            Refundable: RefundableInfo,
+            Refundable: isRefundable,
             PriceBreakDown,
             AllLegsInfo
         };
