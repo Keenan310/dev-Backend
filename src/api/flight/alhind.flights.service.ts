@@ -430,7 +430,7 @@ export class AlhindAPI {
         
         const { AprxTotalBaseFare, AprxTotalTax, TotalAmount, Fares, RefundableInfo, FareName, FID } = flights.PriceBreakDown;
 
-        const isRefundable = RefundableInfo != null && RefundableInfo.toLowerCase() === "Refundable";
+        const isRefundable = RefundableInfo != null && RefundableInfo === "Refundable";
 
         const equivalentAmount = Math.ceil(AprxTotalBaseFare * conversionRate * 100) / 100;
         const Taxes = Math.ceil(AprxTotalTax * conversionRate * 100) / 100;

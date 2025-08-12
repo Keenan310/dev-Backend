@@ -392,7 +392,7 @@ let AlhindAPI = class AlhindAPI {
             const airlineData = await getAirline(flights?.TicketingCarrier);
             const CarrierName = airlineData?.marketing_name || 'N/F';
             const { AprxTotalBaseFare, AprxTotalTax, TotalAmount, Fares, RefundableInfo, FareName, FID } = flights.PriceBreakDown;
-            const isRefundable = RefundableInfo != null && RefundableInfo.toLowerCase() === "Refundable";
+            const isRefundable = RefundableInfo != null && RefundableInfo === "Refundable";
             const equivalentAmount = Math.ceil(AprxTotalBaseFare * conversionRate * 100) / 100;
             const Taxes = Math.ceil(AprxTotalTax * conversionRate * 100) / 100;
             let TotalFare = Math.ceil(TotalAmount * conversionRate * 100) / 100;
