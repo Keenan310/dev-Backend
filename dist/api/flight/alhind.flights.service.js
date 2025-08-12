@@ -351,6 +351,9 @@ let AlhindAPI = class AlhindAPI {
         }
     }
     async flightUtils(result, agentdata, flighDto) {
+        if (!(result?.Journy?.FlightOptions?.length > 0)) {
+            return [];
+        }
         const DepPlace = flighDto.segments[0].depfrom;
         const ArrPlace = flighDto.segments[0].arrto;
         const [DepCounty, ArrCounty] = await Promise.all([
@@ -368,9 +371,7 @@ let AlhindAPI = class AlhindAPI {
             delete copy.FlightFares;
             return copy;
         }));
-        const conversionData = await this.currencyConverterRepository.findOne({
-            where: { alternate: agentdata.currency }
-        });
+        const conversionData = await this.currencyConverterRepository.findOne({ where: { alternate: agentdata.currency } });
         const conversionRate = conversionData?.exchange_rate || 1;
         const airportCache = new Map();
         const airlineCache = new Map();

@@ -369,6 +369,10 @@ export class AlhindAPI {
 
   async flightUtils(result : any, agentdata: AgentModel, flighDto: FlightSearchModel){
 
+    if (!(result?.Journy?.FlightOptions?.length > 0)) {
+        return [];
+    }
+
     // ---- STEP 1: Pre-fetch static values ----
     const DepPlace = flighDto.segments[0].depfrom;
     const ArrPlace = flighDto.segments[0].arrto;
@@ -385,7 +389,6 @@ export class AlhindAPI {
         'sito';
 
     const TripType = flighDto?.segments?.length === 1 ? 'Oneway' : 'Return';
-
     const AllFlights: any[] = result?.Journy?.FlightOptions || [];
 
     // ---- STEP 2: Flatten all fares with price ----
@@ -398,9 +401,7 @@ export class AlhindAPI {
     );
 
     // ---- STEP 3: Fetch conversion rate once ----
-    const conversionData = await this.currencyConverterRepository.findOne({
-        where: { alternate: agentdata.currency }
-    });
+    const conversionData = await this.currencyConverterRepository.findOne({where: { alternate: agentdata.currency }});
     const conversionRate = conversionData?.exchange_rate || 1;
 
     // ---- STEP 4: Cache airports & airlines to avoid repeated DB/API calls ----
