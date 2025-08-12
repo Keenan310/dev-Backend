@@ -18,8 +18,41 @@ export declare class AlhindAPI {
     private readonly airlinesService;
     private readonly airportsService;
     constructor(bookingRepository: Repository<BookingModel>, currencyConverterRepository: Repository<CurrencyConverter>, passengerService: PassengerService, bookingService: BookingService, searchHistoryService: SearchhistoryService, airlinesService: AirlinesService, airportsService: AirportsService);
-    flights(agent: AgentModel, flightDto: FlightSearchModel): Promise<any[]>;
-    flightUtils(result: any, agentdata: AgentModel, flighDto: FlightSearchModel): Promise<any[]>;
+    flights(agent: AgentModel, flightDto: FlightSearchModel): Promise<{
+        System: string;
+        TripType: string;
+        Carrier: any;
+        CarrierName: any;
+        Cabinclass: any;
+        Currency: string;
+        BaseFare: number;
+        Taxes: number;
+        NetFare: number;
+        GrossFare: number;
+        Comission: any;
+        TimeLimit: string;
+        Refundable: any;
+        PriceBreakDown: any;
+        AllLegsInfo: any[];
+    }[]>;
+    sflightUtils(result: any, agentdata: AgentModel, flighDto: FlightSearchModel): Promise<any[]>;
+    flightUtils(result: any, agentdata: AgentModel, flighDto: FlightSearchModel): Promise<{
+        System: string;
+        TripType: string;
+        Carrier: any;
+        CarrierName: any;
+        Cabinclass: any;
+        Currency: string;
+        BaseFare: number;
+        Taxes: number;
+        NetFare: number;
+        GrossFare: number;
+        Comission: any;
+        TimeLimit: string;
+        Refundable: any;
+        PriceBreakDown: any;
+        AllLegsInfo: any[];
+    }[]>;
     priceCheck(agent: AgentModel, revalidation: Revalidation): Promise<Revalidation>;
     getAirports(code: string): Promise<{
         code: string;

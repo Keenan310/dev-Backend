@@ -77,8 +77,8 @@ let AlhindAPI = class AlhindAPI {
                     "TripMode": "R",
                     "TravelType": "I",
                     "AirlineClass": null,
-                    "UserId": "AEDXB029001500",
-                    "Password": "APIuser@1234",
+                    "UserId": "AEAUH029003100",
+                    "Password": "Usman@3102",
                     "Error": null,
                     "IncludeAirline": null,
                     "ExcludeAirline": null,
@@ -106,7 +106,7 @@ let AlhindAPI = class AlhindAPI {
             return [];
         }
     }
-    async flightUtils(result, agentdata, flighDto) {
+    async sflightUtils(result, agentdata, flighDto) {
         if (result?.Journy?.FlightOptions?.length > 0) {
             const DepPlace = flighDto.segments[0].depfrom;
             const ArrPlace = flighDto.segments[0].arrto;
@@ -357,6 +357,169 @@ let AlhindAPI = class AlhindAPI {
         else {
             return [];
         }
+    }
+    async flightUtils(result, agentdata, flighDto) {
+        const DepPlace = flighDto.segments[0].depfrom;
+        const ArrPlace = flighDto.segments[0].arrto;
+        const [DepCounty, ArrCounty] = await Promise.all([
+            this.airportsService.getCountry(DepPlace),
+            this.airportsService.getCountry(ArrPlace)
+        ]);
+        const farepolicy = DepCounty === 'AE' && ArrCounty === 'AE' ? 'domestic' :
+            DepCounty !== 'AE' && ArrCounty !== 'AE' ? 'soto' :
+                DepCounty !== 'AE' && ArrCounty === 'AE' ? 'soti' :
+                    'sito';
+        const TripType = flighDto?.segments?.length === 1 ? 'Oneway' : 'Return';
+        const AllFlights = result.Journy.FlightOptions;
+        const AllFareWithPrice = AllFlights.flatMap(mflights => (mflights?.FlightFares ?? []).map(flight => {
+            const copy = { ...mflights, PriceBreakDown: flight };
+            delete copy.FlightFares;
+            return copy;
+        }));
+        const conversionData = await this.currencyConverterRepository.findOne({
+            where: { alternate: agentdata.currency }
+        });
+        const conversionRate = conversionData?.exchange_rate || 1;
+        const airportCache = new Map();
+        const airlineCache = new Map();
+        const getAirport = async (code) => {
+            if (!airportCache.has(code)) {
+                airportCache.set(code, await this.getAirports(code));
+            }
+            return airportCache.get(code);
+        };
+        const getAirline = async (code) => {
+            if (!airlineCache.has(code)) {
+                airlineCache.set(code, await this.airlinesService.getAirlines(code));
+            }
+            return airlineCache.get(code);
+        };
+        const FlightItenary = await Promise.all(AllFareWithPrice.map(async (flights) => {
+            const availableSeat = flights?.AvailableSeat || 9;
+            const airlineData = await getAirline(flights?.TicketingCarrier);
+            const CarrierName = airlineData?.marketing_name || 'N/F';
+            const { AprxTotalBaseFare, AprxTotalTax, TotalAmount, Fares, RefundableInfo, FareName, FID } = flights.PriceBreakDown;
+            const equivalentAmount = Math.ceil(AprxTotalBaseFare * conversionRate * 100) / 100;
+            const Taxes = Math.ceil(AprxTotalTax * conversionRate * 100) / 100;
+            let TotalFare = Math.ceil(TotalAmount * conversionRate * 100) / 100;
+            const adminMarkUpAmount = agentdata?.markuptype === 'percent'
+                ? equivalentAmount * (agentdata.markup / 100)
+                : agentdata?.markuptype === 'amount' ? agentdata.markup : 0;
+            const ComissionPolicy = airlineData?.[farepolicy] ?? 0;
+            const airlinesMarkUpAmount = equivalentAmount * (ComissionPolicy / 100);
+            const agentMarkUpAmount = agentdata?.clientmarkuptype === 'percent'
+                ? equivalentAmount * (agentdata.clientmarkup / 100)
+                : agentdata?.clientmarkuptype === 'amount'
+                    ? agentdata.clientmarkup
+                    : 0;
+            const addAmount = airlineData?.addAmount || 0;
+            const NetFare = Math.ceil((equivalentAmount + adminMarkUpAmount + airlinesMarkUpAmount + addAmount + agentMarkUpAmount + Taxes) * 100) / 100;
+            if (NetFare > TotalFare)
+                TotalFare = NetFare;
+            const BaggageAllowance = flights?.FlightLegs[0]?.FreeBaggages ?? [];
+            const bagAllowance = BaggageAllowance.find(baggage => baggage.FID === FID);
+            const PriceBreakDown = Fares.map(pax => {
+                const PaxType = pax?.PTC === 'CHD' ? 'CNN' : pax?.PTC;
+                const paxCount = PaxType === 'ADT' ? flighDto.adultcount :
+                    PaxType === 'CHD' || PaxType === 'CNN' ? flighDto.childcount :
+                        flighDto.infantcount || 0;
+                const bagType = PaxType === 'ADT' ? 'Adt_Baggage' :
+                    PaxType === 'CHD' || PaxType === 'CNN' ? 'Chd_Baggage' : 'Inf_Baggage';
+                const baggage = Array(flighDto.segments.length).fill({
+                    Airline: flights?.TicketingCarrier,
+                    Allowance: bagAllowance?.[bagType] || ''
+                });
+                const totalTaxAmount = Math.ceil(pax?.Tax * conversionRate * 100) / 100;
+                const PaxequivalentAmount = Math.ceil(pax?.BaseFare * conversionRate * 100) / 100;
+                const PaxtotalFare = Math.ceil((PaxequivalentAmount + totalTaxAmount) * 100) / 100;
+                return {
+                    PaxType,
+                    BaseFare: PaxequivalentAmount,
+                    Taxes: totalTaxAmount,
+                    TotalFare: PaxtotalFare,
+                    PaxCount: paxCount,
+                    Bag: baggage,
+                    FareComponent: {}
+                };
+            });
+            const onwardSegments = flights?.FlightLegs?.filter(seg => seg.Type === '0') ?? [];
+            const returnSegments = flights?.FlightLegs?.filter(seg => seg.Type === '1') ?? [];
+            const mapSegments = async (segments) => {
+                return Promise.all(segments.map(async (segment) => {
+                    const depAirport = await getAirport(segment?.Origin);
+                    const arrAirport = await getAirport(segment?.Destination);
+                    return {
+                        MarketingCarrier: segment?.AirlineCode,
+                        MarketingCarrierName: (await getAirline(segment?.AirlineCode))?.marketing_name,
+                        MarketingFlightNumber: segment?.FlightNo,
+                        OperatingCarrier: segment?.AirlineCode,
+                        OperatingFlightNumber: segment?.FlightNo,
+                        OperatingCarrierName: (await getAirline(segment?.AirlineCode))?.marketing_name,
+                        DepFrom: segment?.Origin,
+                        DepAirPort: depAirport?.name,
+                        DepLocation: depAirport?.location,
+                        DepDateAdjustment: '',
+                        DepTime: segment?.DepartureTime,
+                        ArrTo: segment?.Destination,
+                        ArrAirPort: arrAirport?.name,
+                        ArrLocation: arrAirport?.location,
+                        ArrDateAdjustment: '',
+                        ArrTime: segment?.ArrivalTime,
+                        OperatedBy: segment?.CodeShare,
+                        StopCount: '',
+                        Duration: '',
+                        AircraftTypeName: 'N/A',
+                        DepartureGate: segment?.DepartureTerminal || 'TBA',
+                        ArrivalGate: segment?.ArrivalTerminal || 'TBA',
+                        HiddenStops: segment?.hiddenStops || [],
+                        TotalMilesFlown: segment?.Distance || 0,
+                        SegmentCode: {
+                            bookingCode: segment.RBD,
+                            cabinCode: 'Y',
+                            mealCode: segment.MealKey,
+                            seatsAvailable: availableSeat
+                        }
+                    };
+                }));
+            };
+            const AllLegsInfo = [];
+            if (onwardSegments.length > 0) {
+                AllLegsInfo.push({
+                    DepDate: flighDto.segments[0].depdate,
+                    DepFrom: onwardSegments[0]?.Origin,
+                    ArrTo: onwardSegments[onwardSegments.length - 1]?.Destination,
+                    Duration: '',
+                    Segments: await mapSegments(onwardSegments)
+                });
+            }
+            if (returnSegments.length > 0) {
+                AllLegsInfo.push({
+                    DepDate: flighDto.segments[flighDto.segments.length - 1]?.depdate,
+                    DepFrom: returnSegments[0]?.Origin,
+                    ArrTo: returnSegments[returnSegments.length - 1]?.Destination,
+                    Duration: '',
+                    Segments: await mapSegments(returnSegments)
+                });
+            }
+            return {
+                System: "AlHind",
+                TripType,
+                Carrier: flights?.TicketingCarrier,
+                CarrierName,
+                Cabinclass: FareName,
+                Currency: agentdata?.currency,
+                BaseFare: equivalentAmount,
+                Taxes,
+                NetFare,
+                GrossFare: TotalFare,
+                Comission: ComissionPolicy,
+                TimeLimit: '',
+                Refundable: RefundableInfo,
+                PriceBreakDown,
+                AllLegsInfo
+            };
+        }));
+        return FlightItenary;
     }
     async priceCheck(agent, revalidation) {
         return revalidation;

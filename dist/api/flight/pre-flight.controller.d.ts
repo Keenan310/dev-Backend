@@ -5,7 +5,23 @@ import { FlightSearchModel } from './dto/search-flight.dto';
 export declare class PreFlightController {
     private readonly flightService;
     constructor(flightService: FlightService);
-    AirSearch(header: string, flightDto: FlightSearchModel): Promise<any[]>;
+    AirSearch(header: string, flightDto: FlightSearchModel): Promise<{
+        System: string;
+        TripType: string;
+        Carrier: any;
+        CarrierName: any;
+        Cabinclass: any;
+        Currency: string;
+        BaseFare: number;
+        Taxes: number;
+        NetFare: number;
+        GrossFare: number;
+        Comission: any;
+        TimeLimit: string;
+        Refundable: any;
+        PriceBreakDown: any;
+        AllLegsInfo: any[];
+    }[]>;
     Revalidation(header: string, revalidationDto: Revalidation): Promise<any>;
     AirBooking(header: string, bookingDto: AirBookingModel): Promise<({
         agentId: string;
