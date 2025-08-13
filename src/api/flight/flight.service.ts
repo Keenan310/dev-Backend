@@ -179,7 +179,7 @@ export class FlightService {
             message:'Booking already cancelled',
           };
         }
-      }else if(booking.system === 'Portal'){
+      }else if(booking.system === 'AlHind'){
           booking.status = 'Cancelled';
           const res =  await this.bookingRepository.update(booking.id, booking);
           if(res.affected === 1){
@@ -237,7 +237,7 @@ export class FlightService {
             message:'Booking already cancelled',
           };
         }
-      }else if(booking.system === 'Portal'){
+      }else if(booking.system === 'AlHind'){
           booking.status = 'Cancelled';
           const res =  await this.bookingRepository.update(booking.id, booking);
           if(res.affected === 1){
