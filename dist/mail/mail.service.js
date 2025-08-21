@@ -478,26 +478,46 @@ let MailService = class MailService {
     async bookingConfirmation(bookingData) {
         const agentData = await this.agentRepository.findOne({ where: { agentId: bookingData.agentId } });
         const bodyEmail = `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-    </head>
-    <body style="font-family: Arial, sans-serif;">
-    
-      <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
-        <tr>
-          <td bgcolor="#ffffff" style="padding: 20px; text-align: center;">
-            <h3 style="color: #333333;">Booking Confirmation !</h3>
-            <p style="color: #666666;">Booking Refrence: ${bookingData.bookingId}</p>
-            <p style="color: #666666;"><strong>Your account status is now ${bookingData.status} .</strong></p>
-            <p style="color: #666666;">Thanks for staying with Keenan Travel. </p>
-            <p style="color: #666666;">Thank you, <br/>${bookingData.companyname}</p>
-          </td>
-        </tr>
-      </table>
-    
-    </body>
-    </html>
-    `;
+      <html lang="en">
+      <head>
+      </head>
+      <body style="font-family: Arial, sans-serif; background-color:#f7f7f7; margin:0; padding:0;">
+
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="background:#ffffff; border-radius:8px; overflow:hidden;">
+          <tr>
+            <td bgcolor="#2563eb" style="padding: 20px; text-align: center; color:#ffffff;">
+              <h2 style="margin:0;">✈️ Booking Confirmation</h2>
+            </td>
+          </tr>
+          
+          <tr>
+            <td style="padding: 20px; text-align: left; color: #333333;">
+              <p style="font-size:16px;">Booking Reference: <strong>${bookingData.bookingId}</strong></p>
+              <p style="font-size:16px;">Airline: <strong>${bookingData.carrier_name}</strong></p>
+              <p style="font-size:16px;">PNR: <strong>${bookingData.pnr}</strong></p>
+              <p style="font-size:16px;">Route: <strong>${bookingData.depfrom} → ${bookingData.arrto}</strong></p>
+              <p style="font-size:16px;">Departure Date: <strong>${bookingData.flightdate}</strong></p>
+              <p style="font-size:16px;">Total Pax: <strong style="color:green;">${bookingData.totalpax}</strong></p>
+              <p style="font-size:16px;">Status: <strong style="color:green;">${bookingData.status}</strong></p>
+            </td>
+          </tr>
+          
+          <tr>
+            <td style="padding: 20px; text-align: left; color: #666666;">
+              <p>Thank you for choosing <strong>Keenan Travel</strong>. We wish you a pleasant journey!</p>
+              <p>Best regards, <br/>${bookingData.companyname}</p>
+            </td>
+          </tr>
+          
+          <tr>
+            <td bgcolor="#f9f9f9" style="padding: 15px; text-align:center; font-size:12px; color:#888;">
+              © 2025 ${bookingData.companyname}. All rights reserved.
+            </td>
+          </tr>
+        </table>
+
+      </body>
+      </html>`;
         const mailOptions = {
             from: "Keenan Travel " + `${process.env.EMAIL_USERNAME}`,
             to: agentData.email,

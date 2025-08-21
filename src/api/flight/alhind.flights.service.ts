@@ -3,10 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import * as dotenv from "dotenv";
 import { Repository } from 'typeorm';
-import { PassengerService } from '../passenger/passenger.service';
-import { BookingModel } from '../booking/booking.model';
-import { BookingService } from '../booking/booking.service';
-import { SearchhistoryService } from '../searchhistory/searchhistory.service';
 import { FlightSearchModel } from './dto/search-flight.dto';
 import { AgentModel } from '../agent/agent.model';
 import { AirlinesService } from '../airlines/airlines.service';
@@ -23,7 +19,6 @@ export class AlhindAPI {
     constructor(
       @InjectRepository(CurrencyConverter)
       private readonly currencyConverterRepository: Repository<CurrencyConverter>,
-
       private readonly airlinesService: AirlinesService,
       private readonly airportsService: AirportsService,
     ) {}
