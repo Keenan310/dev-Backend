@@ -79,6 +79,7 @@ export class UploadService {
       agentDto.password = hashedPassword;
       agentDto.agentId = agentId;
       agentDto.status = 'pending';
+      agentDto.currency = 'AED';
 
       agentDto.ip = await this.authUtils.getPublicIp() || 'N/F';
       agentDto.searchlimit = 100;

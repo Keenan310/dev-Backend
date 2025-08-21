@@ -114,7 +114,7 @@ let AlhindAPI = class AlhindAPI {
             else if (DepCounty != 'AE' && ArrCounty === 'AE') {
                 farepolicy = 'soti';
             }
-            else if (DepCounty === 'AE' && ArrCounty != 'AE') {
+            else if (DepCounty === 'AE' && ArrCounty !== 'AE') {
                 farepolicy = 'sito';
             }
             const FlightItenary = [];
