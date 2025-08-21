@@ -304,10 +304,10 @@ export class AlhindAPI {
                         DepTime: segment?.DepartureTime,
                         ArrTo: segment?.Destination,
                         ArrAirPort: (await this.getAirports(segment?.Destination)).name,
-                        ArrLocation: (await this.getAirports(segment?.Destination)).location,
-                        ArrDateAdjustment: '',//AdjustArrDate,
+                        ArrLocation: (await this.getAirports(segment?.Destination))?.location,
+                        ArrDateAdjustment: '',
                         ArrTime: segment?.ArrivalTime,
-                        OperatedBy: segment?.CodeShare, //await this.airlinesService.getAirlinesName(OperatedBy),
+                        OperatedBy: segment?.CodeShare,
                         StopCount: '',
                         Duration: '',
                         AircraftTypeName: 'N/A',
@@ -581,7 +581,7 @@ export class AlhindAPI {
         if (foundItem) {
           return foundItem;
         } else {
-          return {code: '', name : '', location};
+          return {code: '', name : '', location: ''};
         }
     }
 

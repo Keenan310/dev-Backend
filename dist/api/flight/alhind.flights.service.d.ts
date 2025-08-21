@@ -50,10 +50,6 @@ export declare class AlhindAPI {
         code: string;
         name: string;
         location: string;
-    } | {
-        code: string;
-        name: string;
-        location: Location;
     }>;
     getAirlineName(code: string): Promise<string>;
 }

@@ -295,7 +295,7 @@ let AlhindAPI = class AlhindAPI {
                         DepTime: segment?.DepartureTime,
                         ArrTo: segment?.Destination,
                         ArrAirPort: (await this.getAirports(segment?.Destination)).name,
-                        ArrLocation: (await this.getAirports(segment?.Destination)).location,
+                        ArrLocation: (await this.getAirports(segment?.Destination))?.location,
                         ArrDateAdjustment: '',
                         ArrTime: segment?.ArrivalTime,
                         OperatedBy: segment?.CodeShare,
@@ -524,7 +524,7 @@ let AlhindAPI = class AlhindAPI {
             return foundItem;
         }
         else {
-            return { code: '', name: '', location };
+            return { code: '', name: '', location: '' };
         }
     }
     async getAirlineName(code) {
