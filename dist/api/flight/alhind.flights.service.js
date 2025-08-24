@@ -143,6 +143,7 @@ let AlhindAPI = class AlhindAPI {
                 const airlineData = await this.airlinesService.getAirlines(ValidatingCarrier);
                 const AllPassenger = flights.PriceBreakDown?.Fares;
                 const CarrierName = airlineData?.marketing_name || 'N/F';
+                const Provider = flights?.ProviderCode || 'NF';
                 const equivalentAmount = Math.ceil(flights.PriceBreakDown?.AprxTotalBaseFare * converstionrate * 100) / 100;
                 const Taxes = Math.ceil(flights.PriceBreakDown?.AprxTotalTax * converstionrate * 100) / 100;
                 let TotalFare = Math.ceil(flights.PriceBreakDown?.TotalAmount * converstionrate * 100) / 100;

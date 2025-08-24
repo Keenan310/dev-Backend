@@ -487,7 +487,7 @@ export class GroupfareService {
         "NetFare": NetFareConv,
         "GrossFare": NetFareConv,
         "Comission": 0,
-        "Currency": agent?.currency || 'INR',
+        "Currency": agent?.currency || 'AED',
         "TimeLimit": '',
         "Refundable": false,
         "PriceBreakDown": PriceBreakdown,
