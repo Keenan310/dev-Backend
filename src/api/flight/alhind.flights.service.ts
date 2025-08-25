@@ -147,7 +147,7 @@ export class AlhindAPI {
                 const airlineData : any = await this.airlinesService.getAirlines(ValidatingCarrier);
                 const AllPassenger : any[] = flights.PriceBreakDown?.Fares;
                 const CarrierName: string = airlineData?.marketing_name || 'N/F';
-                const Provider: string = flights?.ProviderCode || 'NF';
+                const ProviderCd: string = flights?.ProviderCode || 'NF';
                 const equivalentAmount : number = Math.ceil(flights.PriceBreakDown?.AprxTotalBaseFare * converstionrate * 100)/ 100;
                 const Taxes : number = Math.ceil(flights.PriceBreakDown?.AprxTotalTax * converstionrate * 100)/100;
                 let TotalFare: number = Math.ceil(flights.PriceBreakDown?.TotalAmount * converstionrate * 100)/100;
@@ -317,7 +317,7 @@ export class AlhindAPI {
                         HiddenStops: segment?.hiddenStops || [],
                         TotalMilesFlown: segment?.Distance || 0,
                         SegmentCode: {
-                            "bookingCode": segment.RBD,
+                            "bookingCode": segment.RBD || 'Y',
                             "cabinCode": cabinclass,
                             "mealCode": segment.MealKey,
                             "seatsAvailable": 9 //flights?.AvailableSeat || 9
@@ -342,7 +342,7 @@ export class AlhindAPI {
                     TripType: TripType,
                     Carrier: ValidatingCarrier,
                     CarrierName: CarrierName,
-                    Provide: Provider,
+                    ProviderCode: ProviderCd,
                     Cabinclass: Class,
                     Currency: currency,
                     BaseFare: equivalentAmount,
