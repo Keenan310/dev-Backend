@@ -332,6 +332,7 @@ let AlhindAPI = class AlhindAPI {
                     TripType: TripType,
                     Carrier: ValidatingCarrier,
                     CarrierName: CarrierName,
+                    Provide: Provider,
                     Cabinclass: Class,
                     Currency: currency,
                     BaseFare: equivalentAmount,
