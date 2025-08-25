@@ -147,7 +147,8 @@ export class AlhindAPI {
                 const airlineData : any = await this.airlinesService.getAirlines(ValidatingCarrier);
                 const AllPassenger : any[] = flights.PriceBreakDown?.Fares;
                 const CarrierName: string = airlineData?.marketing_name || 'N/F';
-                const ProviderCd: string = flights?.ProviderCode || 'NF';
+                const ProviderCode = flights.ProviderCode || 'NF';
+
                 const equivalentAmount : number = Math.ceil(flights.PriceBreakDown?.AprxTotalBaseFare * converstionrate * 100)/ 100;
                 const Taxes : number = Math.ceil(flights.PriceBreakDown?.AprxTotalTax * converstionrate * 100)/100;
                 let TotalFare: number = Math.ceil(flights.PriceBreakDown?.TotalAmount * converstionrate * 100)/100;
@@ -191,7 +192,6 @@ export class AlhindAPI {
                 if(NetFare > TotalFare){
                     TotalFare = NetFare;
                 }
-
 
                 const Refundable : boolean = flights.PriceBreakDown?.RefundableInfo;
                 let TimeLimit : string = '';
@@ -342,7 +342,6 @@ export class AlhindAPI {
                     TripType: TripType,
                     Carrier: ValidatingCarrier,
                     CarrierName: CarrierName,
-                    ProviderCode: ProviderCd,
                     Cabinclass: Class,
                     Currency: currency,
                     BaseFare: equivalentAmount,
@@ -424,9 +423,9 @@ export class AlhindAPI {
         const availableSeat = flights?.AvailableSeat || 9;
         const airlineData = await getAirline(flights?.TicketingCarrier);
         const CarrierName = airlineData?.marketing_name || 'N/F';
-        
-        const { AprxTotalBaseFare, AprxTotalTax, TotalAmount, Fares, RefundableInfo, FareName, FID } = flights.PriceBreakDown;
+        const ProviderCode = flights?.ProviderCode || 'NF';
 
+        const { AprxTotalBaseFare, AprxTotalTax, TotalAmount, Fares, RefundableInfo, FareName, FID } = flights.PriceBreakDown;
         const isRefundable = RefundableInfo != null && RefundableInfo === "Refundable";
 
         const equivalentAmount = Math.ceil(AprxTotalBaseFare * conversionRate * 100) / 100;
@@ -521,7 +520,7 @@ export class AlhindAPI {
                     HiddenStops: segment?.hiddenStops || [],
                     TotalMilesFlown: segment?.Distance || 0,
                     SegmentCode: {
-                        bookingCode: segment.RBD,
+                        bookingCode: segment.RBD || 'Y',
                         cabinCode: 'Y',
                         mealCode: segment.MealKey,
                         seatsAvailable: availableSeat
@@ -554,12 +553,14 @@ export class AlhindAPI {
 
         return {
             System: "AlHind",
+            ProviderCode,
             TripType,
             Carrier: flights?.TicketingCarrier,
             CarrierName,
             Cabinclass: FareName,
             Currency: agentdata?.currency,
             BaseFare: equivalentAmount,
+            
             Taxes,
             NetFare,
             GrossFare: TotalFare,

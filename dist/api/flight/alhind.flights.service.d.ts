@@ -12,6 +12,7 @@ export declare class AlhindAPI {
     constructor(currencyConverterRepository: Repository<CurrencyConverter>, airlinesService: AirlinesService, airportsService: AirportsService);
     flights(agent: AgentModel, flightDto: FlightSearchModel): Promise<{
         System: string;
+        ProviderCode: any;
         TripType: string;
         Carrier: any;
         CarrierName: any;
@@ -30,6 +31,7 @@ export declare class AlhindAPI {
     sflightUtils(result: any, agentdata: AgentModel, flighDto: FlightSearchModel): Promise<any[]>;
     flightUtils(result: any, agentdata: AgentModel, flighDto: FlightSearchModel): Promise<{
         System: string;
+        ProviderCode: any;
         TripType: string;
         Carrier: any;
         CarrierName: any;

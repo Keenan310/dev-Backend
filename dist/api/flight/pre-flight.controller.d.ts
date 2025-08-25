@@ -7,6 +7,7 @@ export declare class PreFlightController {
     constructor(flightService: FlightService);
     AirSearch(header: string, flightDto: FlightSearchModel): Promise<{
         System: string;
+        ProviderCode: any;
         TripType: string;
         Carrier: any;
         CarrierName: any;

@@ -68,28 +68,55 @@ export class MailService {
 
   async OTPSend2FA(email: string, OTPcode: string){
     const bodyEmail = `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>OTP</title>
-    </head>
-    <body style="font-family: Arial, sans-serif;">
-    
-      <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
-        <tr>
-          <td bgcolor="#ffffff" style="padding: 20px; text-align: center;">
-            <h1 style="color: #333333;">OTP</h1>
-            <p style="color: #666666;">No worries! Follow the instructions below to 2FA FOR LOGIN:</p>
-            <p style="color: #666666;"><strong></strong> Here is your new OTP : ${OTPcode}</p>
-            <p style="color: #666666;">Thanks from,<br/>Keenan Travel</p>
-          </td>
-        </tr>
-      </table>
-    
-    </body>
-    </html>
-    `;
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your OTP Code</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f6f8; font-family: Arial, sans-serif;">
+
+  <table width="100%" bgcolor="#f4f6f8" cellpadding="0" cellspacing="0" style="padding:30px 0;">
+    <tr>
+      <td align="center">
+
+        <!-- Card -->
+        <table width="600" bgcolor="#ffffff" cellpadding="0" cellspacing="0" style="border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.08); overflow:hidden;">
+          <tr>
+            <td align="center" bgcolor="#004aad" style="padding: 20px;">
+              <h1 style="margin:0; font-size:24px; color:#ffffff;">🔐 Two-Factor Authentication</h1>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:30px; text-align:center; color:#333333;">
+              <p style="font-size:16px; margin:0 0 15px;">Hello,</p>
+              <p style="font-size:16px; margin:0 0 20px; color:#555555;">
+                Use the One-Time Password (OTP) below to complete your login:
+              </p>
+              <div style="display:inline-block; padding:15px 30px; background:#004aad; color:#ffffff; font-size:22px; font-weight:bold; letter-spacing:3px; border-radius:8px;">
+                ${OTPcode}
+              </div>
+              <p style="font-size:14px; margin:25px 0 0; color:#777777;">
+                This OTP will expire in <strong>10 minutes</strong>. If you did not request this, please ignore this email.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td bgcolor="#f4f6f8" style="padding:20px; text-align:center; font-size:12px; color:#999999;">
+              © ${new Date().getFullYear()} Keenan Travel. All rights reserved.
+            </td>
+          </tr>
+        </table>
+        <!-- End Card -->
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>`;
     const mailOptions = {
       from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: email,

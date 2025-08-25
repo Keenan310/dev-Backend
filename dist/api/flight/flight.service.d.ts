@@ -26,6 +26,7 @@ export declare class FlightService {
     constructor(bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, reissueRepository: Repository<ReissueModel>, refundRepository: Repository<RefundModel>, ticketingRepository: Repository<TicketModel>, authService: AuthService, sabreService: SabreService, bookingService: BookingService, groupFareService: GroupfareService, alhindAPI: AlhindAPI);
     airsearch(header: any, flightDto: FlightSearchModel): Promise<{
         System: string;
+        ProviderCode: any;
         TripType: string;
         Carrier: any;
         CarrierName: any;
