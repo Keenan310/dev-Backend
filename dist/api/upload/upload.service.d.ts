@@ -27,7 +27,7 @@ export declare class UploadService {
     constructor(s3: AWS.S3, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, adminRepository: Repository<AdminModel>, bookingRepository: Repository<BookingModel>, staffRepository: Repository<StaffModel>, promotionRepository: Repository<PromotionModel>, reissueRepository: Repository<ReissueModel>, depositRepository: Repository<DepositModel>, authService: AuthService, mailService: MailService, authUtils: AuthUtils);
     signup(agentDto: AgentModel, files: any): Promise<any>;
     uploadAgentLogo(header: any, file: any, res: any): Promise<void>;
-    uploadAgentTradeLicense(agentUId: string, file: any, res: any): Promise<void>;
+    updateDocuments(header: any, option: string, file: any, res: any): Promise<void>;
     uploadPassengerDocs(docs: string, paxUId: string, file: any, res: any): Promise<void>;
     addDeposit(header: any, amount: number, sender: string, receiver: string, paymentway: string, reference: string, file: any, res: any): Promise<void>;
     addPromotion(header: any, category: string, file: any, res: any): Promise<void>;

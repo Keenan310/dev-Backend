@@ -167,16 +167,27 @@ export class UploadService {
 
   }
 
-  async uploadAgentTradeLicense(agentUId: string, file, res){
+  async updateDocuments(header : any, option : string, file, res){
+
+    const agent = await this.authService.verifyAgentToken(header);
+
+    if(!agent){
+        throw new UnauthorizedException();
+    }
 
     if(!file){
       throw new NotFoundException('Please select a file to upload');
     }
 
-    const agent =  await this.agentRepository.findOne({where : {uid: agentUId}});
     const agentId = agent.agentId;
     const filetype = (file.originalname).split('.')[1];
-    const keyvalue = agentId + '/tradelicense' + '.' + filetype;
+    let folder : string;
+    if(option === 'tl'){
+      folder = 'tradelicense'
+    }else if(option=== 'nid'){
+      folder = 'nid'
+    }
+    const keyvalue = agentId +'/'+ folder + '.' + filetype;
 
     const params = {
       Bucket: process.env.BUCKET_NAME,
@@ -192,9 +203,9 @@ export class UploadService {
       } else {
         const url = process.env.CDN_SPACES+'/B2B/' + keyvalue;
 
-        agent['tradelicense']= url;
+        agent[folder]= url;
         this.agentRepository.update(agent.id, agent);
-        res.status(201).json({ status: 'success', message: 'Trade License uploaded successfully', fileurl: url });
+        res.status(201).json({ status: 'success', message: folder+' uploaded successfully', fileurl: url });
       }
     });
   }

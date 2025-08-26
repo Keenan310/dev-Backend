@@ -50,15 +50,16 @@ export class UploadController {
 
   @ApiBearerAuth('access_token')
   @ApiTags("Agent Modules")
-  @Post("agent/upload/tl")
+  @Post("agent/upload/document")
   @ApiConsumes('multipart/form-data')
   @UsePipes(new ValidationPipe())
   @UseInterceptors(FileInterceptor('file'))
-  uploadAgentTL(
+  updateDocuments(
     @Headers() header: string,
     @UploadedFile() file: Express.Multer.File,
+    @Query('option') option : string,
     @Res() res) {
-    return this.uploadService.uploadAgentTradeLicense(header, file, res);
+    return this.uploadService.updateDocuments(header,option, file, res);
   }
 
   @ApiBearerAuth('access_token')

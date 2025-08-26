@@ -18,18 +18,29 @@ const gateway_module_1 = require("./gateway/gateway.module");
 const cache_manager_1 = require("@nestjs/cache-manager");
 const mail_module_1 = require("./mail/mail.module");
 const paymentgateway_module_1 = require("./paymentgateway/paymentgateway.module");
+const core_1 = require("@nestjs/core");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [cache_manager_1.CacheModule.register(),
+        imports: [
+            cache_manager_1.CacheModule.register(cache_manager_1.CacheModule.register({
+                ttl: 5,
+                max: 100,
+                isGlobal: true,
+            })),
             config_1.ConfigModule.forRoot({
                 envFilePath: '.env'
             }),
-            database_module_1.DatabaseModule, api_module_1.ApiModule, utils_module_1.UtilsModule, gateway_module_1.GatewayModule, mail_module_1.MailModule, paymentgateway_module_1.PaymentgatewayModule],
+            database_module_1.DatabaseModule, api_module_1.ApiModule, utils_module_1.UtilsModule, gateway_module_1.GatewayModule, mail_module_1.MailModule, paymentgateway_module_1.PaymentgatewayModule
+        ],
         controllers: [app_controller_1.AppController],
         providers: [
+            {
+                provide: core_1.APP_INTERCEPTOR,
+                useClass: cache_manager_1.CacheInterceptor,
+            },
             app_service_1.AppService
         ],
     })

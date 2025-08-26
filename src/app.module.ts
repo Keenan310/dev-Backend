@@ -6,13 +6,19 @@ import { ApiModule } from './api/api.module';
 import { UtilsModule } from './utils/utils.module';
 import { ConfigModule } from '@nestjs/config';
 import { GatewayModule } from './gateway/gateway.module';
-import { CacheModule } from '@nestjs/cache-manager';
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { MailModule } from './mail/mail.module';
 import { PaymentgatewayModule } from './paymentgateway/paymentgateway.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module(
   {
-    imports: [CacheModule.register(),
+    imports: [
+      CacheModule.register(CacheModule.register({
+      ttl: 5,
+      max: 100,
+      isGlobal: true,
+    }),),
       // ThrottlerModule.forRoot([
       //   {
       //     ttl: 10000000,
@@ -31,6 +37,10 @@ import { PaymentgatewayModule } from './paymentgateway/paymentgateway.module';
       //   provide: APP_GUARD,
       //   useClass:ThrottlerGuard
       // },
+      {
+        provide: APP_INTERCEPTOR,
+        useClass: CacheInterceptor,
+      },
       AppService],
   }
 )

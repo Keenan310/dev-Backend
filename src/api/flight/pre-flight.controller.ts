@@ -1,14 +1,14 @@
-import { Controller, Post, Body, Get, Headers, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Headers, Param, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { SeapMapDto } from './dto/seatmap-flight.dto';
 import { FlightService } from './flight.service';
 import { AirBookingModel } from './dto/booking-flight.dto';
 import { Revalidation } from './dto/revalidation-flight.dto';
 import { FlightSearchModel } from './dto/search-flight.dto';
-import { FareRulesDto } from './dto/farerules-flight.dto';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @ApiBearerAuth('access_token')
 @ApiTags('Pre Ticketing Modules')
+@UseInterceptors(CacheInterceptor)
 @Controller()
 export class PreFlightController {
   constructor(private readonly flightService: FlightService) {}

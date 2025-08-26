@@ -9,7 +9,7 @@ export declare class UploadController {
         tl?: Express.Multer.File[];
     }): Promise<any>;
     uploadAgentLogo(header: string, file: Express.Multer.File, res: any): Promise<void>;
-    uploadAgentTL(header: string, file: Express.Multer.File, res: any): Promise<void>;
+    updateDocuments(header: string, file: Express.Multer.File, option: string, res: any): Promise<void>;
     uploadDepositFile(header: string, amount: number, sender: string, paymentway: string, receiver: string, reference: string, file: Express.Multer.File, res: any): Promise<void>;
     addPromotion(header: Headers, file: Express.Multer.File, category: string, res: any): Promise<void>;
     uploadPassportCopy(docs: string, paxUId: string, file: Express.Multer.File, res: any): Promise<void>;

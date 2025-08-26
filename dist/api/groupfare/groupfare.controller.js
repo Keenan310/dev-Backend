@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const groupfare_service_1 = require("./groupfare.service");
 const groupfare_model_1 = require("./groupfare.model");
 const swagger_1 = require("@nestjs/swagger");
+const cache_manager_1 = require("@nestjs/cache-manager");
 let GroupfareController = class GroupfareController {
     constructor(groupfareService) {
         this.groupfareService = groupfareService;
@@ -84,6 +85,7 @@ __decorate([
 exports.GroupfareController = GroupfareController = __decorate([
     (0, swagger_1.ApiTags)('GroupFare Modules'),
     (0, common_1.Controller)('groupfare'),
+    (0, common_1.UseInterceptors)(cache_manager_1.CacheInterceptor),
     __metadata("design:paramtypes", [groupfare_service_1.GroupfareService])
 ], GroupfareController);
 //# sourceMappingURL=groupfare.controller.js.map

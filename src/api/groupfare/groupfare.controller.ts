@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Headers, UseInterceptors } from '@nestjs/common';
 import { GroupfareService } from './groupfare.service';
 import { GroupFareDto, GroupFareModel, GroupFareModelUpdate, GroupFareSearch } from './groupfare.model';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @ApiTags('GroupFare Modules')
 @Controller('groupfare')
+@UseInterceptors(CacheInterceptor)
 export class GroupfareController {
   constructor(private readonly groupfareService: GroupfareService) {}
 

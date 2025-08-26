@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Headers, Query, NotAcceptableException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Headers, Query, NotAcceptableException, UseInterceptors } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import { BookingModelUpdateAdmin } from './booking.model';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 
 @ApiTags("Booking Modules")
 @Controller()
+@UseInterceptors(CacheInterceptor)
 export class BookingController {
   constructor(
     private readonly bookingService: BookingService

@@ -38,8 +38,8 @@ let UploadController = class UploadController {
     uploadAgentLogo(header, file, res) {
         return this.uploadService.uploadAgentLogo(header, file, res);
     }
-    uploadAgentTL(header, file, res) {
-        return this.uploadService.uploadAgentTradeLicense(header, file, res);
+    updateDocuments(header, file, option, res) {
+        return this.uploadService.updateDocuments(header, option, file, res);
     }
     uploadDepositFile(header, amount, sender, paymentway, receiver, reference, file, res) {
         if (isNaN(amount)) {
@@ -107,17 +107,18 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, swagger_1.ApiTags)("Agent Modules"),
-    (0, common_1.Post)("agent/upload/tl"),
+    (0, common_1.Post)("agent/upload/document"),
     (0, swagger_1.ApiConsumes)('multipart/form-data'),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
     __param(0, (0, common_1.Headers)()),
     __param(1, (0, common_1.UploadedFile)()),
-    __param(2, (0, common_1.Res)()),
+    __param(2, (0, common_1.Query)('option')),
+    __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:paramtypes", [String, Object, String, Object]),
     __metadata("design:returntype", void 0)
-], UploadController.prototype, "uploadAgentTL", null);
+], UploadController.prototype, "updateDocuments", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, swagger_1.ApiTags)("Deposit Modules"),
