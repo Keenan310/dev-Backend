@@ -238,8 +238,8 @@ let GroupfareService = class GroupfareService {
             const AllLegs = [
                 {
                     "DepDate": Leg.DepDate,
-                    "DepFrom": Leg.DepFrom,
-                    "ArrTo": Leg.ArrTo,
+                    "DepFrom": Leg.RouteFrom,
+                    "ArrTo": Leg.RouteTo,
                     "Duration": 0,
                     "Segments": Segments
                 }
