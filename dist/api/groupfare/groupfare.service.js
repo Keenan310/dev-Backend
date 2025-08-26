@@ -127,8 +127,7 @@ let GroupfareService = class GroupfareService {
     }
     async flightParser(agent, resultData) {
         let Leg = resultData;
-        const conversionData = await this.currencyConverterRepository.findOne({ where: { alternate: agent?.currency } });
-        const converstionrate = conversionData?.exchange_rate || 1;
+        const converstionrate = 1;
         const NetFareConv = Leg.NetFare * converstionrate;
         const PriceBreakdown = [
             {
