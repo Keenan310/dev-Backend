@@ -104,6 +104,11 @@ export class MakeTicketModel{
   @IsNumber()
   sellprice: number;
 
+  // @ApiProperty({default: '0'})
+  // @IsNotEmpty()
+  // @IsNumber()
+  // discount: number;
+
   @ApiProperty({ type: [passengerModel] })
   @ArrayMinSize(1)
   @ArrayMaxSize(9)

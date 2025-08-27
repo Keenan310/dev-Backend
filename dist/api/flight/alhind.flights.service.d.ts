@@ -20,7 +20,7 @@ export declare class AlhindAPI {
         Currency: string;
         BaseFare: number;
         Taxes: number;
-        NetFare: number;
+        NetFare: any;
         GrossFare: number;
         Comission: any;
         TimeLimit: string;
@@ -28,7 +28,6 @@ export declare class AlhindAPI {
         PriceBreakDown: any;
         AllLegsInfo: any[];
     }[]>;
-    sflightUtils(result: any, agentdata: AgentModel, flighDto: FlightSearchModel): Promise<any[]>;
     flightUtils(result: any, agentdata: AgentModel, flighDto: FlightSearchModel): Promise<{
         System: string;
         ProviderCode: any;
@@ -39,7 +38,7 @@ export declare class AlhindAPI {
         Currency: string;
         BaseFare: number;
         Taxes: number;
-        NetFare: number;
+        NetFare: any;
         GrossFare: number;
         Comission: any;
         TimeLimit: string;
