@@ -13,6 +13,11 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 export class PreFlightController {
   constructor(private readonly flightService: FlightService) {}
 
+  @Post("agent/flight/search/ch")
+  AirSearchCH(
+    @Body() flightDto: FlightSearchModel) {
+    return this.flightService.airsearchch(flightDto);
+  }
   @ApiBearerAuth('access_token')
   @Post("agent/flight/search")
   AirSearch(

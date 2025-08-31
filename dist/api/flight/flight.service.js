@@ -27,8 +27,9 @@ const groupfare_service_1 = require("../groupfare/groupfare.service");
 const booking_service_1 = require("../booking/booking.service");
 const auth_service_1 = require("../auth/auth.service");
 const alhind_flights_service_1 = require("./alhind.flights.service");
+const chtravel_flights_service_1 = require("./chtravel.flights.service");
 let FlightService = class FlightService {
-    constructor(bookingRepository, agentRepository, passengerRepository, reissueRepository, refundRepository, ticketingRepository, authService, sabreService, bookingService, groupFareService, alhindAPI) {
+    constructor(bookingRepository, agentRepository, passengerRepository, reissueRepository, refundRepository, ticketingRepository, authService, sabreService, bookingService, groupFareService, alhindAPI, ch) {
         this.bookingRepository = bookingRepository;
         this.agentRepository = agentRepository;
         this.passengerRepository = passengerRepository;
@@ -40,6 +41,10 @@ let FlightService = class FlightService {
         this.bookingService = bookingService;
         this.groupFareService = groupFareService;
         this.alhindAPI = alhindAPI;
+        this.ch = ch;
+    }
+    async airsearchch(flightDto) {
+        const Sabre_FlightData = await this.ch.shopping(flightDto);
     }
     async airsearch(header, flightDto) {
         const agent = await this.authService.verifyAgentToken(header);
@@ -404,6 +409,7 @@ exports.FlightService = FlightService = __decorate([
         sabre_flights_service_1.SabreService,
         booking_service_1.BookingService,
         groupfare_service_1.GroupfareService,
-        alhind_flights_service_1.AlhindAPI])
+        alhind_flights_service_1.AlhindAPI,
+        chtravel_flights_service_1.CHScraper])
 ], FlightService);
 //# sourceMappingURL=flight.service.js.map

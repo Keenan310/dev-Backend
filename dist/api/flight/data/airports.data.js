@@ -961,7 +961,7 @@ exports.airportsData = [
     },
     {
         code: "AUH",
-        name: "Dhabi Intl Airport",
+        name: "Abu Dhabi Intl Airport",
         location: "Abu Dhabi,UNITED ARAB EMIRATES",
     },
     {

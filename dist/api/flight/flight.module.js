@@ -47,6 +47,7 @@ const alhind_flights_service_1 = require("./alhind.flights.service");
 const currency_entity_1 = require("../currency/entities/currency.entity");
 const core_1 = require("@nestjs/core");
 const cache_manager_1 = require("@nestjs/cache-manager");
+const chtravel_flights_service_1 = require("./chtravel.flights.service");
 let FlightModule = class FlightModule {
 };
 exports.FlightModule = FlightModule;
@@ -67,7 +68,7 @@ exports.FlightModule = FlightModule = __decorate([
             },
             flight_service_1.FlightService, traveller_service_1.TravellerService, groupfare_service_1.GroupfareService, sabre_flights_service_1.SabreService, airlines_service_1.AirlinesService, booking_utils_1.BookingUtils,
             mail_service_1.MailService, airports_service_1.AirportsService, booking_service_1.BookingService, passenger_service_1.PassengerService, auth_service_1.AuthService, jwt_1.JwtService, sabre_flight_utils_1.SabreUtils,
-            searchhistory_service_1.SearchhistoryService, auth_utils_1.AuthUtils, activitylog_service_1.ActivitylogService, alhind_flights_service_1.AlhindAPI]
+            searchhistory_service_1.SearchhistoryService, auth_utils_1.AuthUtils, activitylog_service_1.ActivitylogService, alhind_flights_service_1.AlhindAPI, chtravel_flights_service_1.CHScraper]
     })
 ], FlightModule);
 //# sourceMappingURL=flight.module.js.map

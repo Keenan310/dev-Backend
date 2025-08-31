@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { authenticator } from 'otplib';
 import axios from 'axios';
 import * as dotenv from "dotenv";
 import { Repository } from 'typeorm';

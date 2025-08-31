@@ -24,6 +24,9 @@ let PreFlightController = class PreFlightController {
     constructor(flightService) {
         this.flightService = flightService;
     }
+    AirSearchCH(flightDto) {
+        return this.flightService.airsearchch(flightDto);
+    }
     AirSearch(header, flightDto) {
         return this.flightService.airsearch(header, flightDto);
     }
@@ -53,6 +56,13 @@ let PreFlightController = class PreFlightController {
     }
 };
 exports.PreFlightController = PreFlightController;
+__decorate([
+    (0, common_1.Post)("agent/flight/search/ch"),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [search_flight_dto_1.FlightSearchModel]),
+    __metadata("design:returntype", void 0)
+], PreFlightController.prototype, "AirSearchCH", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Post)("agent/flight/search"),

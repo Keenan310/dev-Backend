@@ -38,6 +38,7 @@ import { AlhindAPI } from './alhind.flights.service';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import { CHScraper } from './chtravel.flights.service';
 
 @Module({
   imports: [CacheModule.register({
@@ -56,6 +57,6 @@ import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
         },
         FlightService, TravellerService , GroupfareService, SabreService, AirlinesService, BookingUtils,
     MailService, AirportsService, BookingService , PassengerService, AuthService, JwtService, SabreUtils,
-    SearchhistoryService, AuthUtils, ActivitylogService, AlhindAPI]
+    SearchhistoryService, AuthUtils, ActivitylogService, AlhindAPI, CHScraper]
 })
 export class FlightModule {}

@@ -16,7 +16,6 @@ export class GroupfareController {
   create(
     @Headers() header: Headers,
     @Body() groupFare: GroupFareDto) {
-    
     return this.groupfareService.create(header, groupFare);
   }
 
