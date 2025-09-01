@@ -26,38 +26,27 @@ export class CHScraper {
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
         ]);
 
+        const otp = '123456';
+        const inputSelector = '#mfaActivationCodeId';
+        const submitBtnSelector = '.login_btn';
+
+        // Wait for the input to appear
+        await page.click(inputSelector);
+
+        // Type OTP using keyboard (triggers key events so Vue v-model updates)
+        await page.keyboard.type(otp, { delay: 100 }); // delay simulates human typing
+
+        // Optional: read back value for confirmation
+        const value = await page.$eval(inputSelector, el => (el as HTMLInputElement).value);
+        console.log('Input value in DOM:', value);
+
+
         // const secret = 'UC2EK4Y2B345ZTD2VDPZDPXHSYF7ROPSQ2PL3VXE2WZ3RJX7MO3A';
 
         // // Generate OTP
         // const otp = authenticator.generate(secret);
         // console.log('Current OTP:', otp);
-
-        const otp = '123456'; // your generated OTP
-        const inputSelector = 'input[id="mfaActivationCodeId"]';
-        const submitBtnSelector = '.login_btn';
-
-    // Wait for the input to appear
-    await page.waitForSelector(inputSelector, { visible: true });
-
-    // Focus the input
-    await page.focus(inputSelector);
-
-    // Clear any existing value and click inside (to trigger Vue listeners)
-    await page.$eval(inputSelector, input => {
-        input.value = '';      // clear the value
-        input.click();         // trigger focus/click
-    });
-
-    // Type the OTP slowly like a human
-    await page.keyboard.type(otp, { delay: 200 });
-
-    // Click the submit button
-    await page.waitForSelector(submitBtnSelector, { visible: true });
-    await page.click(submitBtnSelector);
-
-
-
-        
+    
 
         // Then click login
         await page.click('#login_btn');

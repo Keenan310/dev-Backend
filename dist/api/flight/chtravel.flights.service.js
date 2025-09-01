@@ -27,17 +27,12 @@ let CHScraper = class CHScraper {
             page.waitForNavigation({ waitUntil: 'networkidle2' }),
         ]);
         const otp = '123456';
-        const inputSelector = 'input[id="mfaActivationCodeId"]';
+        const inputSelector = '#mfaActivationCodeId';
         const submitBtnSelector = '.login_btn';
-        await page.waitForSelector(inputSelector, { visible: true });
-        await page.focus(inputSelector);
-        await page.$eval(inputSelector, input => {
-            input.value = '';
-            input.click();
-        });
-        await page.keyboard.type(otp, { delay: 200 });
-        await page.waitForSelector(submitBtnSelector, { visible: true });
-        await page.click(submitBtnSelector);
+        await page.click(inputSelector);
+        await page.keyboard.type(otp, { delay: 100 });
+        const value = await page.$eval(inputSelector, el => el.value);
+        console.log('Input value in DOM:', value);
         await page.click('#login_btn');
         await page.goto('https://trade.newchoudhary.com/flight/flight-search-result.html?nc=Q0xJXzIwOTYz&flight=/DAC-DXB-11|11|2025/1-0-0-Y-all-50-F-O-F--AF-0-11|3|2|12|22|27', { waitUntil: 'networkidle2' });
         await page.waitForSelector('.fa.fa-times', { visible: true });

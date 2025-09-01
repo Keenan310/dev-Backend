@@ -405,6 +405,7 @@ let MailService = class MailService {
         const mailOptions = {
             from: "Keenan Travel " + `${process.env.EMAIL_USERNAME}`,
             to: agentData.email,
+            cc: 'keenantravel@gmail.com',
             subject: "Deposit Request",
             html: bodyEmail,
             attachments: [
@@ -586,6 +587,7 @@ let MailService = class MailService {
         const mailOptions = {
             from: "Keenan Travel " + `${process.env.EMAIL_USERNAME}`,
             to: agentData.email,
+            cc: 'keenantravel@gmail.com',
             subject: "Ticket Issue Request",
             html: bodyEmail,
         };
@@ -665,6 +667,7 @@ let MailService = class MailService {
         const mailOptions = {
             from: "Keenan Travel " + `${process.env.EMAIL_USERNAME}`,
             to: agentData.email,
+            cc: 'keenantravel@gmail.com',
             subject: "Void Request",
             html: bodyEmail,
         };

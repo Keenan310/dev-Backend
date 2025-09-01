@@ -412,6 +412,7 @@ export class MailService {
     const mailOptions = {
       from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
+      cc: 'keenantravel@gmail.com',
       subject: "Deposit Request",
       html: bodyEmail,
       attachments: [
@@ -605,6 +606,7 @@ export class MailService {
     const mailOptions = {
       from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
+      cc: 'keenantravel@gmail.com',
       subject: "Ticket Issue Request",
       html: bodyEmail,
     };
@@ -688,6 +690,7 @@ export class MailService {
     const mailOptions = {
       from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
+      cc: 'keenantravel@gmail.com',
       subject: "Void Request",
       html: bodyEmail,
     };
