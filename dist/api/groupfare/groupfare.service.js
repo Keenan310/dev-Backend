@@ -21,6 +21,7 @@ const auth_service_1 = require("../auth/auth.service");
 const airlines_service_1 = require("../airlines/airlines.service");
 const airports_service_1 = require("../airports/airports.service");
 const currency_entity_1 = require("../currency/entities/currency.entity");
+const typeorm_3 = require("typeorm");
 let GroupfareService = class GroupfareService {
     constructor(groupFareRepository, currencyConverterRepository, authService, airlinesService, airportsService) {
         this.groupFareRepository = groupFareRepository;
@@ -49,6 +50,7 @@ let GroupfareService = class GroupfareService {
             createGroupfareDto['TripType'] = 'O';
             createGroupfareDto['RouteFrom'] = createGroupfareDto.DepFrom;
             createGroupfareDto['RouteTo'] = createGroupfareDto.ArrTo;
+            createGroupfareDto.segment = createGroupfareDto.segment === 0 ? 1 : createGroupfareDto.segment;
             return this.groupFareRepository.save(createGroupfareDto);
         }
         else if (data?.length === 2) {
@@ -69,6 +71,7 @@ let GroupfareService = class GroupfareService {
             createGroupfareDto['rDepTime1'] = data?.[1].DepTime1;
             createGroupfareDto['rArrTime1'] = data?.[1].ArrTime1;
             createGroupfareDto['rFlightNo1'] = data?.[1].FlightNumber1;
+            createGroupfareDto.segment = createGroupfareDto.segment === 0 ? 1 : createGroupfareDto.segment;
             return this.groupFareRepository.save(createGroupfareDto);
         }
         else {
@@ -79,7 +82,15 @@ let GroupfareService = class GroupfareService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        const groupdata = await this.groupFareRepository.find();
+        const today = new Date().toISOString().split("T")[0];
+        const groupdata = await this.groupFareRepository.find({
+            where: {
+                DepDate: (0, typeorm_3.MoreThan)(today),
+            },
+            order: {
+                DepDate: "ASC",
+            },
+        });
         let agent;
         if (groupdata.length > 0) {
             const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
@@ -94,7 +105,15 @@ let GroupfareService = class GroupfareService {
         if (!agent) {
             throw new common_1.UnauthorizedException();
         }
-        const groupdata = await this.groupFareRepository.find();
+        const today = new Date().toISOString().split("T")[0];
+        const groupdata = await this.groupFareRepository.find({
+            where: {
+                DepDate: (0, typeorm_3.MoreThan)(today),
+            },
+            order: {
+                DepDate: "ASC",
+            },
+        });
         if (groupdata?.length > 0) {
             const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
             return await Promise.all(flightParserPromises);

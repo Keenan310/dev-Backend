@@ -7,6 +7,7 @@ import { AuthService } from '../auth/auth.service';
 import { AirlinesService } from '../airlines/airlines.service';
 import { AirportsService } from '../airports/airports.service';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
+import { MoreThan } from "typeorm";
 
 @Injectable()
 export class GroupfareService {
@@ -44,6 +45,7 @@ export class GroupfareService {
       createGroupfareDto['TripType'] = 'O';
       createGroupfareDto['RouteFrom'] = createGroupfareDto.DepFrom;
       createGroupfareDto['RouteTo'] = createGroupfareDto.ArrTo;
+      createGroupfareDto.segment = createGroupfareDto.segment === 0 ? 1 : createGroupfareDto.segment;
       return  this.groupFareRepository.save(createGroupfareDto);
     }else if(data?.length === 2){
       const createGroupfareDto = data?.[0];
@@ -63,6 +65,7 @@ export class GroupfareService {
       createGroupfareDto['rDepTime1'] = data?.[1].DepTime1;
       createGroupfareDto['rArrTime1'] = data?.[1].ArrTime1;
       createGroupfareDto['rFlightNo1'] = data?.[1].FlightNumber1;
+      createGroupfareDto.segment = createGroupfareDto.segment === 0 ? 1 : createGroupfareDto.segment;
 
       return  this.groupFareRepository.save(createGroupfareDto);
     }else{
@@ -78,7 +81,16 @@ export class GroupfareService {
         throw new UnauthorizedException();
     }
 
-    const groupdata = await this.groupFareRepository.find();
+    const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+
+    const groupdata = await this.groupFareRepository.find({
+      where: {
+        DepDate: MoreThan(today),   // compares lexicographically
+      },
+      order: {
+        DepDate: "ASC",             // string sort works if format is YYYY-MM-DD
+      },
+    });
 
     let agent: any;
     if(groupdata.length > 0){
@@ -96,7 +108,16 @@ export class GroupfareService {
         throw new UnauthorizedException();
     }
 
-    const groupdata = await this.groupFareRepository.find();
+    const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+
+    const groupdata = await this.groupFareRepository.find({
+      where: {
+        DepDate: MoreThan(today),   // compares lexicographically
+      },
+      order: {
+        DepDate: "ASC",             // string sort works if format is YYYY-MM-DD
+      },
+    });
 
     if(groupdata?.length > 0){
       const flightParserPromises = groupdata.map(group => this.flightParser(agent,group));
