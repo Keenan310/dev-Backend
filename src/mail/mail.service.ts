@@ -234,6 +234,7 @@ export class MailService {
     const mailOptions = {
       from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
       to: agentData.email,
+      cc: 'keenantravel@gmail.com',
       subject: "Sign Up - Confimation",
       html: bodyEmail
     };
