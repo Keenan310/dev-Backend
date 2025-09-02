@@ -84,7 +84,7 @@ export declare class ReportService {
         data: AgentLedgerModel[];
     }>;
     findAllAdminLedger(header: any, startDate: Date, endDate: Date, agentId: string): Promise<{
-        lossProfit: any;
+        lossProfit: number;
         ledger: any[];
         depsoit: any[];
         totalExpense: any;
