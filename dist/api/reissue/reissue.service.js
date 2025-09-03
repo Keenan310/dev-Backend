@@ -75,12 +75,12 @@ let ReissueService = class ReissueService {
             throw new common_1.NotFoundException("Reissue data not found");
         }
         if (booking.status === 'Reissue Requested') {
-            reissue['exchangepenalty'] = quotationReissueDto.exchangepenalty,
-                reissue['faredifference'] = quotationReissueDto.faredifference,
-                reissue['servicefee'] = quotationReissueDto.servicefee,
-                reissue['quotationamount'] = quotationReissueDto.quotationamount,
-                reissue['quotationtext'] = quotationReissueDto.quotationtext,
-                reissue['remarks'] = quotationReissueDto.remarks;
+            reissue['exchangepenalty'] = quotationReissueDto?.exchangepenalty || 0,
+                reissue['faredifference'] = quotationReissueDto?.faredifference || 0,
+                reissue['servicefee'] = quotationReissueDto?.servicefee || 0,
+                reissue['quotationamount'] = quotationReissueDto?.quotationamount || 0,
+                reissue['quotationtext'] = quotationReissueDto.quotationtext || '',
+                reissue['remarks'] = quotationReissueDto.remarks || '';
             await this.reissueRepository.update(reissue.id, reissue);
             booking.status = 'Reissue Quotation Send';
             const bookingResponse = await this.bookingRepository.update(booking.id, booking);
@@ -168,7 +168,7 @@ let ReissueService = class ReissueService {
         else {
             throw new common_1.NotFoundException("Booking status invalid");
         }
-        if (booking.status === 'Reissue Quotation Accepted') {
+        if (booking.status === 'Reissue Quotation Accepted' || booking.status === 'Reissue Requested') {
             booking.status = bookingstatus;
             const bookingResponse = await this.bookingRepository.update(booking.id, booking);
             if (bookingResponse.affected === 1) {

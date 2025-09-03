@@ -201,7 +201,7 @@ export class RefundService {
       }else{
         return { message: 'Something error'};
       }
-    }else if(booking.status === 'Refund Quotation Accepted' && status === 'reject'){
+    }else if((booking.status === 'Refund Quotation Accepted' || booking.status === 'Refund Requested') && status === 'reject'){
       booking['status'] = bookingstatus;
       refund.remarks = refundDecisionDto.remarks;
        await this.refundRepository.update(refund.id, refund);

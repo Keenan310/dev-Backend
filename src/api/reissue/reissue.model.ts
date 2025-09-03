@@ -103,21 +103,17 @@ export class ReissueQuotation{
 
     @ApiProperty()
     @IsNotEmpty()
-    @IsNumber()
     quotationamount: number;
 
     @ApiProperty()
     @IsNotEmpty()
-    @IsNumber()
     exchangepenalty: number;
     
     @ApiProperty()
-    @IsNumber()
     @IsNotEmpty()
     faredifference: number;
     
     @ApiProperty()
-    @IsNumber()
     @IsNotEmpty()
     servicefee: number;
 

@@ -82,12 +82,12 @@ export class ReissueService {
     }
 
     if(booking.status === 'Reissue Requested'){
-        reissue['exchangepenalty'] = quotationReissueDto.exchangepenalty,
-        reissue['faredifference'] = quotationReissueDto.faredifference,
-        reissue['servicefee'] = quotationReissueDto.servicefee,
-        reissue['quotationamount'] = quotationReissueDto.quotationamount,
-        reissue['quotationtext'] = quotationReissueDto.quotationtext,
-        reissue['remarks'] =  quotationReissueDto.remarks;
+        reissue['exchangepenalty'] = quotationReissueDto?.exchangepenalty || 0,
+        reissue['faredifference'] = quotationReissueDto?.faredifference || 0,
+        reissue['servicefee'] = quotationReissueDto?.servicefee || 0,
+        reissue['quotationamount'] = quotationReissueDto?.quotationamount || 0,
+        reissue['quotationtext'] = quotationReissueDto.quotationtext || '',
+        reissue['remarks'] =  quotationReissueDto.remarks || '';
 
       await this.reissueRepository.update(reissue.id, reissue);
 
@@ -190,7 +190,7 @@ export class ReissueService {
       throw new NotFoundException("Booking status invalid");
     }
 
-    if(booking.status === 'Reissue Quotation Accepted'){
+    if(booking.status === 'Reissue Quotation Accepted' || booking.status === 'Reissue Requested'){
       booking.status = bookingstatus;
 
       const bookingResponse =  await this.bookingRepository.update(booking.id, booking);
