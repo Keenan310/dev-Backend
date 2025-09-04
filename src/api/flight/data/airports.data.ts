@@ -4810,6 +4810,11 @@ export const airportsData = [
     location: "Florianopolis,BRAZIL",
   },
   {
+  code: "DBR",
+  name: "Darbhanga Airport",
+  location: "Darbhanga, India"
+},
+  {
     code: "FLO",
     name: "Gilbert Field",
     location: "Florence,UNITED STATES",
