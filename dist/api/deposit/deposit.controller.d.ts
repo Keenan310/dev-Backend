@@ -1,5 +1,5 @@
 import { DepositService } from './deposit.service';
-import { DepositBonuseModel, DepositModel, DepositModelUpdate, DepositModelUpdateStatus } from './deposit.model';
+import { DepositBonuseModel, DepositModelUpdate, DepositModelUpdateStatus } from './deposit.model';
 export declare class DepositController {
     private readonly depositService;
     constructor(depositService: DepositService);
@@ -8,14 +8,14 @@ export declare class DepositController {
         page: number;
         totalpage: number;
         totaldata: number;
-        data: DepositModel[];
+        data: import("./deposit.model").DepositModel[];
     }>;
     findAllAgent(header: string, page?: number, status?: string, filter?: string, limit?: number): Promise<{
         limit: number;
         page: number;
         totalpage: number;
         totaldata: number;
-        data: DepositModel[];
+        data: import("./deposit.model").DepositModel[];
     }>;
     update(header: Headers, uid: string, updateDepositDto: DepositModelUpdate): Promise<import("typeorm").UpdateResult>;
     updatestatus(header: Headers, uid: string, updateDepositDto: DepositModelUpdateStatus): Promise<import("typeorm").UpdateResult>;
@@ -32,6 +32,6 @@ export declare class DepositController {
         page: number;
         totalpage: number;
         totaldata: number;
-        data: DepositModel[];
+        data: import("./deposit.model").DepositModel[];
     }>;
 }

@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Header, Headers, Query, NotAcceptableException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Headers, Query, NotAcceptableException } from '@nestjs/common';
 import { DepositService } from './deposit.service';
-import { DepositBonuseModel, DepositModel, DepositModelUpdate, DepositModelUpdateStatus } from './deposit.model';
+import { DepositBonuseModel, DepositModelUpdate, DepositModelUpdateStatus } from './deposit.model';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 @ApiTags("Deposit Modules")

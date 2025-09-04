@@ -17,9 +17,11 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const airports_model_1 = require("./airports.model");
 const typeorm_2 = require("typeorm");
+const auth_service_1 = require("../auth/auth.service");
 let AirportsService = class AirportsService {
-    constructor(airportsRepository) {
+    constructor(airportsRepository, authService) {
         this.airportsRepository = airportsRepository;
+        this.authService = authService;
     }
     async create(createAirportDto) {
         const airportData = await this.airportsRepository.findOne({ where: { iata: createAirportDto.iata }
@@ -31,6 +33,34 @@ let AirportsService = class AirportsService {
     }
     async findAll() {
         return this.airportsRepository.find();
+    }
+    async search(header, query) {
+        const agent = await this.authService.verifyAgentToken(header);
+        if (!agent) {
+            throw new common_1.UnauthorizedException();
+        }
+        if (!query)
+            return [];
+        let results = [];
+        if (query.length === 3) {
+            results = await this.airportsRepository.find({
+                where: { iata: query.toUpperCase() },
+            });
+        }
+        else {
+            results = await this.airportsRepository.find({
+                where: [
+                    { name: (0, typeorm_2.ILike)(`%${query}%`) },
+                    { city_code: (0, typeorm_2.ILike)(`%${query}%`) },
+                    { country_code: (0, typeorm_2.ILike)(`%${query}%`) },
+                ],
+            });
+        }
+        return results.map((a) => ({
+            code: a.iata,
+            name: a.name,
+            location: a.city_code + ', ' + a.country_code,
+        }));
     }
     async findFormateAll() {
         return this.airportsRepository.find({
@@ -96,6 +126,7 @@ exports.AirportsService = AirportsService;
 exports.AirportsService = AirportsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(airports_model_1.AirportsModel)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        auth_service_1.AuthService])
 ], AirportsService);
 //# sourceMappingURL=airports.service.js.map

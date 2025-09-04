@@ -27,6 +27,9 @@ let AirportsController = class AirportsController {
     findAll() {
         return this.airportsService.findAll();
     }
+    search(header, query) {
+        return this.airportsService.search(header, query?.trim());
+    }
     findFormateAll() {
         return this.airportsService.findFormateAll();
     }
@@ -54,6 +57,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], AirportsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('agent/search'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Query)('q')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], AirportsController.prototype, "search", null);
 __decorate([
     (0, common_1.Get)('formate/all'),
     __metadata("design:type", Function),
@@ -83,9 +94,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AirportsController.prototype, "remove", null);
 exports.AirportsController = AirportsController = __decorate([
-    (0, swagger_1.ApiExcludeController)(),
     (0, swagger_1.ApiTags)("Airports Module"),
-    (0, common_1.Controller)('admin/airports'),
+    (0, common_1.Controller)('airports'),
     __metadata("design:paramtypes", [airports_service_1.AirportsService])
 ], AirportsController);
 //# sourceMappingURL=airports.controller.js.map

@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,Headers, Query } from '@nestjs/common';
 import { AirportsService } from './airports.service';
 import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
 import { AirportsModel, AirportsModelUpdate } from './airports.model';
 
-@ApiExcludeController()
+//@ApiExcludeController()
 @ApiTags("Airports Module")
-@Controller('admin/airports')
+@Controller('airports')
 export class AirportsController {
-  constructor(private readonly airportsService: AirportsService) {}
+  constructor(
+    private readonly airportsService: AirportsService,
+  ) {}
 
   @Post()
   create(@Body() createAirportDto: AirportsModel) {
@@ -17,6 +19,13 @@ export class AirportsController {
   @Get()
   findAll() {
     return this.airportsService.findAll();
+  }
+
+  @Get('agent/search')
+  search(
+    @Headers() header: Headers,
+    @Query('q') query: string) {
+    return this.airportsService.search(header, query?.trim());
   }
 
   @Get('formate/all')

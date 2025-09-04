@@ -1,10 +1,17 @@
 import { AirportsModel, AirportsModelUpdate } from './airports.model';
 import { Repository } from 'typeorm';
+import { AuthService } from '../auth/auth.service';
 export declare class AirportsService {
     private readonly airportsRepository;
-    constructor(airportsRepository: Repository<AirportsModel>);
+    private readonly authService;
+    constructor(airportsRepository: Repository<AirportsModel>, authService: AuthService);
     create(createAirportDto: AirportsModel): Promise<AirportsModel>;
     findAll(): Promise<AirportsModel[]>;
+    search(header: any, query: string): Promise<{
+        code: any;
+        name: any;
+        location: string;
+    }[]>;
     findFormateAll(): Promise<AirportsModel[]>;
     findOne(id: number): Promise<AirportsModel>;
     update(id: number, updateAirportDto: AirportsModelUpdate): Promise<import("typeorm").UpdateResult>;

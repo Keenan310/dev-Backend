@@ -5,6 +5,11 @@ export declare class AirportsController {
     constructor(airportsService: AirportsService);
     create(createAirportDto: AirportsModel): Promise<AirportsModel>;
     findAll(): Promise<AirportsModel[]>;
+    search(header: Headers, query: string): Promise<{
+        code: any;
+        name: any;
+        location: string;
+    }[]>;
     findFormateAll(): Promise<AirportsModel[]>;
     findOne(id: string): Promise<AirportsModel>;
     update(id: string, updateAirportDto: AirportsModelUpdate): Promise<import("typeorm").UpdateResult>;

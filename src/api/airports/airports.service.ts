@@ -1,7 +1,8 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException, Headers, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AirportsModel, AirportsModelUpdate } from './airports.model';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class AirportsService {
@@ -9,6 +10,7 @@ export class AirportsService {
   constructor(
     @InjectRepository(AirportsModel)
     private readonly airportsRepository: Repository<AirportsModel>,
+    private readonly authService: AuthService,
   ) {}
 
   async create(createAirportDto: AirportsModel) {
@@ -22,8 +24,42 @@ export class AirportsService {
     return this.airportsRepository.create(createAirportDto);
   }
 
+
   async findAll() {
     return this.airportsRepository.find();
+  }
+
+  async search(header: any ,query: string){
+
+    const agent = await this.authService.verifyAgentToken(header);
+    
+    if(!agent){
+        throw new UnauthorizedException();
+    }
+
+    if (!query) return [];
+
+    let results=[];
+
+    if (query.length === 3) {
+      results = await this.airportsRepository.find({
+        where: { iata: query.toUpperCase() },
+      });
+    } else {
+      results = await this.airportsRepository.find({
+        where: [
+          { name: ILike(`%${query}%`) },
+          { city_code: ILike(`%${query}%`) },
+          { country_code: ILike(`%${query}%`) },
+        ],
+      });
+    }
+
+    return results.map((a) => ({
+      code: a.iata,
+      name: a.name,
+      location: a.city_code+ ', '+a.country_code,
+    }));
   }
 
   async findFormateAll() {
