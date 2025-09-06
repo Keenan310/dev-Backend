@@ -20,12 +20,10 @@ const typeorm_2 = require("typeorm");
 const auth_service_1 = require("../auth/auth.service");
 const airlines_service_1 = require("../airlines/airlines.service");
 const airports_service_1 = require("../airports/airports.service");
-const currency_entity_1 = require("../currency/entities/currency.entity");
 const typeorm_3 = require("typeorm");
 let GroupfareService = class GroupfareService {
-    constructor(groupFareRepository, currencyConverterRepository, authService, airlinesService, airportsService) {
+    constructor(groupFareRepository, authService, airlinesService, airportsService) {
         this.groupFareRepository = groupFareRepository;
-        this.currencyConverterRepository = currencyConverterRepository;
         this.authService = authService;
         this.airlinesService = airlinesService;
         this.airportsService = airportsService;
@@ -50,7 +48,7 @@ let GroupfareService = class GroupfareService {
             createGroupfareDto['TripType'] = 'O';
             createGroupfareDto['RouteFrom'] = createGroupfareDto.DepFrom;
             createGroupfareDto['RouteTo'] = createGroupfareDto.ArrTo;
-            createGroupfareDto.segment = createGroupfareDto.segment === 0 ? 1 : createGroupfareDto.segment;
+            createGroupfareDto.segment += 1;
             return this.groupFareRepository.save(createGroupfareDto);
         }
         else if (data?.length === 2) {
@@ -59,7 +57,8 @@ let GroupfareService = class GroupfareService {
             createGroupfareDto['TripType'] = 'R';
             createGroupfareDto['RouteFrom'] = createGroupfareDto.DepFrom;
             createGroupfareDto['RouteTo'] = createGroupfareDto.ArrTo;
-            createGroupfareDto['rSegment'] = data?.[1].segment;
+            createGroupfareDto.segment += 1;
+            createGroupfareDto['rSegment'] = data?.[1].segment + 1;
             createGroupfareDto['rDate'] = data?.[1].DepDate;
             createGroupfareDto['rDepFrom'] = data?.[1].DepartureFrom;
             createGroupfareDto['rArrTo'] = data?.[1].ArrivalTo;
@@ -71,7 +70,6 @@ let GroupfareService = class GroupfareService {
             createGroupfareDto['rDepTime1'] = data?.[1].DepTime1;
             createGroupfareDto['rArrTime1'] = data?.[1].ArrTime1;
             createGroupfareDto['rFlightNo1'] = data?.[1].FlightNumber1;
-            createGroupfareDto.segment = createGroupfareDto.segment === 0 ? 1 : createGroupfareDto.segment;
             return this.groupFareRepository.save(createGroupfareDto);
         }
         else {
@@ -505,9 +503,7 @@ exports.GroupfareService = GroupfareService;
 exports.GroupfareService = GroupfareService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(groupfare_model_1.GroupFareModel)),
-    __param(1, (0, typeorm_1.InjectRepository)(currency_entity_1.CurrencyConverter)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository,
         auth_service_1.AuthService,
         airlines_service_1.AirlinesService,
         airports_service_1.AirportsService])

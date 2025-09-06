@@ -4,14 +4,12 @@ import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { AirlinesService } from '../airlines/airlines.service';
 import { AirportsService } from '../airports/airports.service';
-import { CurrencyConverter } from '../currency/entities/currency.entity';
 export declare class GroupfareService {
     private readonly groupFareRepository;
-    private readonly currencyConverterRepository;
     private readonly authService;
     private readonly airlinesService;
     private readonly airportsService;
-    constructor(groupFareRepository: Repository<GroupFareModel>, currencyConverterRepository: Repository<CurrencyConverter>, authService: AuthService, airlinesService: AirlinesService, airportsService: AirportsService);
+    constructor(groupFareRepository: Repository<GroupFareModel>, authService: AuthService, airlinesService: AirlinesService, airportsService: AirportsService);
     create(header: any, data: any): Promise<any>;
     findAllAdmin(header: any): Promise<(any[] | {
         OfferId: any;

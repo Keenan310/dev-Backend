@@ -15,8 +15,6 @@ export class GroupfareService {
   constructor(
     @InjectRepository(GroupFareModel)
     private readonly groupFareRepository: Repository<GroupFareModel>,
-    @InjectRepository(CurrencyConverter)
-    private readonly currencyConverterRepository: Repository<CurrencyConverter>,
     private readonly authService: AuthService,
     private readonly airlinesService: AirlinesService,
     private readonly airportsService: AirportsService,
@@ -45,7 +43,7 @@ export class GroupfareService {
       createGroupfareDto['TripType'] = 'O';
       createGroupfareDto['RouteFrom'] = createGroupfareDto.DepFrom;
       createGroupfareDto['RouteTo'] = createGroupfareDto.ArrTo;
-      createGroupfareDto.segment = createGroupfareDto.segment === 0 ? 1 : createGroupfareDto.segment;
+      createGroupfareDto.segment += 1;
       return  this.groupFareRepository.save(createGroupfareDto);
     }else if(data?.length === 2){
       const createGroupfareDto = data?.[0];
@@ -53,7 +51,8 @@ export class GroupfareService {
       createGroupfareDto['TripType'] = 'R';
       createGroupfareDto['RouteFrom'] = createGroupfareDto.DepFrom;
       createGroupfareDto['RouteTo'] = createGroupfareDto.ArrTo;
-      createGroupfareDto['rSegment'] = data?.[1].segment;
+      createGroupfareDto.segment += 1;
+      createGroupfareDto['rSegment'] = data?.[1].segment + 1;
       createGroupfareDto['rDate'] = data?.[1].DepDate;
       createGroupfareDto['rDepFrom'] = data?.[1].DepartureFrom;
       createGroupfareDto['rArrTo'] = data?.[1].ArrivalTo;
@@ -65,7 +64,6 @@ export class GroupfareService {
       createGroupfareDto['rDepTime1'] = data?.[1].DepTime1;
       createGroupfareDto['rArrTime1'] = data?.[1].ArrTime1;
       createGroupfareDto['rFlightNo1'] = data?.[1].FlightNumber1;
-      createGroupfareDto.segment = createGroupfareDto.segment === 0 ? 1 : createGroupfareDto.segment;
 
       return  this.groupFareRepository.save(createGroupfareDto);
     }else{
