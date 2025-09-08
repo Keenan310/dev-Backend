@@ -29,6 +29,10 @@ let GroupfareService = class GroupfareService {
         this.airportsService = airportsService;
     }
     async create(header, data) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
         const groupfare = await this.groupFareRepository.find({ order: { id: 'DESC' }, take: 1 });
         let groupId;
         if (groupfare.length == 1) {
@@ -44,6 +48,7 @@ let GroupfareService = class GroupfareService {
             createGroupfareDto['TripType'] = 'O';
             createGroupfareDto['RouteFrom'] = createGroupfareDto.DepFrom;
             createGroupfareDto['RouteTo'] = createGroupfareDto.ArrTo;
+            createGroupfareDto.segment = createGroupfareDto.ArrivalTo === createGroupfareDto.DepartureFrom1 ? 2 : 1;
             return this.groupFareRepository.save(createGroupfareDto);
         }
         else if (data?.length === 2) {
@@ -52,7 +57,8 @@ let GroupfareService = class GroupfareService {
             createGroupfareDto['TripType'] = 'R';
             createGroupfareDto['RouteFrom'] = createGroupfareDto.DepFrom;
             createGroupfareDto['RouteTo'] = createGroupfareDto.ArrTo;
-            createGroupfareDto['rSegment'] = data?.[1].segment;
+            createGroupfareDto.segment = createGroupfareDto.ArrivalTo === createGroupfareDto.DepartureFrom1 ? 2 : 1;
+            createGroupfareDto['rSegment'] = createGroupfareDto['rArrTo'] === createGroupfareDto['rDepFrom1'] ? 2 : 1;
             createGroupfareDto['rDate'] = data?.[1].DepDate;
             createGroupfareDto['rDepFrom'] = data?.[1].DepartureFrom;
             createGroupfareDto['rArrTo'] = data?.[1].ArrivalTo;
