@@ -159,19 +159,35 @@ let AlhindAPI = class AlhindAPI {
             const NetFare = equivalentAmount + adminMarkUpAmount + airlinesMarkUpAmount + addAmount + agentMarkUpAmount + Taxes;
             if (NetFare > TotalFare)
                 TotalFare = NetFare;
-            const BaggageAllowance = flights?.FlightLegs[0]?.FreeBaggages ?? [];
-            const bagAllowance = BaggageAllowance.find(baggage => baggage.FID === FID);
+            const legs = flights?.FlightLegs ?? [];
+            const firstLegBaggage = legs[0]?.FreeBaggages ?? [];
+            const firstLegBagAllowance = firstLegBaggage.find(b => b.FID === FID);
+            const lastLegBaggage = legs.length > 1 ? legs[legs.length - 1]?.FreeBaggages ?? [] : [];
+            const lastLegBagAllowance = lastLegBaggage.find(b => b.FID === FID);
             const PriceBreakDown = Fares.map(pax => {
                 const PaxType = pax?.PTC === 'CHD' ? 'CNN' : pax?.PTC;
-                const paxCount = PaxType === 'ADT' ? flighDto.adultcount :
-                    PaxType === 'CHD' || PaxType === 'CNN' ? flighDto.childcount :
-                        flighDto.infantcount || 0;
-                const bagType = PaxType === 'ADT' ? 'Adt_Baggage' :
-                    PaxType === 'CHD' || PaxType === 'CNN' ? 'Chd_Baggage' : 'Inf_Baggage';
-                const baggage = Array(flighDto.segments.length).fill({
-                    Airline: flights?.TicketingCarrier,
-                    Allowance: bagAllowance?.[bagType] || ''
-                });
+                const paxCount = PaxType === 'ADT'
+                    ? flighDto.adultcount
+                    : PaxType === 'CHD' || PaxType === 'CNN'
+                        ? flighDto.childcount
+                        : flighDto.infantcount || 0;
+                const bagType = PaxType === 'ADT'
+                    ? 'Adt_Baggage'
+                    : PaxType === 'CHD' || PaxType === 'CNN'
+                        ? 'Chd_Baggage'
+                        : 'Inf_Baggage';
+                const baggageInfo = [
+                    {
+                        Airline: flights?.TicketingCarrier,
+                        Allowance: firstLegBagAllowance?.[bagType] || '',
+                    },
+                ];
+                if (legs.length > 1) {
+                    baggageInfo.push({
+                        Airline: flights?.TicketingCarrier,
+                        Allowance: lastLegBagAllowance?.[bagType] || '',
+                    });
+                }
                 const totalTaxAmount = Math.ceil(pax?.Tax * conversionRate * 100) / 100;
                 const PaxequivalentAmount = Math.ceil(pax?.BaseFare * conversionRate * 100) / 100;
                 const PaxtotalFare = Math.ceil((PaxequivalentAmount + totalTaxAmount) * 100) / 100;
@@ -181,7 +197,7 @@ let AlhindAPI = class AlhindAPI {
                     Taxes: totalTaxAmount,
                     TotalFare: PaxtotalFare,
                     PaxCount: paxCount,
-                    Bag: baggage,
+                    Bag: baggageInfo,
                     FareComponent: {}
                 };
             });
