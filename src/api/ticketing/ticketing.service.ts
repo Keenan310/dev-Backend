@@ -118,10 +118,9 @@ export class TicketingService {
     booking.purchaseprice = makeTicketModel.purchaseprice;
     booking.ticketed_at = new Date();
 
-    const ticketInfo = paxTicketData.map(p => `${p.surname}/${p.givenName}/${p.ticketNumber}`)
-    .join(', ');
-
-    const details = booking.carrier_name+'/' + booking.depfrom+'-'+booking.arrto+'/'+ booking.pnr+'/'+ticketInfo;
+    const ticketInfo = paxTicketData.map(p => `${p.surname} ${p.givenName} ${p.ticketNumber}`).join(', ');
+    const Route = booking.triptype === "Oneway" ? `${booking.depfrom}-${booking.arrto}` : `${booking.depfrom}-${booking.arrto}-${booking.depfrom}`;
+    const details = ticketInfo+'/' +Route+'/'+ booking.pnr +'-'+ booking.carrier_name;
     const AgentLedgerData = {
       agentId: booking.agentId,
       trxtype: 'ticket',
@@ -174,7 +173,7 @@ export class TicketingService {
     const AgentLedgerData = {
       agentId: booking.agentId,
       trxtype: 'reversal',
-      amount: booking.netfare,
+      credit: booking.netfare,
       refId: booking.bookingId,
       details: details,
       remarks: remarks,
