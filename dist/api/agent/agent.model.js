@@ -280,15 +280,6 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], AgentBalanceUpdate.prototype, "details", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Number)
-], AgentBalanceUpdate.prototype, "ticketcost", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], AgentBalanceUpdate.prototype, "pnr", void 0);
 let AgentCreditModel = class AgentCreditModel {
 };
 exports.AgentCreditModel = AgentCreditModel;

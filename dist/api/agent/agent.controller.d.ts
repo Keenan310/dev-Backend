@@ -15,10 +15,8 @@ export declare class AgentController {
         agentId: string;
         trxtype: string;
         debit: number;
+        credit: number;
         refId: string;
-        ticketcost: number;
-        netfare: number;
-        pnr: string;
         details: string;
         companyname: string;
     } & import("../report/report.model").AgentLedgerModel>;

@@ -345,33 +345,16 @@ export class AgentService {
       throw new NotFoundException('Agent not found');
     }
 
-    if(updateAgentBalanceDto.trxtype === 'ticket' || updateAgentBalanceDto.trxtype === 'reissue'){
-      const AgentLedgerData = {
-        agentId: agent.agentId,
-        trxtype: updateAgentBalanceDto.trxtype,
-        debit: updateAgentBalanceDto.debit,
-        refId: updateAgentBalanceDto.refId,
-        ticketcost: updateAgentBalanceDto.ticketcost,
-        netfare: updateAgentBalanceDto.debit,
-        pnr: updateAgentBalanceDto.pnr,
-        details: updateAgentBalanceDto.details,
-        companyname: agent.company
-      }
-      return await this.agentLedgerRepository.save(AgentLedgerData);
-    }else{
-      const AgentLedgerData = {
+    const AgentLedgerData = {
       agentId: agent.agentId,
       trxtype: updateAgentBalanceDto.trxtype,
+      debit: updateAgentBalanceDto.debit,
       credit: updateAgentBalanceDto.credit,
       refId: updateAgentBalanceDto.refId,
       details: updateAgentBalanceDto.details,
-      ticketcost: updateAgentBalanceDto.ticketcost,
-      pnr: updateAgentBalanceDto.pnr,
       companyname: agent.company
     }
-
     return await this.agentLedgerRepository.save(AgentLedgerData);
-  }
 
   }
 }

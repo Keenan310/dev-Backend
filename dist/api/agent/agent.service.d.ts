@@ -42,10 +42,8 @@ export declare class AgentService {
         agentId: string;
         trxtype: string;
         debit: number;
+        credit: number;
         refId: string;
-        ticketcost: number;
-        netfare: number;
-        pnr: string;
         details: string;
         companyname: string;
     } & AgentLedgerModel>;
