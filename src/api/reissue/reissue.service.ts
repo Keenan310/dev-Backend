@@ -190,9 +190,8 @@ export class ReissueService {
       throw new NotFoundException("Booking status invalid");
     }
 
-    if(booking.status === 'Reissue Quotation Accepted' || booking.status === 'Reissue Requested'){
+    if(booking.status === 'Reissue Quotation Accepted' || booking.status === 'Reissue Requested' || booking.status === 'Reissue Quotation Send'){
       booking.status = bookingstatus;
-
       const bookingResponse =  await this.bookingRepository.update(booking.id, booking);
 
       if(bookingResponse.affected === 1){
