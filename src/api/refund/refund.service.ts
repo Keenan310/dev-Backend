@@ -185,23 +185,23 @@ export class RefundService {
 
       const details = refund.quotationamount + ' Refund. '+refund.passengerdata+' By '+ verifyAdminId.firstname;
 
-      const AgentLedgerData = {
-        agentId: booking.agentId,
-        trxtype: 'refund',
-        credit: Number(refund.quotationamount),
-        refId: booking.bookingId,
-        details: details,
-        companyname: booking.companyname
-      }
+      // const AgentLedgerData = {
+      //   agentId: booking.agentId,
+      //   trxtype: 'refund',
+      //   credit: Number(refund.quotationamount),
+      //   refId: booking.bookingId,
+      //   details: details,
+      //   companyname: booking.companyname
+      // }
 
-      await this.agentLedgerRepository.save(AgentLedgerData);
+      // await this.agentLedgerRepository.save(AgentLedgerData);
       const bookingResponse = await this.bookingRepository.update(booking.id, booking);
       if(bookingResponse.affected === 1){
         return { message: 'Refunded Successfully.'};
       }else{
         return { message: 'Something error'};
       }
-    }else if((booking.status === 'Refund Quotation Accepted' || booking.status === 'Refund Requested') && status === 'reject'){
+    }else if((booking.status === 'Refund Quotation Send' || booking.status === 'Refund Quotation Accepted' || booking.status === 'Refund Requested') && status === 'reject'){
       booking['status'] = bookingstatus;
       refund.remarks = refundDecisionDto.remarks;
        await this.refundRepository.update(refund.id, refund);

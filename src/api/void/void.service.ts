@@ -91,28 +91,28 @@ export class VoidService {
       booking['status'] = bookingstatus;
       const feeDetails = servicefee + ' Void Charge. '+voidData.passengerdata+' By '+ verifyAdminId?.firstname;
 
-      const agentLedgerData1 = {
-        agentId: booking.agentId,
-        trxtype: 'fee',
-        debit: servicefee,
-        refId: booking.bookingId,
-        details: feeDetails,
-        companyname: booking.companyname
-      }
-      await this.agentLedgerRepository.save(agentLedgerData1);
+      // const agentLedgerData1 = {
+      //   agentId: booking.agentId,
+      //   trxtype: 'fee',
+      //   debit: servicefee,
+      //   refId: booking.bookingId,
+      //   details: feeDetails,
+      //   companyname: booking.companyname
+      // }
+      // await this.agentLedgerRepository.save(agentLedgerData1);
 
       const voidedAmount = Number(booking.netfare) - servicefee;
       const details = voidedAmount + ' Void. '+voidData.passengerdata+' with Service Fee: '+servicefee+ '/'+ ' By '+ verifyAdminId.firstname;
-      const agentLedgerData2 = {
-        agentId: booking.agentId,
-        trxtype: 'void',
-        credit: voidedAmount,
-        refId: booking.bookingId,
-        details: details,
+      // const agentLedgerData2 = {
+      //   agentId: booking.agentId,
+      //   trxtype: 'void',
+      //   credit: voidedAmount,
+      //   refId: booking.bookingId,
+      //   details: details,
         
-      }
+      // }
 
-      await this.agentLedgerRepository.save(agentLedgerData2);
+      // await this.agentLedgerRepository.save(agentLedgerData2);
       voidData.amount = voidedAmount;
       voidData.servicefee = servicefee;
       await this.voidRepository.update(voidData.id, voidData);
