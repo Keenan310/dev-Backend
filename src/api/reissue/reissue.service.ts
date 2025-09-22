@@ -38,7 +38,7 @@ export class ReissueService {
     if(booking.status === 'Ticketed' || booking.status === 'Void Rejected' ||
         booking.status === 'Reissued' || booking.status === 'Refund Rejected' ||
         booking.status === 'Reissue Quotation Rejected' ||
-        booking.status === 'Refund Quotation Rejected'){
+        booking.status === 'Refund Quotation Rejected' || booking.status === 'Reissue Rejected'){
       const RequestReissue = {
         agentId : booking.agentId,
         bookingId : booking.bookingId,
