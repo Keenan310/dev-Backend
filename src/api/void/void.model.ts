@@ -34,6 +34,12 @@ export class VoidModel {
   reason: string;
 
   @Column()
+  status: string;
+
+  @Column()
+  remarks: string;
+
+  @Column()
   created_at: Date;
 
   @Column()

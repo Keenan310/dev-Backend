@@ -33,6 +33,9 @@ export class RefundModel{
     @Column()
     remarks: string;
 
+    @Column()
+    status: string;
+
     @CreateDateColumn()
     created_at: Date;
 
@@ -70,8 +73,6 @@ export class RefundQuotation{
 
 export class RefundDecisionModel{
 
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
+    @ApiPropertyOptional()
     remarks: string
 }

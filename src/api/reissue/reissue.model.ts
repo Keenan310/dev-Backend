@@ -64,6 +64,9 @@ export class ReissueModel{
     @IsString()
     @IsNotEmpty()
     remarks: string;
+
+    @Column()
+    status: string;
    
     @Column()
     @IsString()

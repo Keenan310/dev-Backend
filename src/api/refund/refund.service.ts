@@ -135,9 +135,7 @@ export class RefundService {
     }
 
     if(booking.status === 'Refund Quotation Send'){
-
       booking['status'] = bookingstatus;
-
       const bookingResponse = await this.bookingRepository.update(booking.id, booking);
 
       if(bookingResponse.affected === 1 && status === 'accept'){
@@ -181,9 +179,15 @@ export class RefundService {
     }
 
     if(booking.status === 'Refund Quotation Accepted' && status === 'accept'){
+
+      const bookingResponse = await this.bookingRepository.update(booking.id, booking);
       booking['status'] = bookingstatus;
 
-      const details = refund.quotationamount + ' Refund. '+refund.passengerdata+' By '+ verifyAdminId.firstname;
+      refund['status'] = status;
+      refund['remarks'] = refundDecisionDto.remarks;
+      await this.refundRepository.update(refund.id, refund);
+
+      // const details = refund.quotationamount + ' Refund. '+refund.passengerdata+' By '+ verifyAdminId.firstname;
 
       // const AgentLedgerData = {
       //   agentId: booking.agentId,
@@ -195,7 +199,6 @@ export class RefundService {
       // }
 
       // await this.agentLedgerRepository.save(AgentLedgerData);
-      const bookingResponse = await this.bookingRepository.update(booking.id, booking);
       if(bookingResponse.affected === 1){
         return { message: 'Refunded Successfully.'};
       }else{
