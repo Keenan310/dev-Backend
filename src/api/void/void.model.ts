@@ -50,3 +50,8 @@ export class VoidModel {
   uid: string;
 
 }
+
+export class VoidDesicion{
+  @ApiPropertyOptional()
+  remarks : string;
+}

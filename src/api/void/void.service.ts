@@ -1,5 +1,5 @@
 import { HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { VoidModel } from './void.model';
+import { VoidDesicion, VoidModel } from './void.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AgentModel } from '../agent/agent.model';
@@ -60,8 +60,7 @@ export class VoidService {
       throw new NotFoundException(`Ticket Is Already In Another status ${booking.status}`);
     }
   }
-
-  async voidDecision(header: any, bookingUId: string, status: string, servicefee: number) {
+  async voidDecision(header: any, bookingUId: string, status: string, servicefee: number, voidDesicionDto: VoidDesicion) {
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
     if(!verifyAdminId){
@@ -86,54 +85,18 @@ export class VoidService {
     }else if(status == 'reject'){
       bookingstatus='Void Rejected'
     }
-
-    if(booking.status === 'Void Requested' && status === 'accept'){
       booking['status'] = bookingstatus;
-      const feeDetails = servicefee + ' Void Charge. '+voidData.passengerdata+' By '+ verifyAdminId?.firstname;
 
-      // const agentLedgerData1 = {
-      //   agentId: booking.agentId,
-      //   trxtype: 'fee',
-      //   debit: servicefee,
-      //   refId: booking.bookingId,
-      //   details: feeDetails,
-      //   companyname: booking.companyname
-      // }
-      // await this.agentLedgerRepository.save(agentLedgerData1);
+      const bookingResponse = await this.bookingRepository.update(booking.id, booking);
 
-      const voidedAmount = Number(booking.netfare) - servicefee;
-      const details = voidedAmount + ' Void. '+voidData.passengerdata+' with Service Fee: '+servicefee+ '/'+ ' By '+ verifyAdminId.firstname;
-      // const agentLedgerData2 = {
-      //   agentId: booking.agentId,
-      //   trxtype: 'void',
-      //   credit: voidedAmount,
-      //   refId: booking.bookingId,
-      //   details: details,
-        
-      // }
+      voidData['remarks'] = voidDesicionDto.remarks;
+      voidData['status'] = status;
 
-      // await this.agentLedgerRepository.save(agentLedgerData2);
-      voidData.amount = voidedAmount;
-      voidData.servicefee = servicefee;
       await this.voidRepository.update(voidData.id, voidData);
-      const bookingResponse = await this.bookingRepository.update(booking.id, booking);
-      if(bookingResponse.affected === 1){
-        await this.mailService.voidResultMail(booking)
-        return { message: bookingstatus+' Successfully.'};
-      }else{
-        return { message: 'Something error'};
-      }
-    }else if(booking.status === 'Void Requested' && status === 'reject'){
-      booking.status = bookingstatus;
-      const bookingResponse = await this.bookingRepository.update(booking.id, booking);
       if(bookingResponse.affected === 1){
         return { message: bookingstatus+' Successfully.'};
       }else{
         return { message: 'Something error'};
       }
-    }else{
-      throw new HttpException("Ticket Is Already In Another status", HttpStatusCode.BadRequest);
-    }
   }
-  
 }

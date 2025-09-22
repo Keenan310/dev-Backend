@@ -1,7 +1,7 @@
 import { Post, Body, Param, Headers, Controller } from '@nestjs/common';
 import { VoidService } from './void.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { VoidModel } from './void.model';
+import { VoidDesicion, VoidModel } from './void.model';
 
 
 @ApiTags("Void Modules")
@@ -23,7 +23,8 @@ export class VoidController {
     @Headers() header: Headers,
     @Param('bookingUId') bookingUId:string,
     @Param('status') status:string,
-    @Param('servicefee') servicefee:number) {
-    return this.voidService.voidDecision(header, bookingUId, status, servicefee);
+    @Param('servicefee') servicefee:number,
+    @Body() voidDesicionDto: VoidDesicion) {
+    return this.voidService.voidDecision(header, bookingUId, status, servicefee, voidDesicionDto);
   }
 }
