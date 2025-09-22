@@ -1,6 +1,6 @@
 import { HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ReissueModel, ReissueQuotation, ReissueRequestModel } from './reissue.model';
+import { ReissueModel, ReissueQuotation, ReissueRequestDecision, ReissueRequestModel } from './reissue.model';
 import { Repository } from 'typeorm';
 import { AgentModel } from '../agent/agent.model';
 import { BookingModel } from '../booking/booking.model';
@@ -161,7 +161,7 @@ export class ReissueService {
     }
   }
 
-  async reissueDecisionAdmin(header: any, status: string, bookingUId: string) {
+  async reissueDecisionAdmin(header: any, status: string, bookingUId: string, reissueDecisionDto: ReissueRequestDecision) {
 
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
@@ -193,6 +193,8 @@ export class ReissueService {
     if(booking.status === 'Reissue Quotation Accepted' || booking.status === 'Reissue Requested' || booking.status === 'Reissue Quotation Send'){
       booking.status = bookingstatus;
       const bookingResponse =  await this.bookingRepository.update(booking.id, booking);
+      reissue['remarks'] = reissueDecisionDto.remarks;
+      await this.reissueRepository.update(reissue.id, reissue);
 
       if(bookingResponse.affected === 1){
         return { message: bookingstatus+ ' Successfully'};

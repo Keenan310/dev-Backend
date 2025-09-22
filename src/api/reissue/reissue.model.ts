@@ -126,3 +126,8 @@ export class ReissueQuotation{
     remarks: string
     
 }
+
+export class ReissueRequestDecision{
+    @ApiPropertyOptional()
+    remarks: string
+}

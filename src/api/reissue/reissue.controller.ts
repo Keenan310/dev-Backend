@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, Headers } from '@nestjs/common';
 import { ReissueService } from './reissue.service';
-import { ReissueQuotation, ReissueRequestModel } from './reissue.model';
+import { ReissueQuotation, ReissueRequestDecision, ReissueRequestModel } from './reissue.model';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Reissue Modules')
@@ -34,11 +34,12 @@ export class ReissueController {
     return this.reissueService.reissueTicketRequest(header, status, bookingUId);
   }
 
-  @Get('admin/reissue/ticket/decision/:status/:bookingUId')
+  @Post('admin/reissue/ticket/decision/:status/:bookingUId')
   reissueDecision(
     @Headers() header: Headers,
     @Param('status') status: string,
-    @Param('bookingUId') bookingUId: string) {
-    return this.reissueService.reissueDecisionAdmin(header, status, bookingUId);
+    @Param('bookingUId') bookingUId: string,
+    @Body() quotationReissueDecisionDto: ReissueRequestDecision){
+    return this.reissueService.reissueDecisionAdmin(header, status, bookingUId, quotationReissueDecisionDto);
   }
 }
