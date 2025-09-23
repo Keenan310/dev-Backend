@@ -179,14 +179,12 @@ export class RefundService {
     }
 
     if(booking.status === 'Refund Quotation Accepted' || 'Refund Requested' || 'Refund Quotation Send'){
-
-      const bookingResponse = await this.bookingRepository.update(booking.id, booking);
       booking['status'] = bookingstatus;
 
       refund['status'] = status;
       refund['remarks'] = refundDecisionDto.remarks;
       await this.refundRepository.update(refund.id, refund);
-
+      const bookingResponse = await this.bookingRepository.update(booking.id, booking);
       if(bookingResponse.affected === 1){
         return { message: `Refunded ${status} Successfully.`};
       }else{
