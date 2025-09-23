@@ -119,7 +119,7 @@ export class UploadController {
 
 
   @ApiTags("Reissue Modules")
-  @Post("admin/upload/reissue/ticket/:bookingUId/UId")
+  @Post("admin/upload/reissue/ticket/:bookingUId/:UId")
   @UseInterceptors(FileInterceptor('file'))
   uploadReissueTicketCopy(
     @Headers() header: Headers,
@@ -127,7 +127,7 @@ export class UploadController {
     @Param('UId') UId: string,
     @UploadedFile() file: Express.Multer.File,
     @Res() res) {
-    return this.uploadService.uploadReissueTicketCopy(header, bookingUId,UId, file, res);
+    return this.uploadService.uploadReissueTicketCopy(header, bookingUId, UId, file, res);
   }
 
 }
