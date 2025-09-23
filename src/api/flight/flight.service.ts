@@ -16,6 +16,7 @@ import { AuthService } from '../auth/auth.service';
 import { SearchHistoryModel } from '../searchhistory/searchhistory.model';
 import { AlhindAPI } from './alhind.flights.service';
 import { CHScraper } from './chtravel.flights.service';
+import { VoidModel } from '../void/void.model';
 
 @Injectable()
 export class FlightService {
@@ -30,6 +31,8 @@ export class FlightService {
       private readonly reissueRepository: Repository<ReissueModel>,
       @InjectRepository(RefundModel)
       private readonly refundRepository: Repository<RefundModel>,
+      @InjectRepository(VoidModel)
+      private readonly voidRepository: Repository<VoidModel>,
       @InjectRepository(TicketModel)
       private readonly ticketingRepository: Repository<TicketModel>,
       private readonly authService: AuthService,
@@ -287,12 +290,14 @@ export class FlightService {
       const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
       const refunddata = await this.refundRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
       const reissuedata =  await this.reissueRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
+      const voiddata =  await this.voidRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
 
       const customResponseData = {
         bookingdata: booking,
         passengerdata: passengerdata,
         refunddata: refunddata,
         reissuedata: reissuedata,
+        voiddata: voiddata,
         ticketdetails: ticketdetails,
         partialpaymentdata: ''
       };
@@ -304,6 +309,7 @@ export class FlightService {
       const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
       const refunddata = await this.refundRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
       const reissuedata =  await this.reissueRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
+      const voiddata =  await this.voidRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
 
 
       const customResponseData = {
@@ -312,6 +318,7 @@ export class FlightService {
         passengerdata: passengerdata,
         refunddata: refunddata,
         reissuedata: reissuedata,
+        voiddata: voiddata,
         ticketdetails: ticketdetails,
         partialpaymentdata: ''
 
@@ -324,7 +331,7 @@ export class FlightService {
       const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
       const refunddata = await this.refundRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
       const reissuedata =  await this.reissueRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
-
+      const voiddata =  await this.voidRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
 
       const customResponseData = {
         bookingdata: booking,
@@ -332,6 +339,7 @@ export class FlightService {
         passengerdata: passengerdata,
         refunddata: refunddata,
         reissuedata: reissuedata,
+        voiddata: voiddata,
         ticketdetails: ticketdetails,
         partialpaymentdata: ''
 
@@ -348,6 +356,7 @@ export class FlightService {
         passengerdata: passengerdata,
         refunddata: [],
         reissuedata: [],
+        voiddata: [],
         ticketdetails: ticketdetails,
         partialpaymentdata: {}
         
@@ -378,6 +387,7 @@ export class FlightService {
       const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
       const refunddata = await this.refundRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
       const reissuedata =  await this.reissueRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
+      const voiddata =  await this.voidRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
 
 
       const customResponseData = {
@@ -385,6 +395,7 @@ export class FlightService {
         passengerdata: passengerdata,
         refunddata: refunddata,
         reissuedata: reissuedata,
+        voiddata: voiddata,
         ticketdetails: ticketdetails,
         partialpaymentdata: ''
       };
@@ -396,6 +407,7 @@ export class FlightService {
       const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
       const refunddata = await this.refundRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
       const reissuedata =  await this.reissueRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
+      const voiddata =  await this.voidRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
 
 
       const customResponseData = {
@@ -404,6 +416,7 @@ export class FlightService {
         passengerdata: passengerdata,
         refunddata: refunddata,
         reissuedata: reissuedata,
+        voiddata: voiddata,
         ticketdetails: ticketdetails,
         partialpaymentdata: ''
 
@@ -415,6 +428,7 @@ export class FlightService {
       const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
       const refunddata = await this.refundRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
       const reissuedata =  await this.reissueRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
+      const voiddata =  await this.voidRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
 
 
       const customResponseData = {
@@ -423,6 +437,7 @@ export class FlightService {
         passengerdata: passengerdata,
         refunddata: refunddata,
         reissuedata: reissuedata,
+        voiddata: voiddata,
         ticketdetails: ticketdetails,
         partialpaymentdata: ''
 
@@ -439,6 +454,7 @@ export class FlightService {
         passengerdata: passengerdata,
         refunddata: [],
         reissuedata: [],
+        voiddata: [],
         ticketdetails: ticketdetails,
         partialpaymentdata: {}
         
