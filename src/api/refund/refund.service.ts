@@ -75,7 +75,7 @@ export class RefundService {
       throw new NotFoundException("Booking not found");
     }
 
-    const refund = await this.refundRepository.findOne({where: {bookingId: booking.bookingId}});
+    const refund = await this.refundRepository.findOne({where: {bookingId: booking.bookingId}, order : {created_at : "DESC"}});
 
     if(!refund){
       throw new NotFoundException("Refund data not found");
@@ -165,7 +165,7 @@ export class RefundService {
       throw new NotFoundException("Booking not found");
     }
 
-    const refund = await this.refundRepository.findOne({where: {bookingId: booking.bookingId}});
+    const refund = await this.refundRepository.findOne({where: {bookingId: booking.bookingId}, order : {created_at : "DESC"}});
 
     if(!refund){
       throw new NotFoundException("Refund data not found");
@@ -175,10 +175,10 @@ export class RefundService {
     if(status === 'accept'){
       bookingstatus='Refunded';
     }else if(status === 'reject'){
-      bookingstatus = 'Refund Rejected'
+      bookingstatus = 'Refund Rejected';
     }
 
-    if(booking.status === 'Refund Quotation Accepted' && status === 'accept'){
+    if(booking.status === 'Refund Quotation Accepted' || 'Refund Requested' || 'Refund Quotation Send'){
 
       const bookingResponse = await this.bookingRepository.update(booking.id, booking);
       booking['status'] = bookingstatus;
@@ -187,30 +187,8 @@ export class RefundService {
       refund['remarks'] = refundDecisionDto.remarks;
       await this.refundRepository.update(refund.id, refund);
 
-      // const details = refund.quotationamount + ' Refund. '+refund.passengerdata+' By '+ verifyAdminId.firstname;
-
-      // const AgentLedgerData = {
-      //   agentId: booking.agentId,
-      //   trxtype: 'refund',
-      //   credit: Number(refund.quotationamount),
-      //   refId: booking.bookingId,
-      //   details: details,
-      //   companyname: booking.companyname
-      // }
-
-      // await this.agentLedgerRepository.save(AgentLedgerData);
       if(bookingResponse.affected === 1){
-        return { message: 'Refunded Successfully.'};
-      }else{
-        return { message: 'Something error'};
-      }
-    }else if((booking.status === 'Refund Quotation Send' || booking.status === 'Refund Quotation Accepted' || booking.status === 'Refund Requested') && status === 'reject'){
-      booking['status'] = bookingstatus;
-      refund.remarks = refundDecisionDto.remarks;
-       await this.refundRepository.update(refund.id, refund);
-      const bookingResponse = await this.bookingRepository.update(booking.id, booking);
-      if(bookingResponse.affected === 1){
-        return { message: 'Refunded Rejected Successfully.'};
+        return { message: `Refunded ${status} Successfully.`};
       }else{
         return { message: 'Something error'};
       }

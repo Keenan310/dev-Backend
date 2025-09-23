@@ -75,7 +75,7 @@ export class ReissueService {
       throw new NotFoundException("Booking not found");
     }
 
-    const reissue = await this.reissueRepository.findOne({where: {bookingId: booking.bookingId}});
+    const reissue = await this.reissueRepository.findOne({where: {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
 
     if(!reissue){
       throw new NotFoundException("Reissue data not found");

@@ -31,10 +31,10 @@ export class RefundModel{
     quotationamount: number;
 
     @Column()
-    remarks: string;
-
-    @Column()
     status: string;
+    
+    @Column()
+    remarks: string;
 
     @CreateDateColumn()
     created_at: Date;
