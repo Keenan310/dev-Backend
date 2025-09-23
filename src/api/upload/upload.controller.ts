@@ -119,7 +119,7 @@ export class UploadController {
 
 
   @ApiTags("Reissue Modules")
-  @Post("admin/upload/reissue/ticket/:bookingUId")
+  @Post("admin/upload/reissue/ticket/:bookingUId/UId")
   @UseInterceptors(FileInterceptor('file'))
   uploadReissueTicketCopy(
     @Headers() header: Headers,
