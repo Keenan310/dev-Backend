@@ -1,4 +1,4 @@
-import { VoidModel } from './void.model';
+import { VoidDesicion, VoidModel } from './void.model';
 import { Repository } from 'typeorm';
 import { AgentModel } from '../agent/agent.model';
 import { BookingModel } from '../booking/booking.model';
@@ -16,7 +16,7 @@ export declare class VoidService {
     createVoidRequest(header: any, bookingUId: string, createVoidDto: VoidModel): Promise<{
         message: string;
     }>;
-    voidDecision(header: any, bookingUId: string, status: string, servicefee: number): Promise<{
+    voidDecision(header: any, bookingUId: string, status: string, servicefee: number, voidDesicionDto: VoidDesicion): Promise<{
         message: string;
     }>;
 }

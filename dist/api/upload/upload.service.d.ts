@@ -31,5 +31,5 @@ export declare class UploadService {
     uploadPassengerDocs(docs: string, paxUId: string, file: any, res: any): Promise<void>;
     addDeposit(header: any, amount: number, sender: string, receiver: string, paymentway: string, reference: string, file: any, res: any): Promise<void>;
     addPromotion(header: any, category: string, file: any, res: any): Promise<void>;
-    uploadReissueTicketCopy(header: any, bookingUId: string, file: any, res: any): Promise<void>;
+    uploadReissueTicketCopy(header: any, bookingUId: string, UId: string, file: any, res: any): Promise<void>;
 }

@@ -71,8 +71,8 @@ let UploadController = class UploadController {
     uploadPassportCopy(docs, paxUId, file, res) {
         return this.uploadService.uploadPassengerDocs(docs, paxUId, file, res);
     }
-    uploadReissueTicketCopy(header, bookingUId, file, res) {
-        return this.uploadService.uploadReissueTicketCopy(header, bookingUId, file, res);
+    uploadReissueTicketCopy(header, bookingUId, UId, file, res) {
+        return this.uploadService.uploadReissueTicketCopy(header, bookingUId, UId, file, res);
     }
 };
 exports.UploadController = UploadController;
@@ -164,14 +164,15 @@ __decorate([
 ], UploadController.prototype, "uploadPassportCopy", null);
 __decorate([
     (0, swagger_1.ApiTags)("Reissue Modules"),
-    (0, common_1.Post)("admin/upload/reissue/ticket/:bookingUId"),
+    (0, common_1.Post)("admin/upload/reissue/ticket/:bookingUId/:UId"),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
     __param(0, (0, common_1.Headers)()),
     __param(1, (0, common_1.Param)('bookingUId')),
-    __param(2, (0, common_1.UploadedFile)()),
-    __param(3, (0, common_1.Res)()),
+    __param(2, (0, common_1.Param)('UId')),
+    __param(3, (0, common_1.UploadedFile)()),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, Object, Object]),
+    __metadata("design:paramtypes", [Object, String, String, Object, Object]),
     __metadata("design:returntype", void 0)
 ], UploadController.prototype, "uploadReissueTicketCopy", null);
 exports.UploadController = UploadController = __decorate([

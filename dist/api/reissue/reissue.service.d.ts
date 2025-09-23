@@ -1,4 +1,4 @@
-import { ReissueModel, ReissueQuotation, ReissueRequestModel } from './reissue.model';
+import { ReissueModel, ReissueQuotation, ReissueRequestDecision, ReissueRequestModel } from './reissue.model';
 import { Repository } from 'typeorm';
 import { BookingModel } from '../booking/booking.model';
 import { AuthService } from '../auth/auth.service';
@@ -18,7 +18,7 @@ export declare class ReissueService {
     reissueTicketRequest(header: any, status: string, bookingUId: string): Promise<{
         message: string;
     }>;
-    reissueDecisionAdmin(header: any, status: string, bookingUId: string): Promise<{
+    reissueDecisionAdmin(header: any, status: string, bookingUId: string, reissueDecisionDto: ReissueRequestDecision): Promise<{
         message: string;
     }>;
 }

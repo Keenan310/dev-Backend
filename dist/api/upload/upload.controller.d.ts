@@ -13,5 +13,5 @@ export declare class UploadController {
     uploadDepositFile(header: string, amount: number, sender: string, paymentway: string, receiver: string, reference: string, file: Express.Multer.File, res: any): Promise<void>;
     addPromotion(header: Headers, file: Express.Multer.File, category: string, res: any): Promise<void>;
     uploadPassportCopy(docs: string, paxUId: string, file: Express.Multer.File, res: any): Promise<void>;
-    uploadReissueTicketCopy(header: Headers, bookingUId: string, file: Express.Multer.File, res: any): Promise<void>;
+    uploadReissueTicketCopy(header: Headers, bookingUId: string, UId: string, file: Express.Multer.File, res: any): Promise<void>;
 }

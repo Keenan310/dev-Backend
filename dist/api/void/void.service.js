@@ -21,7 +21,6 @@ const agent_model_1 = require("../agent/agent.model");
 const booking_model_1 = require("../booking/booking.model");
 const report_model_1 = require("../report/report.model");
 const auth_service_1 = require("../auth/auth.service");
-const axios_1 = require("axios");
 const mail_service_1 = require("../../mail/mail.service");
 let VoidService = class VoidService {
     constructor(voidRepository, agentRepository, bookingRepository, agentLedgerRepository, authService, mailService) {
@@ -41,7 +40,7 @@ let VoidService = class VoidService {
         if (!booking) {
             throw new common_1.NotFoundException("Booking not found");
         }
-        if (booking.status === 'Ticketed') {
+        if (!['Hold', 'Cancelled', 'Issue In Process'].includes(booking.status)) {
             const RequestVoid = {
                 agentId: booking.agentId,
                 bookingId: booking.bookingId,
@@ -63,7 +62,7 @@ let VoidService = class VoidService {
             throw new common_1.NotFoundException(`Ticket Is Already In Another status ${booking.status}`);
         }
     }
-    async voidDecision(header, bookingUId, status, servicefee) {
+    async voidDecision(header, bookingUId, status, servicefee, voidDesicionDto) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
@@ -83,52 +82,16 @@ let VoidService = class VoidService {
         else if (status == 'reject') {
             bookingstatus = 'Void Rejected';
         }
-        if (booking.status === 'Void Requested' && status === 'accept') {
-            booking['status'] = bookingstatus;
-            const feeDetails = servicefee + ' Void Charge. ' + voidData.passengerdata + ' By ' + verifyAdminId?.firstname;
-            const agentLedgerData1 = {
-                agentId: booking.agentId,
-                trxtype: 'fee',
-                debit: servicefee,
-                refId: booking.bookingId,
-                details: feeDetails,
-                companyname: booking.companyname
-            };
-            await this.agentLedgerRepository.save(agentLedgerData1);
-            const voidedAmount = Number(booking.netfare) - servicefee;
-            const details = voidedAmount + ' Void. ' + voidData.passengerdata + ' with Service Fee: ' + servicefee + '/' + ' By ' + verifyAdminId.firstname;
-            const agentLedgerData2 = {
-                agentId: booking.agentId,
-                trxtype: 'void',
-                credit: voidedAmount,
-                refId: booking.bookingId,
-                details: details,
-            };
-            await this.agentLedgerRepository.save(agentLedgerData2);
-            voidData.amount = voidedAmount;
-            voidData.servicefee = servicefee;
-            await this.voidRepository.update(voidData.id, voidData);
-            const bookingResponse = await this.bookingRepository.update(booking.id, booking);
-            if (bookingResponse.affected === 1) {
-                await this.mailService.voidResultMail(booking);
-                return { message: bookingstatus + ' Successfully.' };
-            }
-            else {
-                return { message: 'Something error' };
-            }
-        }
-        else if (booking.status === 'Void Requested' && status === 'reject') {
-            booking.status = bookingstatus;
-            const bookingResponse = await this.bookingRepository.update(booking.id, booking);
-            if (bookingResponse.affected === 1) {
-                return { message: bookingstatus + ' Successfully.' };
-            }
-            else {
-                return { message: 'Something error' };
-            }
+        booking['status'] = bookingstatus;
+        const bookingResponse = await this.bookingRepository.update(booking.id, booking);
+        voidData['remarks'] = voidDesicionDto.remarks;
+        voidData['status'] = status;
+        await this.voidRepository.update(voidData.id, voidData);
+        if (bookingResponse.affected === 1) {
+            return { message: bookingstatus + ' Successfully.' };
         }
         else {
-            throw new common_1.HttpException("Ticket Is Already In Another status", axios_1.HttpStatusCode.BadRequest);
+            return { message: 'Something error' };
         }
     }
 };

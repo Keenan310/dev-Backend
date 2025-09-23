@@ -11,6 +11,7 @@ export declare class ReissueModel {
     servicefee: number;
     reissuedate: string;
     remarks: string;
+    status: string;
     reissuecopy: string;
     created_at: Date;
     updated_at: Date;
@@ -26,5 +27,8 @@ export declare class ReissueQuotation {
     faredifference: number;
     servicefee: number;
     quotationtext: string;
+    remarks: string;
+}
+export declare class ReissueRequestDecision {
     remarks: string;
 }

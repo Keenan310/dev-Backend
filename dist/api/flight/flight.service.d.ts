@@ -12,12 +12,14 @@ import { FlightSearchModel } from './dto/search-flight.dto';
 import { AuthService } from '../auth/auth.service';
 import { AlhindAPI } from './alhind.flights.service';
 import { CHScraper } from './chtravel.flights.service';
+import { VoidModel } from '../void/void.model';
 export declare class FlightService {
     private readonly bookingRepository;
     private readonly agentRepository;
     private readonly passengerRepository;
     private readonly reissueRepository;
     private readonly refundRepository;
+    private readonly voidRepository;
     private readonly ticketingRepository;
     private readonly authService;
     private readonly sabreService;
@@ -25,7 +27,7 @@ export declare class FlightService {
     private readonly groupFareService;
     private readonly alhindAPI;
     private readonly ch;
-    constructor(bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, reissueRepository: Repository<ReissueModel>, refundRepository: Repository<RefundModel>, ticketingRepository: Repository<TicketModel>, authService: AuthService, sabreService: SabreService, bookingService: BookingService, groupFareService: GroupfareService, alhindAPI: AlhindAPI, ch: CHScraper);
+    constructor(bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, reissueRepository: Repository<ReissueModel>, refundRepository: Repository<RefundModel>, voidRepository: Repository<VoidModel>, ticketingRepository: Repository<TicketModel>, authService: AuthService, sabreService: SabreService, bookingService: BookingService, groupFareService: GroupfareService, alhindAPI: AlhindAPI, ch: CHScraper);
     airsearchch(flightDto: FlightSearchModel): Promise<void>;
     airsearch(header: any, flightDto: FlightSearchModel): Promise<{
         System: string;
@@ -122,8 +124,9 @@ export declare class FlightService {
     airretrieveagent(header: any, bookingUId: string): Promise<{
         bookingdata: BookingModel;
         passengerdata: PassengerModel[];
-        refunddata: RefundModel;
+        refunddata: RefundModel[];
         reissuedata: ReissueModel[];
+        voiddata: VoidModel[];
         ticketdetails: TicketModel[];
         partialpaymentdata: string;
     } | {
@@ -132,14 +135,16 @@ export declare class FlightService {
         passengerdata: PassengerModel[];
         refunddata: any[];
         reissuedata: any[];
+        voiddata: any[];
         ticketdetails: TicketModel[];
         partialpaymentdata: {};
     }>;
     airretrieveadmin(header: any, bookingUId: string): Promise<{
         bookingdata: BookingModel;
         passengerdata: PassengerModel[];
-        refunddata: RefundModel;
+        refunddata: RefundModel[];
         reissuedata: ReissueModel[];
+        voiddata: VoidModel[];
         ticketdetails: TicketModel[];
         partialpaymentdata: string;
     } | {
@@ -148,6 +153,7 @@ export declare class FlightService {
         passengerdata: PassengerModel[];
         refunddata: any[];
         reissuedata: any[];
+        voiddata: any[];
         ticketdetails: TicketModel[];
         partialpaymentdata: {};
     }>;

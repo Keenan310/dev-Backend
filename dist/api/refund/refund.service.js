@@ -37,11 +37,7 @@ let RefundService = class RefundService {
         if (!booking) {
             throw new common_1.NotFoundException("Booking not found");
         }
-        if (booking.status === 'Ticketed' || booking.status === 'Void Rejected' ||
-            booking.status === 'Reissued' || booking.status === 'Reissue Rejected' ||
-            booking.status === 'Reissue Quotation Rejected' ||
-            booking.status === 'Refund Quotation Rejected' ||
-            booking.status === 'Refunded' || booking.status === 'Refund Rejected') {
+        if (!['Hold', 'Cancelled', 'Issue In Process'].includes(booking.status)) {
             const RequestRefund = {
                 agentId: booking.agentId,
                 bookingId: booking.bookingId,
@@ -70,7 +66,7 @@ let RefundService = class RefundService {
         if (!booking) {
             throw new common_1.NotFoundException("Booking not found");
         }
-        const refund = await this.refundRepository.findOne({ where: { bookingId: booking.bookingId } });
+        const refund = await this.refundRepository.findOne({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
         if (!refund) {
             throw new common_1.NotFoundException("Refund data not found");
         }
@@ -140,7 +136,7 @@ let RefundService = class RefundService {
         if (!booking) {
             throw new common_1.NotFoundException("Booking not found");
         }
-        const refund = await this.refundRepository.findOne({ where: { bookingId: booking.bookingId } });
+        const refund = await this.refundRepository.findOne({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
         if (!refund) {
             throw new common_1.NotFoundException("Refund data not found");
         }
@@ -151,33 +147,14 @@ let RefundService = class RefundService {
         else if (status === 'reject') {
             bookingstatus = 'Refund Rejected';
         }
-        if (booking.status === 'Refund Quotation Accepted' && status === 'accept') {
+        if (booking.status === 'Refund Quotation Accepted' || 'Refund Requested' || 'Refund Quotation Send') {
             booking['status'] = bookingstatus;
-            const details = refund.quotationamount + ' Refund. ' + refund.passengerdata + ' By ' + verifyAdminId.firstname;
-            const AgentLedgerData = {
-                agentId: booking.agentId,
-                trxtype: 'refund',
-                credit: Number(refund.quotationamount),
-                refId: booking.bookingId,
-                details: details,
-                companyname: booking.companyname
-            };
-            await this.agentLedgerRepository.save(AgentLedgerData);
-            const bookingResponse = await this.bookingRepository.update(booking.id, booking);
-            if (bookingResponse.affected === 1) {
-                return { message: 'Refunded Successfully.' };
-            }
-            else {
-                return { message: 'Something error' };
-            }
-        }
-        else if ((booking.status === 'Refund Quotation Accepted' || booking.status === 'Refund Requested') && status === 'reject') {
-            booking['status'] = bookingstatus;
-            refund.remarks = refundDecisionDto.remarks;
+            refund['status'] = status;
+            refund['remarks'] = refundDecisionDto.remarks;
             await this.refundRepository.update(refund.id, refund);
             const bookingResponse = await this.bookingRepository.update(booking.id, booking);
             if (bookingResponse.affected === 1) {
-                return { message: 'Refunded Rejected Successfully.' };
+                return { message: `Refund ${status} Successfully.` };
             }
             else {
                 return { message: 'Something error' };

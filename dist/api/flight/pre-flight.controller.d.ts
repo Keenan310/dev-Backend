@@ -91,8 +91,9 @@ export declare class PreFlightController {
     AirRetrieveAgent(header: string, bookingUId: string): Promise<{
         bookingdata: import("../booking/booking.model").BookingModel;
         passengerdata: import("../passenger/passenger.model").PassengerModel[];
-        refunddata: import("../refund/refund.model").RefundModel;
+        refunddata: import("../refund/refund.model").RefundModel[];
         reissuedata: import("../reissue/reissue.model").ReissueModel[];
+        voiddata: import("../void/void.model").VoidModel[];
         ticketdetails: import("../booking/booking.model").TicketModel[];
         partialpaymentdata: string;
     } | {
@@ -101,14 +102,16 @@ export declare class PreFlightController {
         passengerdata: import("../passenger/passenger.model").PassengerModel[];
         refunddata: any[];
         reissuedata: any[];
+        voiddata: any[];
         ticketdetails: import("../booking/booking.model").TicketModel[];
         partialpaymentdata: {};
     }>;
     AirRetrieveAdmin(header: Headers, bookingUId: string): Promise<{
         bookingdata: import("../booking/booking.model").BookingModel;
         passengerdata: import("../passenger/passenger.model").PassengerModel[];
-        refunddata: import("../refund/refund.model").RefundModel;
+        refunddata: import("../refund/refund.model").RefundModel[];
         reissuedata: import("../reissue/reissue.model").ReissueModel[];
+        voiddata: import("../void/void.model").VoidModel[];
         ticketdetails: import("../booking/booking.model").TicketModel[];
         partialpaymentdata: string;
     } | {
@@ -117,6 +120,7 @@ export declare class PreFlightController {
         passengerdata: import("../passenger/passenger.model").PassengerModel[];
         refunddata: any[];
         reissuedata: any[];
+        voiddata: any[];
         ticketdetails: import("../booking/booking.model").TicketModel[];
         partialpaymentdata: {};
     }>;

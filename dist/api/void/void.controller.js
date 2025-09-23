@@ -24,8 +24,8 @@ let VoidController = class VoidController {
     createVoidRequest(header, bookingUId, createVoidDto) {
         return this.voidService.createVoidRequest(header, bookingUId, createVoidDto);
     }
-    voidDecision(header, bookingUId, status, servicefee) {
-        return this.voidService.voidDecision(header, bookingUId, status, servicefee);
+    voidDecision(header, bookingUId, status, servicefee, voidDesicionDto) {
+        return this.voidService.voidDecision(header, bookingUId, status, servicefee, voidDesicionDto);
     }
 };
 exports.VoidController = VoidController;
@@ -45,8 +45,9 @@ __decorate([
     __param(1, (0, common_1.Param)('bookingUId')),
     __param(2, (0, common_1.Param)('status')),
     __param(3, (0, common_1.Param)('servicefee')),
+    __param(4, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, Number]),
+    __metadata("design:paramtypes", [Object, String, String, Number, void_model_1.VoidDesicion]),
     __metadata("design:returntype", void 0)
 ], VoidController.prototype, "voidDecision", null);
 exports.VoidController = VoidController = __decorate([

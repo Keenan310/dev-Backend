@@ -39,6 +39,7 @@ import { CurrencyConverter } from '../currency/entities/currency.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { CHScraper } from './chtravel.flights.service';
+import { VoidModel } from '../void/void.model';
 
 @Module({
   imports: [CacheModule.register({
@@ -48,7 +49,7 @@ import { CHScraper } from './chtravel.flights.service';
     }),
     TypeOrmModule.forFeature(
     [AirlinesModel,SearchHistoryModel, GroupFareModel, TravellerModel,TicketModel, AirportsModel,
-    BookingModel, PassengerModel, AgentModel, StaffModel, AdminModel,RefundModel, ReissueModel,
+    BookingModel, PassengerModel, AgentModel, StaffModel, AdminModel,RefundModel, ReissueModel, VoidModel,
     AgentLedgerModel, OTPModel, ActivityLogModel, CurrencyConverter])],
   controllers: [PreFlightController, PostFlightController],
   providers: [{

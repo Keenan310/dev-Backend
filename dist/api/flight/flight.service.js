@@ -28,13 +28,15 @@ const booking_service_1 = require("../booking/booking.service");
 const auth_service_1 = require("../auth/auth.service");
 const alhind_flights_service_1 = require("./alhind.flights.service");
 const chtravel_flights_service_1 = require("./chtravel.flights.service");
+const void_model_1 = require("../void/void.model");
 let FlightService = class FlightService {
-    constructor(bookingRepository, agentRepository, passengerRepository, reissueRepository, refundRepository, ticketingRepository, authService, sabreService, bookingService, groupFareService, alhindAPI, ch) {
+    constructor(bookingRepository, agentRepository, passengerRepository, reissueRepository, refundRepository, voidRepository, ticketingRepository, authService, sabreService, bookingService, groupFareService, alhindAPI, ch) {
         this.bookingRepository = bookingRepository;
         this.agentRepository = agentRepository;
         this.passengerRepository = passengerRepository;
         this.reissueRepository = reissueRepository;
         this.refundRepository = refundRepository;
+        this.voidRepository = voidRepository;
         this.ticketingRepository = ticketingRepository;
         this.authService = authService;
         this.sabreService = sabreService;
@@ -250,13 +252,15 @@ let FlightService = class FlightService {
         const passengerdata = await this.passengerRepository.find({ where: { bookingId: booking.bookingId } });
         if (booking.system === 'Sabre') {
             const ticketdetails = await this.ticketingRepository.find({ where: { bookingId: booking.bookingId } });
-            const refunddata = await this.refundRepository.findOne({ where: { bookingId: booking.bookingId } });
-            const reissuedata = await this.reissueRepository.find({ where: { bookingId: booking.bookingId } });
+            const refunddata = await this.refundRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
+            const reissuedata = await this.reissueRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
+            const voiddata = await this.voidRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
             const customResponseData = {
                 bookingdata: booking,
                 passengerdata: passengerdata,
                 refunddata: refunddata,
                 reissuedata: reissuedata,
+                voiddata: voiddata,
                 ticketdetails: ticketdetails,
                 partialpaymentdata: ''
             };
@@ -264,14 +268,16 @@ let FlightService = class FlightService {
         }
         else if (booking.system === 'Portal') {
             const ticketdetails = await this.ticketingRepository.find({ where: { bookingId: booking.bookingId } });
-            const refunddata = await this.refundRepository.findOne({ where: { bookingId: booking.bookingId } });
-            const reissuedata = await this.reissueRepository.find({ where: { bookingId: booking.bookingId } });
+            const refunddata = await this.refundRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
+            const reissuedata = await this.reissueRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
+            const voiddata = await this.voidRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
             const customResponseData = {
                 bookingdata: booking,
                 sabredata: [],
                 passengerdata: passengerdata,
                 refunddata: refunddata,
                 reissuedata: reissuedata,
+                voiddata: voiddata,
                 ticketdetails: ticketdetails,
                 partialpaymentdata: ''
             };
@@ -279,14 +285,16 @@ let FlightService = class FlightService {
         }
         else if (booking.system === 'AlHind') {
             const ticketdetails = await this.ticketingRepository.find({ where: { bookingId: booking.bookingId } });
-            const refunddata = await this.refundRepository.findOne({ where: { bookingId: booking.bookingId } });
-            const reissuedata = await this.reissueRepository.find({ where: { bookingId: booking.bookingId } });
+            const refunddata = await this.refundRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
+            const reissuedata = await this.reissueRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
+            const voiddata = await this.voidRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
             const customResponseData = {
                 bookingdata: booking,
                 sabredata: [],
                 passengerdata: passengerdata,
                 refunddata: refunddata,
                 reissuedata: reissuedata,
+                voiddata: voiddata,
                 ticketdetails: ticketdetails,
                 partialpaymentdata: ''
             };
@@ -300,6 +308,7 @@ let FlightService = class FlightService {
                 passengerdata: passengerdata,
                 refunddata: [],
                 reissuedata: [],
+                voiddata: [],
                 ticketdetails: ticketdetails,
                 partialpaymentdata: {}
             };
@@ -318,13 +327,15 @@ let FlightService = class FlightService {
         const passengerdata = await this.passengerRepository.find({ where: { bookingId: booking.bookingId } });
         if (booking.system === 'Sabre') {
             const ticketdetails = await this.ticketingRepository.find({ where: { bookingId: booking.bookingId } });
-            const refunddata = await this.refundRepository.findOne({ where: { bookingId: booking.bookingId } });
-            const reissuedata = await this.reissueRepository.find({ where: { bookingId: booking.bookingId } });
+            const refunddata = await this.refundRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
+            const reissuedata = await this.reissueRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
+            const voiddata = await this.voidRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
             const customResponseData = {
                 bookingdata: booking,
                 passengerdata: passengerdata,
                 refunddata: refunddata,
                 reissuedata: reissuedata,
+                voiddata: voiddata,
                 ticketdetails: ticketdetails,
                 partialpaymentdata: ''
             };
@@ -332,14 +343,16 @@ let FlightService = class FlightService {
         }
         else if (booking.system === 'Portal') {
             const ticketdetails = await this.ticketingRepository.find({ where: { bookingId: booking.bookingId } });
-            const refunddata = await this.refundRepository.findOne({ where: { bookingId: booking.bookingId } });
-            const reissuedata = await this.reissueRepository.find({ where: { bookingId: booking.bookingId } });
+            const refunddata = await this.refundRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
+            const reissuedata = await this.reissueRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
+            const voiddata = await this.voidRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
             const customResponseData = {
                 bookingdata: booking,
                 sabredata: [],
                 passengerdata: passengerdata,
                 refunddata: refunddata,
                 reissuedata: reissuedata,
+                voiddata: voiddata,
                 ticketdetails: ticketdetails,
                 partialpaymentdata: ''
             };
@@ -347,14 +360,16 @@ let FlightService = class FlightService {
         }
         else if (booking.system === 'AlHind') {
             const ticketdetails = await this.ticketingRepository.find({ where: { bookingId: booking.bookingId } });
-            const refunddata = await this.refundRepository.findOne({ where: { bookingId: booking.bookingId } });
-            const reissuedata = await this.reissueRepository.find({ where: { bookingId: booking.bookingId } });
+            const refunddata = await this.refundRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
+            const reissuedata = await this.reissueRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
+            const voiddata = await this.voidRepository.find({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
             const customResponseData = {
                 bookingdata: booking,
                 sabredata: [],
                 passengerdata: passengerdata,
                 refunddata: refunddata,
                 reissuedata: reissuedata,
+                voiddata: voiddata,
                 ticketdetails: ticketdetails,
                 partialpaymentdata: ''
             };
@@ -368,6 +383,7 @@ let FlightService = class FlightService {
                 passengerdata: passengerdata,
                 refunddata: [],
                 reissuedata: [],
+                voiddata: [],
                 ticketdetails: ticketdetails,
                 partialpaymentdata: {}
             };
@@ -398,8 +414,10 @@ exports.FlightService = FlightService = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(passenger_model_1.PassengerModel)),
     __param(3, (0, typeorm_1.InjectRepository)(reissue_model_1.ReissueModel)),
     __param(4, (0, typeorm_1.InjectRepository)(refund_model_1.RefundModel)),
-    __param(5, (0, typeorm_1.InjectRepository)(booking_model_1.TicketModel)),
+    __param(5, (0, typeorm_1.InjectRepository)(void_model_1.VoidModel)),
+    __param(6, (0, typeorm_1.InjectRepository)(booking_model_1.TicketModel)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

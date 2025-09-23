@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VoidModel = void 0;
+exports.VoidDesicion = exports.VoidModel = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 const typeorm_1 = require("typeorm");
@@ -52,6 +52,14 @@ __decorate([
 ], VoidModel.prototype, "reason", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], VoidModel.prototype, "status", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], VoidModel.prototype, "remarks", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
     __metadata("design:type", Date)
 ], VoidModel.prototype, "created_at", void 0);
 __decorate([
@@ -66,4 +74,11 @@ __decorate([
 exports.VoidModel = VoidModel = __decorate([
     (0, typeorm_1.Entity)('void')
 ], VoidModel);
+class VoidDesicion {
+}
+exports.VoidDesicion = VoidDesicion;
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    __metadata("design:type", String)
+], VoidDesicion.prototype, "remarks", void 0);
 //# sourceMappingURL=void.model.js.map

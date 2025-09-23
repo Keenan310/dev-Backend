@@ -1,5 +1,5 @@
 import { ReissueService } from './reissue.service';
-import { ReissueQuotation, ReissueRequestModel } from './reissue.model';
+import { ReissueQuotation, ReissueRequestDecision, ReissueRequestModel } from './reissue.model';
 export declare class ReissueController {
     private readonly reissueService;
     constructor(reissueService: ReissueService);
@@ -12,7 +12,7 @@ export declare class ReissueController {
     quatationDecision(header: string, status: string, bookingUId: string): Promise<{
         message: string;
     }>;
-    reissueDecision(header: Headers, status: string, bookingUId: string): Promise<{
+    reissueDecision(header: Headers, status: string, bookingUId: string, quotationReissueDecisionDto: ReissueRequestDecision): Promise<{
         message: string;
     }>;
 }

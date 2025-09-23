@@ -30,8 +30,8 @@ let ReissueController = class ReissueController {
     quatationDecision(header, status, bookingUId) {
         return this.reissueService.reissueTicketRequest(header, status, bookingUId);
     }
-    reissueDecision(header, status, bookingUId) {
-        return this.reissueService.reissueDecisionAdmin(header, status, bookingUId);
+    reissueDecision(header, status, bookingUId, quotationReissueDecisionDto) {
+        return this.reissueService.reissueDecisionAdmin(header, status, bookingUId, quotationReissueDecisionDto);
     }
 };
 exports.ReissueController = ReissueController;
@@ -65,12 +65,13 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ReissueController.prototype, "quatationDecision", null);
 __decorate([
-    (0, common_1.Get)('admin/reissue/ticket/decision/:status/:bookingUId'),
+    (0, common_1.Post)('admin/reissue/ticket/decision/:status/:bookingUId'),
     __param(0, (0, common_1.Headers)()),
     __param(1, (0, common_1.Param)('status')),
     __param(2, (0, common_1.Param)('bookingUId')),
+    __param(3, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String]),
+    __metadata("design:paramtypes", [Object, String, String, reissue_model_1.ReissueRequestDecision]),
     __metadata("design:returntype", void 0)
 ], ReissueController.prototype, "reissueDecision", null);
 exports.ReissueController = ReissueController = __decorate([

@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RefundDecisionModel = exports.RefundQuotation = exports.RefundRequestModel = exports.RefundModel = void 0;
 const swagger_1 = require("@nestjs/swagger");
-const class_validator_1 = require("class-validator");
 const typeorm_1 = require("typeorm");
 let RefundModel = class RefundModel {
 };
@@ -49,6 +48,10 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
 ], RefundModel.prototype, "quotationamount", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], RefundModel.prototype, "status", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
@@ -99,9 +102,7 @@ class RefundDecisionModel {
 }
 exports.RefundDecisionModel = RefundDecisionModel;
 __decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, swagger_1.ApiPropertyOptional)(),
     __metadata("design:type", String)
 ], RefundDecisionModel.prototype, "remarks", void 0);
 //# sourceMappingURL=refund.model.js.map

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReissueQuotation = exports.ReissueRequestModel = exports.ReissueModel = void 0;
+exports.ReissueRequestDecision = exports.ReissueQuotation = exports.ReissueRequestModel = exports.ReissueModel = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 const typeorm_1 = require("typeorm");
@@ -88,6 +88,10 @@ __decorate([
 ], ReissueModel.prototype, "remarks", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], ReissueModel.prototype, "status", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
@@ -159,4 +163,11 @@ __decorate([
     (0, swagger_1.ApiPropertyOptional)(),
     __metadata("design:type", String)
 ], ReissueQuotation.prototype, "remarks", void 0);
+class ReissueRequestDecision {
+}
+exports.ReissueRequestDecision = ReissueRequestDecision;
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    __metadata("design:type", String)
+], ReissueRequestDecision.prototype, "remarks", void 0);
 //# sourceMappingURL=reissue.model.js.map

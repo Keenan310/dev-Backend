@@ -7,6 +7,7 @@ export declare class RefundModel {
     refundpenalty: number;
     servicefee: number;
     quotationamount: number;
+    status: string;
     remarks: string;
     created_at: Date;
     updated_at: Date;

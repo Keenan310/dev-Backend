@@ -6,7 +6,12 @@ export declare class VoidModel {
     amount: number;
     servicefee: number;
     reason: string;
+    status: string;
+    remarks: string;
     created_at: Date;
     updated_at: Date;
     uid: string;
+}
+export declare class VoidDesicion {
+    remarks: string;
 }

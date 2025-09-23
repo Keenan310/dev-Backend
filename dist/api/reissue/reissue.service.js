@@ -37,10 +37,7 @@ let ReissueService = class ReissueService {
         if (!booking) {
             throw new common_1.NotFoundException("Booking not found");
         }
-        if (booking.status === 'Ticketed' || booking.status === 'Void Rejected' ||
-            booking.status === 'Reissued' || booking.status === 'Refund Rejected' ||
-            booking.status === 'Reissue Quotation Rejected' ||
-            booking.status === 'Refund Quotation Rejected') {
+        if (!['Hold', 'Cancelled', 'Issue In Process'].includes(booking.status)) {
             const RequestReissue = {
                 agentId: booking.agentId,
                 bookingId: booking.bookingId,
@@ -70,7 +67,7 @@ let ReissueService = class ReissueService {
         if (!booking) {
             throw new common_1.NotFoundException("Booking not found");
         }
-        const reissue = await this.reissueRepository.findOne({ where: { bookingId: booking.bookingId } });
+        const reissue = await this.reissueRepository.findOne({ where: { bookingId: booking.bookingId }, order: { created_at: "DESC" } });
         if (!reissue) {
             throw new common_1.NotFoundException("Reissue data not found");
         }
@@ -145,7 +142,7 @@ let ReissueService = class ReissueService {
             }
         }
     }
-    async reissueDecisionAdmin(header, status, bookingUId) {
+    async reissueDecisionAdmin(header, status, bookingUId, reissueDecisionDto) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
@@ -171,6 +168,9 @@ let ReissueService = class ReissueService {
         if (booking.status === 'Reissue Quotation Accepted' || booking.status === 'Reissue Requested' || booking.status === 'Reissue Quotation Send') {
             booking.status = bookingstatus;
             const bookingResponse = await this.bookingRepository.update(booking.id, booking);
+            reissue['remarks'] = reissueDecisionDto.remarks;
+            reissue['status'] = status;
+            await this.reissueRepository.update(reissue.id, reissue);
             if (bookingResponse.affected === 1) {
                 return { message: bookingstatus + ' Successfully' };
             }
