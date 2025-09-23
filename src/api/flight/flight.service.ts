@@ -376,7 +376,7 @@ export class FlightService {
 
     if(booking.system === 'Sabre'){
       const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
-      const refunddata = await this.refundRepository.findOne({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
+      const refunddata = await this.refundRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
       const reissuedata =  await this.reissueRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
 
 
@@ -394,7 +394,7 @@ export class FlightService {
     }else if(booking.system === 'Portal'){
 
       const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
-      const refunddata = await this.refundRepository.findOne({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
+      const refunddata = await this.refundRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
       const reissuedata =  await this.reissueRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
 
 
@@ -413,7 +413,7 @@ export class FlightService {
 
     }else if(booking.system === 'AlHind'){
       const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
-      const refunddata = await this.refundRepository.findOne({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
+      const refunddata = await this.refundRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
       const reissuedata =  await this.reissueRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
 
 
