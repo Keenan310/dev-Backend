@@ -37,7 +37,7 @@ export class VoidService {
       throw new NotFoundException("Booking not found");
     }
 
-    if(booking.status !== 'Hold' || 'Cancelled' || 'Issue In Process'){
+    if(!['Hold', 'Cancelled', 'Issue In Process'].includes(booking.status)){
       const RequestVoid = {
         agentId : booking.agentId,
         bookingId : booking.bookingId,

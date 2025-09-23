@@ -35,10 +35,7 @@ export class ReissueService {
       throw new NotFoundException("Booking not found");
     }
 
-    if(booking.status === 'Ticketed' || booking.status === 'Void Rejected' ||
-        booking.status === 'Reissued' || booking.status === 'Refund Rejected' ||
-        booking.status === 'Reissue Quotation Rejected' ||
-        booking.status === 'Refund Quotation Rejected' || booking.status === 'Reissue Rejected'){
+    if(!['Hold', 'Cancelled', 'Issue In Process'].includes(booking.status)){
       const RequestReissue = {
         agentId : booking.agentId,
         bookingId : booking.bookingId,

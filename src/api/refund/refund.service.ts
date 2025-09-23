@@ -35,11 +35,7 @@ export class RefundService {
       throw new NotFoundException("Booking not found");
     }
 
-    if(booking.status === 'Ticketed' || booking.status === 'Void Rejected' ||
-      booking.status === 'Reissued' || booking.status === 'Reissue Rejected' ||
-      booking.status === 'Reissue Quotation Rejected' || 
-      booking.status === 'Refund Quotation Rejected' ||
-      booking.status === 'Refunded' ||  booking.status === 'Refund Rejected'){
+    if(!['Hold', 'Cancelled', 'Issue In Process'].includes(booking.status)){
 
       const RequestRefund = {
         agentId : booking.agentId,
@@ -186,7 +182,7 @@ export class RefundService {
       await this.refundRepository.update(refund.id, refund);
       const bookingResponse = await this.bookingRepository.update(booking.id, booking);
       if(bookingResponse.affected === 1){
-        return { message: `Refunded ${status} Successfully.`};
+        return { message: `Refund ${status} Successfully.`};
       }else{
         return { message: 'Something error'};
       }
