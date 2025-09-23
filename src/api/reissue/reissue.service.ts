@@ -194,7 +194,7 @@ export class ReissueService {
       booking.status = bookingstatus;
       const bookingResponse =  await this.bookingRepository.update(booking.id, booking);
       reissue['remarks'] = reissueDecisionDto.remarks;
-      reissue['status']
+      reissue['status'] = status;
       await this.reissueRepository.update(reissue.id, reissue);
 
       if(bookingResponse.affected === 1){
