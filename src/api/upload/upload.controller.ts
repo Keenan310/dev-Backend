@@ -124,9 +124,10 @@ export class UploadController {
   uploadReissueTicketCopy(
     @Headers() header: Headers,
     @Param('bookingUId') bookingUId: string,
+    @Param('UId') UId: string,
     @UploadedFile() file: Express.Multer.File,
     @Res() res) {
-    return this.uploadService.uploadReissueTicketCopy(header, bookingUId, file, res);
+    return this.uploadService.uploadReissueTicketCopy(header, bookingUId,UId, file, res);
   }
 
 }

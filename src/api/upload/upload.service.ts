@@ -370,7 +370,7 @@ export class UploadService {
     });
   }
 
-  async uploadReissueTicketCopy(header: any, bookingUId: string, file, res){
+  async uploadReissueTicketCopy(header: any, bookingUId: string, UId: string, file, res){
 
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
@@ -397,8 +397,7 @@ export class UploadService {
       ContentType: file.mimetype
     };
 
-    const reissue =  await this.reissueRepository.findOne({where : {bookingId: booking.bookingId}});
-
+    const reissue =  await this.reissueRepository.findOne({where : {uid: UId}});
     this.s3.putObject(params, (err, data) => {
       if (err) {  
         res.status(500).json({ status: 'error', message: 'Something Error In Code'});
