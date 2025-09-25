@@ -26,10 +26,10 @@ exports.DatabaseModule = DatabaseModule = __decorate([
                     autoLoadEntities: true,
                     synchronize: false,
                     logging: false,
-                    timezone: 'Z',
+                    timezone: '+04:00',
                     keepConnectionAlive: true,
                     extra: {
-                        connectionLimit: 10,
+                        connectionLimit: 100,
                         connectTimeout: 60000,
                     },
                 }),
