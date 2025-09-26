@@ -94,7 +94,7 @@ export class MailService {
               <p style="font-size:16px; margin:0 0 20px; color:#555555;">
                 Use the One-Time Password (OTP) below to complete your login:
               </p>
-              <div style="display:inline-block; padding:15px 30px; background:#004aad; color:#ffffff; font-size:22px; font-weight:bold; letter-spacing:3px; border-radius:8px;">
+              <div style="display:inline-block; padding:15px 30px; background:#2a8a8d; color:#ffffff; font-size:22px; font-weight:bold; letter-spacing:3px; border-radius:8px;">
                 ${OTPcode}
               </div>
               <p style="font-size:14px; margin:25px 0 0; color:#777777;">
