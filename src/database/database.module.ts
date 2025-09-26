@@ -18,7 +18,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         timezone: '+04:00',
         keepConnectionAlive: true,
         extra: {
-          connectionLimit: 100,
+          connectionLimit: 10,
           connectTimeout: 60000,
         },
       }),
