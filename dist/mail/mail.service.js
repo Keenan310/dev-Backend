@@ -86,7 +86,7 @@ let MailService = class MailService {
         <!-- Card -->
         <table width="600" bgcolor="#ffffff" cellpadding="0" cellspacing="0" style="border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.08); overflow:hidden;">
           <tr>
-            <td align="center" bgcolor="#004aad" style="padding: 20px;">
+            <td align="center" bgcolor="#156534" style="padding: 20px;">
               <h1 style="margin:0; font-size:24px; color:#ffffff;">🔐 Two-Factor Authentication</h1>
             </td>
           </tr>
@@ -97,7 +97,7 @@ let MailService = class MailService {
               <p style="font-size:16px; margin:0 0 20px; color:#555555;">
                 Use the One-Time Password (OTP) below to complete your login:
               </p>
-              <div style="display:inline-block; padding:15px 30px; background:#004aad; color:#ffffff; font-size:22px; font-weight:bold; letter-spacing:3px; border-radius:8px;">
+              <div style="display:inline-block; padding:15px 30px; background:#156534; color:#ffffff; font-size:22px; font-weight:bold; letter-spacing:3px; border-radius:8px;">
                 ${OTPcode}
               </div>
               <p style="font-size:14px; margin:25px 0 0; color:#777777;">

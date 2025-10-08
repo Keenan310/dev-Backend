@@ -1,6 +1,5 @@
 import { AgentLedgerModel, AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto, UpdateAdminExpenseDto } from './report.model';
-import { Repository } from 'typeorm';
-import { DataSource } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { AgentBalanceUpdate, AgentModel } from '../agent/agent.model';
 import { BookingModel } from '../booking/booking.model';
 import { DepositModel } from '../deposit/deposit.model';
@@ -17,6 +16,13 @@ export declare class ReportService {
     private readonly authService;
     private dataSource;
     constructor(ledgerRepository: Repository<AgentLedgerModel>, bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, depositRepository: Repository<DepositModel>, searchHistoryRepository: Repository<SearchHistoryModel>, adminExpenseRepository: Repository<AdminExpenseModel>, adminLedgerRepository: Repository<AdminLedger>, authService: AuthService, dataSource: DataSource);
+    adminGraph(header: any): Promise<{
+        month: string;
+        bookingCount: number;
+        agentCount: number;
+        cumulativeBooking: number;
+        cumulativeAgent: number;
+    }[]>;
     addAdminExpense(header: any, adminExpenseModel: AdminExpenseModel): Promise<AdminExpenseModel>;
     editAdminExpense(header: any, id: number, UpdateAdminExpenseDto: UpdateAdminExpenseDto): Promise<import("typeorm").UpdateResult>;
     addAdminLedger(header: any, adminLedgerModel: AdminLedger): Promise<void>;
@@ -68,6 +74,7 @@ export declare class ReportService {
         TotalDepositApproved: number;
         TotalDepositPending: number;
         TotalDepositRejected: number;
+        GraphData: any[];
     }>;
     findAdminExpense(header: any, page: number, filter: string, limit: number): Promise<{
         limit: number;

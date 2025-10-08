@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { AgentLedgerModel, AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto, UpdateAgentLedgerDto, UpdateAdminExpenseDto } from './report.model';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { DataSource } from 'typeorm';
+import { Repository, DataSource, Between } from 'typeorm';
+import * as dayjs from 'dayjs';
 import { AgentBalanceUpdate, AgentModel } from '../agent/agent.model';
 import { BookingModel } from '../booking/booking.model';
 import { DepositModel } from '../deposit/deposit.model';
@@ -29,6 +29,71 @@ export class ReportService {
     private readonly authService: AuthService,
     private dataSource: DataSource
   ) {}
+
+  async adminGraph(header : any){
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
+
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
+
+    const now = dayjs();
+    const startOfYear = now.startOf('year').toDate();
+    const endOfYear = now.endOf('year').toDate();
+
+    // 1️⃣ Fetch all bookings and agents for current year
+    const [bookingData, agentData] = await Promise.all([
+      this.bookingRepository.find({
+        where: { created_at: Between(startOfYear, endOfYear) },
+        select: ['id', 'created_at'],
+      }),
+      this.agentRepository.find({
+        where: { created_at: Between(startOfYear, endOfYear) },
+        select: ['id', 'created_at'],
+      }),
+    ]);
+
+
+    const currentMonth = now.month(); // 0–11
+    const months = Array.from({ length: currentMonth + 1 }).map((_, i) => {
+      const date = dayjs().month(i).startOf('month');
+      return {
+        month: date.format('MMM YYYY'),  // e.g. "Jan 2025"
+        bookingCount: 0,
+        agentCount: 0,
+        cumulativeBooking: 0,
+        cumulativeAgent: 0,
+      };
+    });
+
+    // 3️⃣ Count bookings per month
+    bookingData.forEach(b => {
+      const month = dayjs(b.created_at).format('MMM YYYY');
+      const bucket = months.find(m => m.month === month);
+      if (bucket) bucket.bookingCount++;
+    });
+
+    // 4️⃣ Count agents per month
+    agentData.forEach(a => {
+      const month = dayjs(a.created_at).format('MMM YYYY');
+      const bucket = months.find(m => m.month === month);
+      if (bucket) bucket.agentCount++;
+    });
+
+    // 5️⃣ Calculate cumulative totals
+    let bookingRunningTotal = 0;
+    let agentRunningTotal = 0;
+
+    months.forEach(m => {
+      bookingRunningTotal += m.bookingCount;
+      agentRunningTotal += m.agentCount;
+      m.cumulativeBooking = bookingRunningTotal;
+      m.cumulativeAgent = agentRunningTotal;
+    });
+
+    return months;
+
+  }
 
   async addAdminExpense(header : any, adminExpenseModel : AdminExpenseModel){
     const verifyAdminId = await this.authService.verifyAdminToken(header);
@@ -479,10 +544,23 @@ export class ReportService {
 
     const search = await this.searchHistoryRepository.find({
       order: { updated_at: 'DESC' },
-      take: 100
+      take: 50
     });
 
     const bookingData = await this.bookingRepository.find({
+      select: [
+        'created_at',
+        'bookingId',
+        'name',
+        'pnr',
+        'companyname',
+        'netfare',
+        'depfrom',
+        'arrto',
+        'carrier_name',
+        'status',
+        'uid'
+      ],
       order: { updated_at: 'DESC' },
       take: 100
     });
@@ -529,9 +607,8 @@ export class ReportService {
       "TotalDepositApproved": totaldepositapproved,
       "TotalDepositPending": totaldepositpending,
       "TotalDepositRejected": totaldepositrejected,
+      "GraphData":[]
     }
-    
-
     return DataResponse;
   }
 

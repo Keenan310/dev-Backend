@@ -17,7 +17,7 @@ const common_1 = require("@nestjs/common");
 const report_model_1 = require("./report.model");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const typeorm_3 = require("typeorm");
+const dayjs = require("dayjs");
 const agent_model_1 = require("../agent/agent.model");
 const booking_model_1 = require("../booking/booking.model");
 const deposit_model_1 = require("../deposit/deposit.model");
@@ -34,6 +34,57 @@ let ReportService = class ReportService {
         this.adminLedgerRepository = adminLedgerRepository;
         this.authService = authService;
         this.dataSource = dataSource;
+    }
+    async adminGraph(header) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        const now = dayjs();
+        const startOfYear = now.startOf('year').toDate();
+        const endOfYear = now.endOf('year').toDate();
+        const [bookingData, agentData] = await Promise.all([
+            this.bookingRepository.find({
+                where: { created_at: (0, typeorm_2.Between)(startOfYear, endOfYear) },
+                select: ['id', 'created_at'],
+            }),
+            this.agentRepository.find({
+                where: { created_at: (0, typeorm_2.Between)(startOfYear, endOfYear) },
+                select: ['id', 'created_at'],
+            }),
+        ]);
+        const currentMonth = now.month();
+        const months = Array.from({ length: currentMonth + 1 }).map((_, i) => {
+            const date = dayjs().month(i).startOf('month');
+            return {
+                month: date.format('MMM YYYY'),
+                bookingCount: 0,
+                agentCount: 0,
+                cumulativeBooking: 0,
+                cumulativeAgent: 0,
+            };
+        });
+        bookingData.forEach(b => {
+            const month = dayjs(b.created_at).format('MMM YYYY');
+            const bucket = months.find(m => m.month === month);
+            if (bucket)
+                bucket.bookingCount++;
+        });
+        agentData.forEach(a => {
+            const month = dayjs(a.created_at).format('MMM YYYY');
+            const bucket = months.find(m => m.month === month);
+            if (bucket)
+                bucket.agentCount++;
+        });
+        let bookingRunningTotal = 0;
+        let agentRunningTotal = 0;
+        months.forEach(m => {
+            bookingRunningTotal += m.bookingCount;
+            agentRunningTotal += m.agentCount;
+            m.cumulativeBooking = bookingRunningTotal;
+            m.cumulativeAgent = agentRunningTotal;
+        });
+        return months;
     }
     async addAdminExpense(header, adminExpenseModel) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
@@ -415,9 +466,22 @@ let ReportService = class ReportService {
         }
         const search = await this.searchHistoryRepository.find({
             order: { updated_at: 'DESC' },
-            take: 100
+            take: 50
         });
         const bookingData = await this.bookingRepository.find({
+            select: [
+                'created_at',
+                'bookingId',
+                'name',
+                'pnr',
+                'companyname',
+                'netfare',
+                'depfrom',
+                'arrto',
+                'carrier_name',
+                'status',
+                'uid'
+            ],
             order: { updated_at: 'DESC' },
             take: 100
         });
@@ -458,6 +522,7 @@ let ReportService = class ReportService {
             "TotalDepositApproved": totaldepositapproved,
             "TotalDepositPending": totaldepositpending,
             "TotalDepositRejected": totaldepositrejected,
+            "GraphData": []
         };
         return DataResponse;
     }
@@ -655,6 +720,6 @@ exports.ReportService = ReportService = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository,
         auth_service_1.AuthService,
-        typeorm_3.DataSource])
+        typeorm_2.DataSource])
 ], ReportService);
 //# sourceMappingURL=report.service.js.map

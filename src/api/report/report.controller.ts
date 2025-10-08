@@ -12,6 +12,12 @@ export class ReportController {
   ) {}
 
   @ApiBearerAuth('access_token')
+  @Get('admin/dashboard/graph')
+  addGraph(@Headers() header: Headers) {
+    return this.reportService.adminGraph(header);
+  }
+
+  @ApiBearerAuth('access_token')
   @Post('admin/expense')
   addExpense(
     @Headers() header: Headers,
@@ -94,7 +100,6 @@ export class ReportController {
   ) {
     return this.reportService.findAllAdminBalanceInquery(header);
   }
-
 
   @ApiBearerAuth('access_token')
   @Get('admin/report/:startDate/:endDate')

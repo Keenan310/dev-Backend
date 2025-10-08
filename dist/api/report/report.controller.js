@@ -22,6 +22,9 @@ let ReportController = class ReportController {
     constructor(reportService) {
         this.reportService = reportService;
     }
+    addGraph(header) {
+        return this.reportService.adminGraph(header);
+    }
     addExpense(header, adminExpenseModel) {
         return this.reportService.addAdminExpense(header, adminExpenseModel);
     }
@@ -75,6 +78,14 @@ let ReportController = class ReportController {
     }
 };
 exports.ReportController = ReportController;
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, common_1.Get)('admin/dashboard/graph'),
+    __param(0, (0, common_1.Headers)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], ReportController.prototype, "addGraph", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Post)('admin/expense'),
