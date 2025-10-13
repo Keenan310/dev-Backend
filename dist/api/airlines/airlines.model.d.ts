@@ -41,3 +41,20 @@ export declare class AirlinesUpdateModel {
     isBlocked: boolean;
     bookable: boolean;
 }
+export declare class AirlineDiscount {
+    id: number;
+    airline: string;
+    from_location: string;
+    discount_percent: number;
+    fix_discount: number;
+    travel_date: string;
+    booking_date: string;
+    from_list: string;
+    from_except: string;
+    to_list: string;
+    to_except: string;
+    rbd: string;
+    source: string;
+    created_at: Date;
+    update_at: Date;
+}

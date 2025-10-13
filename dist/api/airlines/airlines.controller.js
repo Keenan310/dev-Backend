@@ -17,9 +17,22 @@ const common_1 = require("@nestjs/common");
 const airlines_service_1 = require("./airlines.service");
 const swagger_1 = require("@nestjs/swagger");
 const airlines_model_1 = require("./airlines.model");
+const airlines_dto_1 = require("./airlines.dto");
 let AirlinesController = class AirlinesController {
     constructor(airlinesService) {
         this.airlinesService = airlinesService;
+    }
+    createAirlineDiscount(header, dto) {
+        return this.airlinesService.createAirlineDiscount(header, dto);
+    }
+    viewAirlineDiscount(header) {
+        return this.airlinesService.viewAirlineDiscount(header);
+    }
+    updateAirlineDiscount(header, id, updateAirlineDiscountDto) {
+        return this.airlinesService.updateAirlineDiscount(header, +id, updateAirlineDiscountDto);
+    }
+    deleteAirlineDiscount(header, id) {
+        return this.airlinesService.deleteAirlineDiscount(header, +id);
     }
     findAll(header) {
         return this.airlinesService.findAll(header);
@@ -29,6 +42,38 @@ let AirlinesController = class AirlinesController {
     }
 };
 exports.AirlinesController = AirlinesController;
+__decorate([
+    (0, common_1.Post)('admin/airline/discount'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, airlines_dto_1.CreateAirlineDiscountDto]),
+    __metadata("design:returntype", void 0)
+], AirlinesController.prototype, "createAirlineDiscount", null);
+__decorate([
+    (0, common_1.Get)('admin/airline/discount'),
+    __param(0, (0, common_1.Headers)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AirlinesController.prototype, "viewAirlineDiscount", null);
+__decorate([
+    (0, common_1.Get)('admin/airline/discount'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, airlines_dto_1.UpdateAirlineDiscountDto]),
+    __metadata("design:returntype", void 0)
+], AirlinesController.prototype, "updateAirlineDiscount", null);
+__decorate([
+    (0, common_1.Get)('admin/airline/discount/id'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], AirlinesController.prototype, "deleteAirlineDiscount", null);
 __decorate([
     (0, common_1.Get)('admin/airlines/all'),
     __param(0, (0, common_1.Headers)()),

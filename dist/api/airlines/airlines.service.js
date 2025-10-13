@@ -19,9 +19,47 @@ const typeorm_2 = require("typeorm");
 const airlines_model_1 = require("./airlines.model");
 const auth_service_1 = require("../auth/auth.service");
 let AirlinesService = class AirlinesService {
-    constructor(airlinesRepository, authService) {
+    constructor(airlinesRepository, airlineDiscountRepository, authService) {
         this.airlinesRepository = airlinesRepository;
+        this.airlineDiscountRepository = airlineDiscountRepository;
         this.authService = authService;
+    }
+    async createAirlineDiscount(header, createAirlineDiscountDto) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        const discount = this.airlineDiscountRepository.create(createAirlineDiscountDto);
+        return this.airlineDiscountRepository.save(discount);
+    }
+    async viewAirlineDiscount(header) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        return this.airlineDiscountRepository.find();
+    }
+    async updateAirlineDiscount(header, id, updateAirlineDiscountDto) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        const data = await this.airlineDiscountRepository.findOneBy({ id: id });
+        if (!data) {
+            throw new common_1.NotFoundException("Not found");
+        }
+        return this.airlineDiscountRepository.update(id, data);
+    }
+    async deleteAirlineDiscount(header, id) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        const data = await this.airlineDiscountRepository.findOneBy({ id: id });
+        if (!data) {
+            throw new common_1.NotFoundException("Not found");
+        }
+        return await this.airlineDiscountRepository.delete(data.id);
     }
     async create(header, createAirlineDto) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
@@ -93,7 +131,9 @@ exports.AirlinesService = AirlinesService;
 exports.AirlinesService = AirlinesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(airlines_model_1.AirlinesModel)),
+    __param(1, (0, typeorm_1.InjectRepository)(airlines_model_1.AirlineDiscount)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         auth_service_1.AuthService])
 ], AirlinesService);
 //# sourceMappingURL=airlines.service.js.map

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { Entity, PrimaryGeneratedColumn, Column, Generated } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Generated, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('airlinesdata')
 export class AirlinesModel{
@@ -134,4 +134,52 @@ export class AirlinesUpdateModel {
   @IsBoolean()
   bookable: boolean;
 
+}
+
+@Entity('airline_discounts')
+export class AirlineDiscount {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  airline: string;
+
+  @Column()
+  from_location: string;
+
+  @Column('decimal', { precision: 5, scale: 2, nullable: true })
+  discount_percent: number;
+
+  @Column('decimal', { precision: 10, scale: 2, nullable: true })
+  fix_discount: number;
+
+  @Column()
+  travel_date: string;
+
+  @Column()
+  booking_date: string;
+
+  @Column({ nullable: true })
+  from_list: string;
+
+  @Column({ nullable: true })
+  from_except: string;
+
+  @Column({ nullable: true })
+  to_list: string;
+
+  @Column({ nullable: true })
+  to_except: string;
+
+  @Column({ nullable: true })
+  rbd: string;
+
+  @Column({ nullable: true })
+  source: string;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  update_at: Date;
 }

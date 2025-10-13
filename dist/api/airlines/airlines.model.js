@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AirlinesUpdateModel = exports.AirlinesModel = void 0;
+exports.AirlineDiscount = exports.AirlinesUpdateModel = exports.AirlinesModel = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 const typeorm_1 = require("typeorm");
@@ -188,4 +188,70 @@ __decorate([
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], AirlinesUpdateModel.prototype, "bookable", void 0);
+let AirlineDiscount = class AirlineDiscount {
+};
+exports.AirlineDiscount = AirlineDiscount;
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], AirlineDiscount.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], AirlineDiscount.prototype, "airline", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], AirlineDiscount.prototype, "from_location", void 0);
+__decorate([
+    (0, typeorm_1.Column)('decimal', { precision: 5, scale: 2, nullable: true }),
+    __metadata("design:type", Number)
+], AirlineDiscount.prototype, "discount_percent", void 0);
+__decorate([
+    (0, typeorm_1.Column)('decimal', { precision: 10, scale: 2, nullable: true }),
+    __metadata("design:type", Number)
+], AirlineDiscount.prototype, "fix_discount", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], AirlineDiscount.prototype, "travel_date", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], AirlineDiscount.prototype, "booking_date", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], AirlineDiscount.prototype, "from_list", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], AirlineDiscount.prototype, "from_except", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], AirlineDiscount.prototype, "to_list", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], AirlineDiscount.prototype, "to_except", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], AirlineDiscount.prototype, "rbd", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], AirlineDiscount.prototype, "source", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], AirlineDiscount.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], AirlineDiscount.prototype, "update_at", void 0);
+exports.AirlineDiscount = AirlineDiscount = __decorate([
+    (0, typeorm_1.Entity)('airline_discounts')
+], AirlineDiscount);
 //# sourceMappingURL=airlines.model.js.map
