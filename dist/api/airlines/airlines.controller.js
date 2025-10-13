@@ -58,7 +58,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AirlinesController.prototype, "viewAirlineDiscount", null);
 __decorate([
-    (0, common_1.Get)('admin/airline/discount'),
+    (0, common_1.Patch)('admin/airline/discount/:id'),
     __param(0, (0, common_1.Headers)()),
     __param(1, (0, common_1.Param)('id')),
     __param(2, (0, common_1.Body)()),
@@ -67,7 +67,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AirlinesController.prototype, "updateAirlineDiscount", null);
 __decorate([
-    (0, common_1.Get)('admin/airline/discount/id'),
+    (0, common_1.Delete)('admin/airline/discount/:id'),
     __param(0, (0, common_1.Headers)()),
     __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -91,7 +91,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AirlinesController.prototype, "updatemarkup", null);
 exports.AirlinesController = AirlinesController = __decorate([
-    (0, swagger_1.ApiExcludeController)(),
     (0, swagger_1.ApiTags)("Admin Module"),
     (0, common_1.Controller)(),
     (0, swagger_1.ApiBearerAuth)(),

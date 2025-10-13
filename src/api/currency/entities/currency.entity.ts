@@ -7,6 +7,12 @@ export class CurrencyConverter {
   id: number;
 
   @Column()
+  airline: string;
+
+  @Column()
+  source: string;
+
+  @Column()
   base: string;
 
   @Column()

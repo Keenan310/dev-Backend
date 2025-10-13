@@ -21,6 +21,14 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
+], CurrencyConverter.prototype, "airline", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], CurrencyConverter.prototype, "source", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
 ], CurrencyConverter.prototype, "base", void 0);
 __decorate([
     (0, typeorm_1.Column)(),

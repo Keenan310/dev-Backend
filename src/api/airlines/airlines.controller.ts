@@ -1,10 +1,9 @@
-import { Controller, Get, Body, Patch, Param, Headers, Post } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Headers, Post, Delete } from '@nestjs/common';
 import { AirlinesService } from './airlines.service';
 import { ApiBearerAuth, ApiExcludeController, ApiTags } from '@nestjs/swagger';
 import { AirlinesUpdateModel } from './airlines.model';
 import { CreateAirlineDiscountDto, UpdateAirlineDiscountDto } from './airlines.dto';
 
-@ApiExcludeController()
 @ApiTags("Admin Module")
 @Controller()
 @ApiBearerAuth()
@@ -23,15 +22,15 @@ export class AirlinesController {
     return this.airlinesService.viewAirlineDiscount(header);
   }
 
-  @Get('admin/airline/discount')
+  @Patch('admin/airline/discount/:id')
   updateAirlineDiscount(
-    @Headers() header: Headers, 
+    @Headers() header: Headers,
     @Param('id') id: string,
     @Body() updateAirlineDiscountDto: UpdateAirlineDiscountDto) {
     return this.airlinesService.updateAirlineDiscount(header, +id, updateAirlineDiscountDto);
   }
 
-  @Get('admin/airline/discount/id')
+  @Delete('admin/airline/discount/:id')
   deleteAirlineDiscount(
     @Headers() header: Headers,
     @Param('id') id: string) {
@@ -40,8 +39,7 @@ export class AirlinesController {
 
   @Get('admin/airlines/all')
   findAll(
-    @Headers() header: Headers,
-  ) {
+    @Headers() header: Headers) {
     return this.airlinesService.findAll(header);
   }
 
