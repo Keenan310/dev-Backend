@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateAirlineDiscountDto = exports.CreateAirlineDiscountDto = void 0;
-const mapped_types_1 = require("@nestjs/mapped-types");
+const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class CreateAirlineDiscountDto {
 }
@@ -19,10 +19,6 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateAirlineDiscountDto.prototype, "airline", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateAirlineDiscountDto.prototype, "from_location", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsNumber)(),
@@ -34,44 +30,44 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateAirlineDiscountDto.prototype, "fix_discount", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], CreateAirlineDiscountDto.prototype, "travel_date", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], CreateAirlineDiscountDto.prototype, "booking_date", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
 ], CreateAirlineDiscountDto.prototype, "from_list", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
 ], CreateAirlineDiscountDto.prototype, "from_except", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
 ], CreateAirlineDiscountDto.prototype, "to_list", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
 ], CreateAirlineDiscountDto.prototype, "to_except", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
 ], CreateAirlineDiscountDto.prototype, "rbd", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
 ], CreateAirlineDiscountDto.prototype, "source", void 0);
-class UpdateAirlineDiscountDto extends (0, mapped_types_1.PartialType)(CreateAirlineDiscountDto) {
+class UpdateAirlineDiscountDto extends (0, swagger_1.PartialType)(CreateAirlineDiscountDto) {
 }
 exports.UpdateAirlineDiscountDto = UpdateAirlineDiscountDto;
 //# sourceMappingURL=airlines.dto.js.map

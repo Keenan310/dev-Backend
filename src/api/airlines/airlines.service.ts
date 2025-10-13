@@ -16,14 +16,14 @@ export class AirlinesService {
   ) {}
 
   async createAirlineDiscount(header: any, createAirlineDiscountDto : CreateAirlineDiscountDto){
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
+    // const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
+    // if(!verifyAdminId){
+    //     throw new UnauthorizedException();
+    // }
 
-    const discount = this.airlineDiscountRepository.create(createAirlineDiscountDto);
-    return this.airlineDiscountRepository.save(discount);
+    //const discount = this.airlineDiscountRepository.create(createAirlineDiscountDto);
+    return this.airlineDiscountRepository.save(createAirlineDiscountDto);
   }
 
   async viewAirlineDiscount(header: any){

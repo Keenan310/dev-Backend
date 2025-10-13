@@ -200,10 +200,6 @@ __decorate([
     __metadata("design:type", String)
 ], AirlineDiscount.prototype, "airline", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], AirlineDiscount.prototype, "from_location", void 0);
-__decorate([
     (0, typeorm_1.Column)('decimal', { precision: 5, scale: 2, nullable: true }),
     __metadata("design:type", Number)
 ], AirlineDiscount.prototype, "discount_percent", void 0);
@@ -220,28 +216,28 @@ __decorate([
     __metadata("design:type", String)
 ], AirlineDiscount.prototype, "booking_date", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)('simple-json', { nullable: true }),
+    __metadata("design:type", Array)
 ], AirlineDiscount.prototype, "from_list", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)('simple-json', { nullable: true }),
+    __metadata("design:type", Array)
 ], AirlineDiscount.prototype, "from_except", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)('simple-json', { nullable: true }),
+    __metadata("design:type", Array)
 ], AirlineDiscount.prototype, "to_list", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)('simple-json', { nullable: true }),
+    __metadata("design:type", Array)
 ], AirlineDiscount.prototype, "to_except", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)('simple-json', { nullable: true }),
+    __metadata("design:type", Array)
 ], AirlineDiscount.prototype, "rbd", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)('simple-json', { nullable: true }),
+    __metadata("design:type", Array)
 ], AirlineDiscount.prototype, "source", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),

@@ -1,12 +1,9 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { IsString, IsOptional, IsNumber, IsDateString } from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
+import { IsString, IsOptional, IsNumber, IsDateString, IsArray } from 'class-validator';
 
 export class CreateAirlineDiscountDto {
   @IsString()
   airline: string;
-
-  @IsString()
-  from_location: string;
 
   @IsOptional()
   @IsNumber()
@@ -16,35 +13,36 @@ export class CreateAirlineDiscountDto {
   @IsNumber()
   fix_discount?: number;
 
-  @IsString()
+  @IsDateString()
   travel_date: string;
 
-  @IsString()
+  @IsDateString()
   booking_date: string;
 
   @IsOptional()
-  @IsString()
-  from_list?: string;
+  @IsArray()
+  from_list?: string[];
 
   @IsOptional()
-  @IsString()
-  from_except?: string;
+  @IsArray()
+  from_except?: string[];
 
   @IsOptional()
-  @IsString()
-  to_list?: string;
+  @IsArray()
+  to_list?: string[];
 
   @IsOptional()
-  @IsString()
-  to_except?: string;
+  @IsArray()
+  to_except?: string[];
 
   @IsOptional()
-  @IsString()
-  rbd?: string;
+  @IsArray()
+  rbd?: string[];
 
   @IsOptional()
-  @IsString()
-  source?: string;
+  @IsArray()
+  source?: string[];
 }
+
 
 export class UpdateAirlineDiscountDto extends PartialType(CreateAirlineDiscountDto) {}

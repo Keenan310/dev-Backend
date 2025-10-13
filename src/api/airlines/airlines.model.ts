@@ -144,9 +144,6 @@ export class AirlineDiscount {
   @Column()
   airline: string;
 
-  @Column()
-  from_location: string;
-
   @Column('decimal', { precision: 5, scale: 2, nullable: true })
   discount_percent: number;
 
@@ -159,23 +156,24 @@ export class AirlineDiscount {
   @Column()
   booking_date: string;
 
-  @Column({ nullable: true })
-  from_list: string;
+  // <--- CHANGE HERE: JSON columns
+  @Column('simple-json', { nullable: true })
+  from_list: string[];
 
-  @Column({ nullable: true })
-  from_except: string;
+  @Column('simple-json', { nullable: true })
+  from_except: string[];
 
-  @Column({ nullable: true })
-  to_list: string;
+  @Column('simple-json', { nullable: true })
+  to_list: string[];
 
-  @Column({ nullable: true })
-  to_except: string;
+  @Column('simple-json', { nullable: true })
+  to_except: string[];
 
-  @Column({ nullable: true })
-  rbd: string;
+  @Column('simple-json', { nullable: true })
+  rbd: string[];
 
-  @Column({ nullable: true })
-  source: string;
+  @Column('simple-json', { nullable: true })
+  source: string[];
 
   @CreateDateColumn()
   created_at: Date;

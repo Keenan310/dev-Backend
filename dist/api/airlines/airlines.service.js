@@ -25,12 +25,7 @@ let AirlinesService = class AirlinesService {
         this.authService = authService;
     }
     async createAirlineDiscount(header, createAirlineDiscountDto) {
-        const verifyAdminId = await this.authService.verifyAdminToken(header);
-        if (!verifyAdminId) {
-            throw new common_1.UnauthorizedException();
-        }
-        const discount = this.airlineDiscountRepository.create(createAirlineDiscountDto);
-        return this.airlineDiscountRepository.save(discount);
+        return this.airlineDiscountRepository.save(createAirlineDiscountDto);
     }
     async viewAirlineDiscount(header) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
