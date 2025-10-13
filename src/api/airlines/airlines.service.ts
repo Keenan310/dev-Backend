@@ -16,22 +16,22 @@ export class AirlinesService {
   ) {}
 
   async createAirlineDiscount(header: any, createAirlineDiscountDto : CreateAirlineDiscountDto){
-    // const verifyAdminId = await this.authService.verifyAdminToken(header);
-
-    // if(!verifyAdminId){
-    //     throw new UnauthorizedException();
-    // }
-
-    //const discount = this.airlineDiscountRepository.create(createAirlineDiscountDto);
-    return this.airlineDiscountRepository.save(createAirlineDiscountDto);
-  }
-
-  async viewAirlineDiscount(header: any){
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
     if(!verifyAdminId){
         throw new UnauthorizedException();
     }
+
+    const discount = this.airlineDiscountRepository.create(createAirlineDiscountDto);
+    return this.airlineDiscountRepository.save(discount);
+  }
+
+  async viewAirlineDiscount(header: any){
+    // const verifyAdminId = await this.authService.verifyAdminToken(header);
+
+    // if(!verifyAdminId){
+    //     throw new UnauthorizedException();
+    // }
     return this.airlineDiscountRepository.find();
   }
 
@@ -46,15 +46,15 @@ export class AirlinesService {
     if(!data){
       throw new NotFoundException("Not found");
     }
-    return this.airlineDiscountRepository.update(id, data);
+    return this.airlineDiscountRepository.update(id, updateAirlineDiscountDto);
   }
 
   async deleteAirlineDiscount(header: any, id: number) {
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
+    // const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
+    // if(!verifyAdminId){
+    //     throw new UnauthorizedException();
+    // }
 
     const data = await this.airlineDiscountRepository.findOneBy({ id: id });
     if(!data){
