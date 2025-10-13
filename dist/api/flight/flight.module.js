@@ -59,7 +59,7 @@ exports.FlightModule = FlightModule = __decorate([
                 max: 100,
                 isGlobal: true,
             }),
-            typeorm_1.TypeOrmModule.forFeature([airlines_model_1.AirlinesModel, searchhistory_model_1.SearchHistoryModel, groupfare_model_1.GroupFareModel, traveller_model_1.TravellerModel, ticketing_model_1.TicketModel, airports_model_1.AirportsModel,
+            typeorm_1.TypeOrmModule.forFeature([airlines_model_1.AirlinesModel, airlines_model_1.AirlineDiscount, searchhistory_model_1.SearchHistoryModel, groupfare_model_1.GroupFareModel, traveller_model_1.TravellerModel, ticketing_model_1.TicketModel, airports_model_1.AirportsModel,
                 booking_model_1.BookingModel, passenger_model_1.PassengerModel, agent_model_1.AgentModel, staff_model_1.StaffModel, admin_model_1.AdminModel, refund_model_1.RefundModel, reissue_model_1.ReissueModel, void_model_1.VoidModel,
                 report_model_1.AgentLedgerModel, auth_model_1.OTPModel, activitylog_entity_1.ActivityLogModel, currency_entity_1.CurrencyConverter])],
         controllers: [pre_flight_controller_1.PreFlightController, post_flight_controller_1.PostFlightController],

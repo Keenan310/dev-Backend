@@ -9,7 +9,7 @@ import { StaffModel } from '../staff/staff.model';
 import { AdminModel } from '../admin/admin.model';
 import { JwtService } from '@nestjs/jwt';
 import { AirlinesService } from '../airlines/airlines.service';
-import { AirlinesModel } from '../airlines/airlines.model';
+import { AirlineDiscount, AirlinesModel } from '../airlines/airlines.model';
 import { AirportsModel } from '../airports/airports.model';
 import { AirportsService } from '../airports/airports.service';
 import { MailService } from 'src/mail/mail.service';
@@ -19,7 +19,7 @@ import { OTPModel } from '../auth/auth.model';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([GroupFareModel, BookingModel, AgentModel, StaffModel, AdminModel, AirlinesModel, AirportsModel, OTPModel, CurrencyConverter])],
+  imports: [TypeOrmModule.forFeature([AirlineDiscount, GroupFareModel, BookingModel, AgentModel, StaffModel, AdminModel, AirlinesModel, AirportsModel, OTPModel, CurrencyConverter])],
   controllers: [GroupfareController],
   providers: [GroupfareService, AuthService, JwtService, AuthUtils, AirlinesService, AirportsService, MailService],
 })

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { FlightService } from './flight.service';
 import { SabreService } from './sabre.flights.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AirlinesModel } from '../airlines/airlines.model';
+import { AirlinesModel, AirlineDiscount } from '../airlines/airlines.model';
 import { AirportsModel } from '../airports/airports.model';
 import { BookingService } from '../booking/booking.service';
 import { PassengerService } from '../passenger/passenger.service';
@@ -48,7 +48,7 @@ import { VoidModel } from '../void/void.model';
       isGlobal: true,  // 👈 very important
     }),
     TypeOrmModule.forFeature(
-    [AirlinesModel,SearchHistoryModel, GroupFareModel, TravellerModel,TicketModel, AirportsModel,
+    [AirlinesModel, AirlineDiscount, SearchHistoryModel, GroupFareModel, TravellerModel,TicketModel, AirportsModel,
     BookingModel, PassengerModel, AgentModel, StaffModel, AdminModel,RefundModel, ReissueModel, VoidModel,
     AgentLedgerModel, OTPModel, ActivityLogModel, CurrencyConverter])],
   controllers: [PreFlightController, PostFlightController],
