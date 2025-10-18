@@ -20,6 +20,7 @@ const booking_flight_dto_1 = require("./dto/booking-flight.dto");
 const revalidation_flight_dto_1 = require("./dto/revalidation-flight.dto");
 const search_flight_dto_1 = require("./dto/search-flight.dto");
 const cache_manager_1 = require("@nestjs/cache-manager");
+const getfare_flight_dto_1 = require("./dto/getfare-flight.dto");
 let PreFlightController = class PreFlightController {
     constructor(flightService) {
         this.flightService = flightService;
@@ -32,6 +33,9 @@ let PreFlightController = class PreFlightController {
     }
     Revalidation(header, revalidationDto) {
         return this.flightService.airrevalidation(header, revalidationDto);
+    }
+    GetFare(header, getFareDto) {
+        return this.flightService.getfare(header, getFareDto);
     }
     AirBooking(header, bookingDto) {
         return this.flightService.airbooking(header, bookingDto);
@@ -81,6 +85,15 @@ __decorate([
     __metadata("design:paramtypes", [String, revalidation_flight_dto_1.Revalidation]),
     __metadata("design:returntype", void 0)
 ], PreFlightController.prototype, "Revalidation", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, common_1.Post)("agent/flight/getfare"),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, getfare_flight_dto_1.GetFare]),
+    __metadata("design:returntype", void 0)
+], PreFlightController.prototype, "GetFare", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Post)("agent/flight/booking"),

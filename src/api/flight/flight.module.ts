@@ -40,6 +40,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { CHScraper } from './chtravel.flights.service';
 import { VoidModel } from '../void/void.model';
+import { SaveFlightsData } from './entity/save-flight.entity';
 
 @Module({
   imports: [CacheModule.register({
@@ -50,7 +51,7 @@ import { VoidModel } from '../void/void.model';
     TypeOrmModule.forFeature(
     [AirlinesModel, AirlineDiscount, SearchHistoryModel, GroupFareModel, TravellerModel,TicketModel, AirportsModel,
     BookingModel, PassengerModel, AgentModel, StaffModel, AdminModel,RefundModel, ReissueModel, VoidModel,
-    AgentLedgerModel, OTPModel, ActivityLogModel, CurrencyConverter])],
+    AgentLedgerModel, OTPModel, ActivityLogModel, CurrencyConverter, SaveFlightsData])],
   controllers: [PreFlightController, PostFlightController],
   providers: [{
           provide: APP_INTERCEPTOR,

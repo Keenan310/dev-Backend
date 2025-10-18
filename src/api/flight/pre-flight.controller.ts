@@ -5,6 +5,7 @@ import { AirBookingModel } from './dto/booking-flight.dto';
 import { Revalidation } from './dto/revalidation-flight.dto';
 import { FlightSearchModel } from './dto/search-flight.dto';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { GetFare } from './dto/getfare-flight.dto';
 
 @ApiBearerAuth('access_token')
 @ApiTags('Pre Ticketing Modules')
@@ -32,6 +33,14 @@ export class PreFlightController {
     @Headers() header: string,
     @Body() revalidationDto: Revalidation) {
     return this.flightService.airrevalidation(header, revalidationDto);
+  }
+
+  @ApiBearerAuth('access_token')
+  @Post("agent/flight/getfare")
+  GetFare(
+    @Headers() header: string,
+    @Body() getFareDto: GetFare) {
+    return this.flightService.getfare(header, getFareDto);
   }
 
   @ApiBearerAuth('access_token')

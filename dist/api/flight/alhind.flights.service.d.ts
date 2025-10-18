@@ -5,12 +5,16 @@ import { AirlinesService } from '../airlines/airlines.service';
 import { AirportsService } from '../airports/airports.service';
 import { Revalidation } from './dto/revalidation-flight.dto';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
+import { SaveFlightsData } from './entity/save-flight.entity';
 export declare class AlhindAPI {
     private readonly currencyConverterRepository;
+    private readonly saveFlightsData;
     private readonly airlinesService;
     private readonly airportsService;
-    constructor(currencyConverterRepository: Repository<CurrencyConverter>, airlinesService: AirlinesService, airportsService: AirportsService);
+    constructor(currencyConverterRepository: Repository<CurrencyConverter>, saveFlightsData: Repository<SaveFlightsData>, airlinesService: AirlinesService, airportsService: AirportsService);
     flights(agent: AgentModel, flightDto: FlightSearchModel): Promise<{
+        Token: any;
+        Key: any;
         System: string;
         ProviderCode: any;
         TripType: string;
@@ -22,6 +26,7 @@ export declare class AlhindAPI {
         Taxes: number;
         NetFare: any;
         GrossFare: number;
+        Fees: number;
         Comission: any;
         TimeLimit: string;
         Refundable: boolean;
@@ -29,6 +34,8 @@ export declare class AlhindAPI {
         AllLegsInfo: any[];
     }[]>;
     flightUtils(result: any, agentdata: AgentModel, flighDto: FlightSearchModel): Promise<{
+        Token: any;
+        Key: any;
         System: string;
         ProviderCode: any;
         TripType: string;
@@ -40,6 +47,7 @@ export declare class AlhindAPI {
         Taxes: number;
         NetFare: any;
         GrossFare: number;
+        Fees: number;
         Comission: any;
         TimeLimit: string;
         Refundable: boolean;

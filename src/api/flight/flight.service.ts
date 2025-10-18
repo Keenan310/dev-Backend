@@ -3,6 +3,7 @@ import { SabreService } from './sabre.flights.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookingModel, TicketModel } from '../booking/booking.model';
 import { Repository } from 'typeorm';
+import axios from 'axios';
 import { PassengerModel } from '../passenger/passenger.model';
 import { HttpStatusCode } from 'axios';
 import { ReissueModel } from '../reissue/reissue.model';
@@ -13,10 +14,12 @@ import { BookingService } from '../booking/booking.service';
 import { AirBookingModel } from './dto/booking-flight.dto';
 import { FlightSearchModel } from './dto/search-flight.dto';
 import { AuthService } from '../auth/auth.service';
-import { SearchHistoryModel } from '../searchhistory/searchhistory.model';
 import { AlhindAPI } from './alhind.flights.service';
 import { CHScraper } from './chtravel.flights.service';
 import { VoidModel } from '../void/void.model';
+import { SearchhistoryService } from '../searchhistory/searchhistory.service';
+import { GetFare } from './dto/getfare-flight.dto';
+import { SaveFlightsData } from './entity/save-flight.entity';
 
 @Injectable()
 export class FlightService {
@@ -35,6 +38,9 @@ export class FlightService {
       private readonly voidRepository: Repository<VoidModel>,
       @InjectRepository(TicketModel)
       private readonly ticketingRepository: Repository<TicketModel>,
+      @InjectRepository(SaveFlightsData)
+      private readonly saveFlightsDataRepository: Repository<SaveFlightsData>,
+      private readonly searchhistoryService: SearchhistoryService,
       private readonly authService: AuthService,
       private readonly sabreService: SabreService,
       private readonly bookingService: BookingService,
@@ -54,6 +60,8 @@ export class FlightService {
     if(!agent){
       throw new UnauthorizedException();
     }
+
+    this.searchhistoryService.create(agent, flightDto);
 
     //const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
 
@@ -91,6 +99,72 @@ export class FlightService {
       RevalidationData ='Other System';
     }
     return RevalidationData;
+  }
+
+  async getfare(header: any, getFare: GetFare){
+
+    const agent = await this.authService.verifyAgentToken(header);
+
+    if(!agent){
+      throw new UnauthorizedException();
+    }
+
+    const rawdata = await this.saveFlightsDataRepository.findOne({ where: { token: getFare.token} });
+    const key = getFare?.key;
+
+    const flightsArray = Array.isArray(rawdata.data) ? rawdata.data : JSON.parse(rawdata.data);
+    const singleFlight = flightsArray.find(item => item.Key === key);
+
+    if (!singleFlight) {
+      throw new Error('Flight not found for the given key');
+    }
+
+    const { PriceBreakDown, ...rest } = singleFlight;
+    const updatedData = {
+      ...rest,
+      FlightFares: [PriceBreakDown],
+      SeatEnabled: false,
+      Reprice: false,
+      FFNoEnabled: false
+
+    };
+
+    let tripMode = rawdata.triptype;
+    if (rawdata.triptype === 'R') {
+        tripMode = 'S';
+    }
+
+    let data = JSON.stringify({
+      "Token": getFare.token,
+      "UserId": "AEAUH001035200",
+      "Error": null,
+      "TripMode": tripMode,
+      "Journy": {
+        "FlightOptions": [],
+        "FlightOption": updatedData,
+        "HostTokens": [],
+        "Errors": []
+      }
+    });
+
+    let getfarerequest = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'https://b2b.keenantravel.com/getfare.php',
+      headers: { 
+        'Content-Type': 'application/json',
+      },
+      data : data
+    };
+    
+    try {
+      const response = await axios.request(getfarerequest);
+      return response.data;
+    }catch (error) {
+      console.error(error);
+      throw error;
+    }
+
   }
 
   async pricecheck(agentUId : string, revalidationDto: any){

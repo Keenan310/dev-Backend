@@ -33,6 +33,10 @@ let AirlinesService = class AirlinesService {
         return this.airlineDiscountRepository.save(discount);
     }
     async viewAirlineDiscount(header) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
         return this.airlineDiscountRepository.find();
     }
     async updateAirlineDiscount(header, id, updateAirlineDiscountDto) {
@@ -47,6 +51,10 @@ let AirlinesService = class AirlinesService {
         return this.airlineDiscountRepository.update(id, updateAirlineDiscountDto);
     }
     async deleteAirlineDiscount(header, id) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
         const data = await this.airlineDiscountRepository.findOneBy({ id: id });
         if (!data) {
             throw new common_1.NotFoundException("Not found");

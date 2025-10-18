@@ -2,11 +2,14 @@ import { FlightService } from './flight.service';
 import { AirBookingModel } from './dto/booking-flight.dto';
 import { Revalidation } from './dto/revalidation-flight.dto';
 import { FlightSearchModel } from './dto/search-flight.dto';
+import { GetFare } from './dto/getfare-flight.dto';
 export declare class PreFlightController {
     private readonly flightService;
     constructor(flightService: FlightService);
     AirSearchCH(flightDto: FlightSearchModel): Promise<void>;
     AirSearch(header: string, flightDto: FlightSearchModel): Promise<{
+        Token: any;
+        Key: any;
         System: string;
         ProviderCode: any;
         TripType: string;
@@ -18,6 +21,7 @@ export declare class PreFlightController {
         Taxes: number;
         NetFare: any;
         GrossFare: number;
+        Fees: number;
         Comission: any;
         TimeLimit: string;
         Refundable: boolean;
@@ -25,6 +29,7 @@ export declare class PreFlightController {
         AllLegsInfo: any[];
     }[]>;
     Revalidation(header: string, revalidationDto: Revalidation): Promise<any>;
+    GetFare(header: string, getFareDto: GetFare): Promise<any>;
     AirBooking(header: string, bookingDto: AirBookingModel): Promise<({
         agentId: string;
         bookingId: string;

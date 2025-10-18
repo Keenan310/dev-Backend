@@ -23,10 +23,12 @@ const airports_service_1 = require("../airports/airports.service");
 const airports_data_1 = require("./data/airports.data");
 const airlines_data_1 = require("./data/airlines.data");
 const currency_entity_1 = require("../currency/entities/currency.entity");
+const save_flight_entity_1 = require("./entity/save-flight.entity");
 dotenv.config();
 let AlhindAPI = class AlhindAPI {
-    constructor(currencyConverterRepository, airlinesService, airportsService) {
+    constructor(currencyConverterRepository, saveFlightsData, airlinesService, airportsService) {
         this.currencyConverterRepository = currencyConverterRepository;
+        this.saveFlightsData = saveFlightsData;
         this.airlinesService = airlinesService;
         this.airportsService = airportsService;
     }
@@ -119,6 +121,11 @@ let AlhindAPI = class AlhindAPI {
             delete copy.FlightFares;
             return copy;
         }));
+        this.saveFlightsData.save({
+            token: result?.Token || '',
+            triptype: TripType,
+            data: AllFareWithPrice || [],
+        });
         const conversionData = await this.currencyConverterRepository.findOne({ where: { alternate: agentdata.currency } });
         const conversionRate = conversionData?.exchange_rate || 1;
         const airportCache = new Map();
@@ -136,11 +143,13 @@ let AlhindAPI = class AlhindAPI {
             return airlineCache.get(code);
         };
         const FlightItenary = await Promise.all(AllFareWithPrice.map(async (flights) => {
+            const Token = result?.Token || '';
+            const Key = flights?.Key;
             const availableSeat = flights?.AvailableSeat || 9;
             const airlineData = await getAirline(flights?.TicketingCarrier);
             const CarrierName = airlineData?.marketing_name || 'N/F';
             const ProviderCode = flights?.ProviderCode || 'NF';
-            const { AprxTotalBaseFare, AprxTotalTax, TotalAmount, Fares, RefundableInfo, FareName, FID } = flights.PriceBreakDown;
+            const { AprxTotalBaseFare, AprxTotalTax, TotalAmount, Fares, RefundableInfo, FareName, FID } = flights?.PriceBreakDown;
             const isRefundable = RefundableInfo != null && RefundableInfo === "Refundable";
             const equivalentAmount = (AprxTotalBaseFare * conversionRate);
             const Taxes = (AprxTotalTax * conversionRate);
@@ -152,13 +161,12 @@ let AlhindAPI = class AlhindAPI {
             const airlinesMarkUpAmount = equivalentAmount * (ComissionPolicy / 100);
             const agentMarkUpAmount = agentdata?.clientmarkuptype === 'percent'
                 ? equivalentAmount * (agentdata.clientmarkup / 100)
-                : agentdata?.clientmarkuptype === 'amount'
-                    ? agentdata.clientmarkup
-                    : 0;
+                : agentdata?.clientmarkuptype === 'amount' ? agentdata.clientmarkup : 0;
             const addAmount = airlineData?.addAmount || 0;
             const NetFare = equivalentAmount + adminMarkUpAmount + airlinesMarkUpAmount + addAmount + agentMarkUpAmount + Taxes;
             if (NetFare > TotalFare)
                 TotalFare = NetFare;
+            const Fees = agentMarkUpAmount;
             const legs = flights?.FlightLegs ?? [];
             const firstLegBaggage = legs[0]?.FreeBaggages ?? [];
             const firstLegBagAllowance = firstLegBaggage.find(b => b.FID === FID);
@@ -261,6 +269,8 @@ let AlhindAPI = class AlhindAPI {
                 });
             }
             return {
+                Token,
+                Key,
                 System: "AlHind",
                 ProviderCode,
                 TripType,
@@ -272,6 +282,7 @@ let AlhindAPI = class AlhindAPI {
                 Taxes,
                 NetFare,
                 GrossFare: TotalFare,
+                Fees,
                 Comission: ComissionPolicy,
                 TimeLimit: '',
                 Refundable: isRefundable,
@@ -307,7 +318,9 @@ exports.AlhindAPI = AlhindAPI;
 exports.AlhindAPI = AlhindAPI = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(currency_entity_1.CurrencyConverter)),
+    __param(1, (0, typeorm_1.InjectRepository)(save_flight_entity_1.SaveFlightsData)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         airlines_service_1.AirlinesService,
         airports_service_1.AirportsService])
 ], AlhindAPI);

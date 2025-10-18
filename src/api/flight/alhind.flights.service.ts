@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { authenticator } from 'otplib';
 import axios from 'axios';
 import * as dotenv from "dotenv";
 import { Repository } from 'typeorm';
@@ -12,6 +11,7 @@ import { airportsData } from './data/airports.data';
 import { airlinesData } from './data/airlines.data';
 import { Revalidation } from './dto/revalidation-flight.dto';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
+import { SaveFlightsData } from './entity/save-flight.entity';
 dotenv.config()
 
 
@@ -20,6 +20,8 @@ export class AlhindAPI {
     constructor(
       @InjectRepository(CurrencyConverter)
       private readonly currencyConverterRepository: Repository<CurrencyConverter>,
+      @InjectRepository(SaveFlightsData)
+      private readonly saveFlightsData: Repository<SaveFlightsData>,
       private readonly airlinesService: AirlinesService,
       private readonly airportsService: AirportsService,
     ) {}
@@ -127,6 +129,13 @@ export class AlhindAPI {
         })
     );
 
+    this.saveFlightsData.save({
+        token: result?.Token || '',
+        triptype: TripType,
+        data: AllFareWithPrice || [],
+
+    });
+
     // ---- STEP 3: Fetch conversion rate once ----
     const conversionData = await this.currencyConverterRepository.findOne({where: { alternate: agentdata.currency }});
     const conversionRate = conversionData?.exchange_rate || 1;
@@ -151,12 +160,14 @@ export class AlhindAPI {
 
     // ---- STEP 5: Process all flights in parallel ----
     const FlightItenary = await Promise.all(AllFareWithPrice.map(async flights => {
+        const Token = result?.Token || '';
+        const Key = flights?.Key;
         const availableSeat = flights?.AvailableSeat || 9;
         const airlineData = await getAirline(flights?.TicketingCarrier);
         const CarrierName = airlineData?.marketing_name || 'N/F';
         const ProviderCode = flights?.ProviderCode || 'NF';
 
-        const { AprxTotalBaseFare, AprxTotalTax, TotalAmount, Fares, RefundableInfo, FareName, FID } = flights.PriceBreakDown;
+        const { AprxTotalBaseFare, AprxTotalTax, TotalAmount, Fares, RefundableInfo, FareName, FID } = flights?.PriceBreakDown;
         const isRefundable = RefundableInfo != null && RefundableInfo === "Refundable";
 
         const equivalentAmount = (AprxTotalBaseFare * conversionRate);
@@ -175,13 +186,13 @@ export class AlhindAPI {
         // Agent markup
         const agentMarkUpAmount = agentdata?.clientmarkuptype === 'percent'
             ? equivalentAmount * (agentdata.clientmarkup / 100)
-            : agentdata?.clientmarkuptype === 'amount'
-                ? agentdata.clientmarkup
-                : 0;
+            : agentdata?.clientmarkuptype === 'amount' ? agentdata.clientmarkup: 0;
 
         const addAmount = airlineData?.addAmount || 0;
         const NetFare = equivalentAmount + adminMarkUpAmount + airlinesMarkUpAmount + addAmount + agentMarkUpAmount + Taxes;
         if (NetFare > TotalFare) TotalFare = NetFare;
+
+        const Fees = agentMarkUpAmount;
 
         const legs = flights?.FlightLegs ?? [];
         // Outbound baggage (always exists if FlightLegs has data)
@@ -305,6 +316,8 @@ export class AlhindAPI {
         }
 
         return {
+            Token,
+            Key,
             System: "AlHind",
             ProviderCode,
             TripType,
@@ -313,10 +326,10 @@ export class AlhindAPI {
             Cabinclass: FareName,
             Currency: agentdata?.currency,
             BaseFare: equivalentAmount,
-            
             Taxes,
             NetFare,
             GrossFare: TotalFare,
+            Fees,
             Comission: ComissionPolicy,
             TimeLimit: '',
             Refundable: isRefundable,

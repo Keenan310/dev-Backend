@@ -18,8 +18,9 @@ const sabre_flights_service_1 = require("./sabre.flights.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const booking_model_1 = require("../booking/booking.model");
 const typeorm_2 = require("typeorm");
-const passenger_model_1 = require("../passenger/passenger.model");
 const axios_1 = require("axios");
+const passenger_model_1 = require("../passenger/passenger.model");
+const axios_2 = require("axios");
 const reissue_model_1 = require("../reissue/reissue.model");
 const refund_model_1 = require("../refund/refund.model");
 const agent_model_1 = require("../agent/agent.model");
@@ -29,8 +30,10 @@ const auth_service_1 = require("../auth/auth.service");
 const alhind_flights_service_1 = require("./alhind.flights.service");
 const chtravel_flights_service_1 = require("./chtravel.flights.service");
 const void_model_1 = require("../void/void.model");
+const searchhistory_service_1 = require("../searchhistory/searchhistory.service");
+const save_flight_entity_1 = require("./entity/save-flight.entity");
 let FlightService = class FlightService {
-    constructor(bookingRepository, agentRepository, passengerRepository, reissueRepository, refundRepository, voidRepository, ticketingRepository, authService, sabreService, bookingService, groupFareService, alhindAPI, ch) {
+    constructor(bookingRepository, agentRepository, passengerRepository, reissueRepository, refundRepository, voidRepository, ticketingRepository, saveFlightsDataRepository, searchhistoryService, authService, sabreService, bookingService, groupFareService, alhindAPI, ch) {
         this.bookingRepository = bookingRepository;
         this.agentRepository = agentRepository;
         this.passengerRepository = passengerRepository;
@@ -38,6 +41,8 @@ let FlightService = class FlightService {
         this.refundRepository = refundRepository;
         this.voidRepository = voidRepository;
         this.ticketingRepository = ticketingRepository;
+        this.saveFlightsDataRepository = saveFlightsDataRepository;
+        this.searchhistoryService = searchhistoryService;
         this.authService = authService;
         this.sabreService = sabreService;
         this.bookingService = bookingService;
@@ -53,6 +58,7 @@ let FlightService = class FlightService {
         if (!agent) {
             throw new common_1.UnauthorizedException();
         }
+        this.searchhistoryService.create(agent, flightDto);
         const AlhindData = await this.alhindAPI.flights(agent, flightDto);
         AlhindData.sort((a, b) => a.NetFare - b.NetFare);
         return AlhindData;
@@ -77,6 +83,60 @@ let FlightService = class FlightService {
             RevalidationData = 'Other System';
         }
         return RevalidationData;
+    }
+    async getfare(header, getFare) {
+        const agent = await this.authService.verifyAgentToken(header);
+        if (!agent) {
+            throw new common_1.UnauthorizedException();
+        }
+        const rawdata = await this.saveFlightsDataRepository.findOne({ where: { token: getFare.token } });
+        const key = getFare?.key;
+        const flightsArray = Array.isArray(rawdata.data) ? rawdata.data : JSON.parse(rawdata.data);
+        const singleFlight = flightsArray.find(item => item.Key === key);
+        if (!singleFlight) {
+            throw new Error('Flight not found for the given key');
+        }
+        const { PriceBreakDown, ...rest } = singleFlight;
+        const updatedData = {
+            ...rest,
+            FlightFares: [PriceBreakDown],
+            SeatEnabled: false,
+            Reprice: false,
+            FFNoEnabled: false
+        };
+        let tripMode = rawdata.triptype;
+        if (rawdata.triptype === 'R') {
+            tripMode = 'S';
+        }
+        let data = JSON.stringify({
+            "Token": getFare.token,
+            "UserId": "AEAUH001035200",
+            "Error": null,
+            "TripMode": tripMode,
+            "Journy": {
+                "FlightOptions": [],
+                "FlightOption": updatedData,
+                "HostTokens": [],
+                "Errors": []
+            }
+        });
+        let getfarerequest = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: 'https://b2b.keenantravel.com/getfare.php',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: data
+        };
+        try {
+            const response = await axios_1.default.request(getfarerequest);
+            return response.data;
+        }
+        catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
     async pricecheck(agentUId, revalidationDto) {
         const agentdata = await this.agentRepository.findOne({ where: { uid: agentUId } });
@@ -117,7 +177,7 @@ let FlightService = class FlightService {
         }
         const bookingdata = await this.bookingRepository.findOne({ where: { pnr: pnr } });
         if (bookingdata) {
-            throw new common_1.HttpException("Pnr Already Imported", axios_1.HttpStatusCode.Found);
+            throw new common_1.HttpException("Pnr Already Imported", axios_2.HttpStatusCode.Found);
         }
         let BookingResponse;
         if (system.toLowerCase() === 'sabre') {
@@ -135,7 +195,7 @@ let FlightService = class FlightService {
         }
         const booking = await this.bookingRepository.findOne({ where: { uid: bookingUId } });
         if (booking.status === 'Cancelled') {
-            throw new common_1.HttpException("Already Cancelled", axios_1.HttpStatusCode.AlreadyReported);
+            throw new common_1.HttpException("Already Cancelled", axios_2.HttpStatusCode.AlreadyReported);
         }
         else if (booking.status === 'Hold') {
             if (booking.system === 'Sabre') {
@@ -181,7 +241,7 @@ let FlightService = class FlightService {
             }
         }
         else {
-            throw new common_1.HttpException("Unknow error", axios_1.HttpStatusCode.BadRequest);
+            throw new common_1.HttpException("Unknow error", axios_2.HttpStatusCode.BadRequest);
         }
     }
     async aircanceladmin(header, bookingUId) {
@@ -191,7 +251,7 @@ let FlightService = class FlightService {
         }
         const booking = await this.bookingRepository.findOne({ where: { uid: bookingUId } });
         if (booking.status === 'Cancelled') {
-            throw new common_1.HttpException("Already Cancelled", axios_1.HttpStatusCode.AlreadyReported);
+            throw new common_1.HttpException("Already Cancelled", axios_2.HttpStatusCode.AlreadyReported);
         }
         else if (booking.status === 'Hold') {
             if (booking.system === 'Sabre') {
@@ -237,7 +297,7 @@ let FlightService = class FlightService {
             }
         }
         else {
-            throw new common_1.HttpException("Unknow error", axios_1.HttpStatusCode.BadRequest);
+            throw new common_1.HttpException("Unknow error", axios_2.HttpStatusCode.BadRequest);
         }
     }
     async airretrieveagent(header, bookingUId) {
@@ -397,7 +457,7 @@ let FlightService = class FlightService {
         }
         const bookingdata = await this.bookingRepository.findOne({ where: { pnr: pnr } });
         if (bookingdata) {
-            throw new common_1.HttpException("Pnr Already Imported", axios_1.HttpStatusCode.Found);
+            throw new common_1.HttpException("Pnr Already Imported", axios_2.HttpStatusCode.Found);
         }
         if (system.toLowerCase() != 'sabre') {
             throw new common_1.NotFoundException("Invalid System");
@@ -416,6 +476,7 @@ exports.FlightService = FlightService = __decorate([
     __param(4, (0, typeorm_1.InjectRepository)(refund_model_1.RefundModel)),
     __param(5, (0, typeorm_1.InjectRepository)(void_model_1.VoidModel)),
     __param(6, (0, typeorm_1.InjectRepository)(booking_model_1.TicketModel)),
+    __param(7, (0, typeorm_1.InjectRepository)(save_flight_entity_1.SaveFlightsData)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
@@ -423,6 +484,8 @@ exports.FlightService = FlightService = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
+        typeorm_2.Repository,
+        searchhistory_service_1.SearchhistoryService,
         auth_service_1.AuthService,
         sabre_flights_service_1.SabreService,
         booking_service_1.BookingService,

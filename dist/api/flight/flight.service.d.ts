@@ -13,6 +13,9 @@ import { AuthService } from '../auth/auth.service';
 import { AlhindAPI } from './alhind.flights.service';
 import { CHScraper } from './chtravel.flights.service';
 import { VoidModel } from '../void/void.model';
+import { SearchhistoryService } from '../searchhistory/searchhistory.service';
+import { GetFare } from './dto/getfare-flight.dto';
+import { SaveFlightsData } from './entity/save-flight.entity';
 export declare class FlightService {
     private readonly bookingRepository;
     private readonly agentRepository;
@@ -21,15 +24,19 @@ export declare class FlightService {
     private readonly refundRepository;
     private readonly voidRepository;
     private readonly ticketingRepository;
+    private readonly saveFlightsDataRepository;
+    private readonly searchhistoryService;
     private readonly authService;
     private readonly sabreService;
     private readonly bookingService;
     private readonly groupFareService;
     private readonly alhindAPI;
     private readonly ch;
-    constructor(bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, reissueRepository: Repository<ReissueModel>, refundRepository: Repository<RefundModel>, voidRepository: Repository<VoidModel>, ticketingRepository: Repository<TicketModel>, authService: AuthService, sabreService: SabreService, bookingService: BookingService, groupFareService: GroupfareService, alhindAPI: AlhindAPI, ch: CHScraper);
+    constructor(bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, reissueRepository: Repository<ReissueModel>, refundRepository: Repository<RefundModel>, voidRepository: Repository<VoidModel>, ticketingRepository: Repository<TicketModel>, saveFlightsDataRepository: Repository<SaveFlightsData>, searchhistoryService: SearchhistoryService, authService: AuthService, sabreService: SabreService, bookingService: BookingService, groupFareService: GroupfareService, alhindAPI: AlhindAPI, ch: CHScraper);
     airsearchch(flightDto: FlightSearchModel): Promise<void>;
     airsearch(header: any, flightDto: FlightSearchModel): Promise<{
+        Token: any;
+        Key: any;
         System: string;
         ProviderCode: any;
         TripType: string;
@@ -41,6 +48,7 @@ export declare class FlightService {
         Taxes: number;
         NetFare: any;
         GrossFare: number;
+        Fees: number;
         Comission: any;
         TimeLimit: string;
         Refundable: boolean;
@@ -48,6 +56,7 @@ export declare class FlightService {
         AllLegsInfo: any[];
     }[]>;
     airrevalidation(header: any, revalidationDto: any): Promise<any>;
+    getfare(header: any, getFare: GetFare): Promise<any>;
     pricecheck(agentUId: string, revalidationDto: any): Promise<any[] | "Other System">;
     airbooking(header: any, bookingDto: AirBookingModel): Promise<({
         agentId: string;

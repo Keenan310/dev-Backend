@@ -152,17 +152,6 @@ let TicketingService = class TicketingService {
         if (!agent) {
             throw new common_1.HttpException(`Agnet not Found`, axios_1.HttpStatusCode.NotFound);
         }
-        const details = booking.carrier_name + ' ' + booking.depfrom + '-' + booking.arrto + ' Ticket Issue Rejected ' + booking.netfare + ' (Revesal due to ' + remarks + '). PNR : ' + booking.pnr + ' .';
-        const AgentLedgerData = {
-            agentId: booking.agentId,
-            trxtype: 'reversal',
-            credit: booking.netfare,
-            refId: booking.bookingId,
-            details: details,
-            remarks: remarks,
-            companyname: booking.companyname
-        };
-        await this.agentLedgerRepository.save(AgentLedgerData);
         booking.status = 'Issue Request Rejected';
         const bookingResponse = await this.bookingRepository.update(booking.id, booking);
         if (bookingResponse.affected === 1) {
