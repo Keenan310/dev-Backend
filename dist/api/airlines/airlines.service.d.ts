@@ -12,7 +12,7 @@ export declare class AirlinesService {
     updateAirlineDiscount(header: any, id: number, updateAirlineDiscountDto: UpdateAirlineDiscountDto): Promise<import("typeorm").UpdateResult>;
     deleteAirlineDiscount(header: any, id: number): Promise<import("typeorm").DeleteResult>;
     create(header: any, createAirlineDto: AirlinesModel): Promise<AirlinesModel>;
-    getAirlines(code: string): Promise<"" | AirlinesModel>;
+    getAirlines(code: string): Promise<AirlinesModel | "">;
     getAirlinesName(code: string): Promise<string>;
     findAll(header: any): Promise<AirlinesModel[]>;
     findOne(header: any, id: number): Promise<AirlinesModel>;

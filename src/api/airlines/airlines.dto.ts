@@ -13,11 +13,16 @@ export class CreateAirlineDiscountDto {
   @IsNumber()
   fix_discount?: number;
 
+  @IsOptional()
   @IsDateString()
   travel_date: string;
 
+  @IsOptional()
   @IsDateString()
   booking_date: string;
+
+  @IsString()
+  currency: string;
 
   @IsOptional()
   @IsArray()
@@ -25,15 +30,7 @@ export class CreateAirlineDiscountDto {
 
   @IsOptional()
   @IsArray()
-  from_except?: string[];
-
-  @IsOptional()
-  @IsArray()
   to_list?: string[];
-
-  @IsOptional()
-  @IsArray()
-  to_except?: string[];
 
   @IsOptional()
   @IsArray()

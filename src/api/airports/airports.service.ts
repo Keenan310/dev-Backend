@@ -6,7 +6,6 @@ import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class AirportsService {
-
   constructor(
     @InjectRepository(AirportsModel)
     private readonly airportsRepository: Repository<AirportsModel>,

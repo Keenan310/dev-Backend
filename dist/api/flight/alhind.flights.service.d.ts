@@ -6,12 +6,14 @@ import { AirportsService } from '../airports/airports.service';
 import { Revalidation } from './dto/revalidation-flight.dto';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
 import { SaveFlightsData } from './entity/save-flight.entity';
+import { AirlineDiscount } from '../airlines/airlines.model';
 export declare class AlhindAPI {
     private readonly currencyConverterRepository;
+    private readonly airlineDiscountRepository;
     private readonly saveFlightsData;
     private readonly airlinesService;
     private readonly airportsService;
-    constructor(currencyConverterRepository: Repository<CurrencyConverter>, saveFlightsData: Repository<SaveFlightsData>, airlinesService: AirlinesService, airportsService: AirportsService);
+    constructor(currencyConverterRepository: Repository<CurrencyConverter>, airlineDiscountRepository: Repository<AirlineDiscount>, saveFlightsData: Repository<SaveFlightsData>, airlinesService: AirlinesService, airportsService: AirportsService);
     flights(agent: AgentModel, flightDto: FlightSearchModel): Promise<{
         Token: any;
         Key: any;
@@ -49,6 +51,26 @@ export declare class AlhindAPI {
         GrossFare: number;
         Fees: number;
         Comission: any;
+        TimeLimit: string;
+        Refundable: boolean;
+        PriceBreakDown: any;
+        AllLegsInfo: any[];
+    }[]>;
+    flightsUtilsUpdate(result: any, agentdata: AgentModel, flighDto: FlightSearchModel): Promise<{
+        Token: any;
+        Key: any;
+        System: string;
+        ProviderCode: any;
+        TripType: string;
+        Carrier: any;
+        CarrierName: any;
+        Cabinclass: any;
+        Currency: string;
+        BaseFare: number;
+        Taxes: number;
+        NetFare: any;
+        GrossFare: number;
+        Fees: number;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: any;

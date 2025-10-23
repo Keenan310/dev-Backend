@@ -202,11 +202,11 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)('decimal', { precision: 5, scale: 2, nullable: true }),
     __metadata("design:type", Number)
-], AirlineDiscount.prototype, "discount_percent", void 0);
+], AirlineDiscount.prototype, "discount_percent_aed", void 0);
 __decorate([
     (0, typeorm_1.Column)('decimal', { precision: 10, scale: 2, nullable: true }),
     __metadata("design:type", Number)
-], AirlineDiscount.prototype, "fix_discount", void 0);
+], AirlineDiscount.prototype, "fix_discount_aed", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
@@ -216,21 +216,17 @@ __decorate([
     __metadata("design:type", String)
 ], AirlineDiscount.prototype, "booking_date", void 0);
 __decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], AirlineDiscount.prototype, "currency", void 0);
+__decorate([
     (0, typeorm_1.Column)('simple-json', { nullable: true }),
     __metadata("design:type", Array)
 ], AirlineDiscount.prototype, "from_list", void 0);
 __decorate([
     (0, typeorm_1.Column)('simple-json', { nullable: true }),
     __metadata("design:type", Array)
-], AirlineDiscount.prototype, "from_except", void 0);
-__decorate([
-    (0, typeorm_1.Column)('simple-json', { nullable: true }),
-    __metadata("design:type", Array)
 ], AirlineDiscount.prototype, "to_list", void 0);
-__decorate([
-    (0, typeorm_1.Column)('simple-json', { nullable: true }),
-    __metadata("design:type", Array)
-], AirlineDiscount.prototype, "to_except", void 0);
 __decorate([
     (0, typeorm_1.Column)('simple-json', { nullable: true }),
     __metadata("design:type", Array)

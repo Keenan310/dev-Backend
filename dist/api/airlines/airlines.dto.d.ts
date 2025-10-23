@@ -4,10 +4,9 @@ export declare class CreateAirlineDiscountDto {
     fix_discount?: number;
     travel_date: string;
     booking_date: string;
+    currency: string;
     from_list?: string[];
-    from_except?: string[];
     to_list?: string[];
-    to_except?: string[];
     rbd?: string[];
     source?: string[];
 }
