@@ -26,13 +26,21 @@ export class AirlinesService {
     return this.airlineDiscountRepository.save(discount);
   }
 
-  async viewAirlineDiscount(header: any){
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
+  async viewAirlineDiscount(header: any, currency: string){
+    // const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
+    // if(!verifyAdminId){
+    //     throw new UnauthorizedException();
+    // }
+
+    if (currency && currency.trim() !== '') {
+        currency = currency.toUpperCase();
+        // Return filtered by currency
+        return await this.airlineDiscountRepository.find({ where: { currency } });
+    } else {
+        // Return all if no currency provided
+        return await this.airlineDiscountRepository.find();
     }
-    return this.airlineDiscountRepository.find();
   }
 
   async updateAirlineDiscount(header: any, id: number, updateAirlineDiscountDto: UpdateAirlineDiscountDto){

@@ -25,8 +25,8 @@ let AirlinesController = class AirlinesController {
     createAirlineDiscount(header, dto) {
         return this.airlinesService.createAirlineDiscount(header, dto);
     }
-    viewAirlineDiscount(header) {
-        return this.airlinesService.viewAirlineDiscount(header);
+    viewAirlineDiscount(header, currency) {
+        return this.airlinesService.viewAirlineDiscount(header, currency);
     }
     updateAirlineDiscount(header, id, updateAirlineDiscountDto) {
         return this.airlinesService.updateAirlineDiscount(header, +id, updateAirlineDiscountDto);
@@ -52,9 +52,11 @@ __decorate([
 ], AirlinesController.prototype, "createAirlineDiscount", null);
 __decorate([
     (0, common_1.Get)('admin/airline/discount'),
+    (0, swagger_1.ApiQuery)({ name: 'currency', required: false }),
     __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Query)('currency')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], AirlinesController.prototype, "viewAirlineDiscount", null);
 __decorate([

@@ -1,6 +1,6 @@
-import { Controller, Get, Body, Patch, Param, Headers, Post, Delete } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Headers, Post, Delete, Query } from '@nestjs/common';
 import { AirlinesService } from './airlines.service';
-import { ApiBearerAuth, ApiExcludeController, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeController, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AirlinesUpdateModel } from './airlines.model';
 import { CreateAirlineDiscountDto, UpdateAirlineDiscountDto } from './airlines.dto';
 
@@ -17,9 +17,13 @@ export class AirlinesController {
     return this.airlinesService.createAirlineDiscount(header, dto);
   }
 
+
   @Get('admin/airline/discount')
-  viewAirlineDiscount(@Headers() header: Headers) {
-    return this.airlinesService.viewAirlineDiscount(header);
+  @ApiQuery({ name: 'currency', required: false })
+  viewAirlineDiscount(
+    @Headers() header: Headers,
+    @Query('currency') currency: string,) {
+    return this.airlinesService.viewAirlineDiscount(header, currency);
   }
 
   @Patch('admin/airline/discount/:id')

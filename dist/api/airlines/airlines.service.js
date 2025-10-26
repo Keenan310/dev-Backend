@@ -32,12 +32,14 @@ let AirlinesService = class AirlinesService {
         const discount = this.airlineDiscountRepository.create(createAirlineDiscountDto);
         return this.airlineDiscountRepository.save(discount);
     }
-    async viewAirlineDiscount(header) {
-        const verifyAdminId = await this.authService.verifyAdminToken(header);
-        if (!verifyAdminId) {
-            throw new common_1.UnauthorizedException();
+    async viewAirlineDiscount(header, currency) {
+        if (currency && currency.trim() !== '') {
+            currency = currency.toUpperCase();
+            return await this.airlineDiscountRepository.find({ where: { currency } });
         }
-        return this.airlineDiscountRepository.find();
+        else {
+            return await this.airlineDiscountRepository.find();
+        }
     }
     async updateAirlineDiscount(header, id, updateAirlineDiscountDto) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);

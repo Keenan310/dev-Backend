@@ -44,8 +44,8 @@ export declare class AirlinesUpdateModel {
 export declare class AirlineDiscount {
     id: number;
     airline: string;
-    discount_percent_aed: number;
-    fix_discount_aed: number;
+    discount_percent: number;
+    fix_discount: number;
     travel_date: string;
     booking_date: string;
     currency: string;

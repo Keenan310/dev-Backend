@@ -8,7 +8,7 @@ export declare class AirlinesService {
     private readonly authService;
     constructor(airlinesRepository: Repository<AirlinesModel>, airlineDiscountRepository: Repository<AirlineDiscount>, authService: AuthService);
     createAirlineDiscount(header: any, createAirlineDiscountDto: CreateAirlineDiscountDto): Promise<AirlineDiscount>;
-    viewAirlineDiscount(header: any): Promise<AirlineDiscount[]>;
+    viewAirlineDiscount(header: any, currency: string): Promise<AirlineDiscount[]>;
     updateAirlineDiscount(header: any, id: number, updateAirlineDiscountDto: UpdateAirlineDiscountDto): Promise<import("typeorm").UpdateResult>;
     deleteAirlineDiscount(header: any, id: number): Promise<import("typeorm").DeleteResult>;
     create(header: any, createAirlineDto: AirlinesModel): Promise<AirlinesModel>;

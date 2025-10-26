@@ -145,17 +145,17 @@ export class AirlineDiscount {
   airline: string;
 
   @Column('decimal', { precision: 5, scale: 2, nullable: true })
-  discount_percent_aed: number;
+  discount_percent: number;
 
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
-  fix_discount_aed: number;
+  fix_discount: number;
 
   @Column()
   travel_date: string;
 
   @Column()
   booking_date: string;
-  
+
   @Column()
   currency : string;
 
