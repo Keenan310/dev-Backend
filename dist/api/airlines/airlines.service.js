@@ -33,6 +33,10 @@ let AirlinesService = class AirlinesService {
         return this.airlineDiscountRepository.save(discount);
     }
     async viewAirlineDiscount(header, currency) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
         if (currency && currency.trim() !== '') {
             currency = currency.toUpperCase();
             return await this.airlineDiscountRepository.find({ where: { currency } });
