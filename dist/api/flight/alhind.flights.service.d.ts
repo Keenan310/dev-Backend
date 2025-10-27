@@ -68,7 +68,7 @@ export declare class AlhindAPI {
         Currency: string;
         BaseFare: number;
         Taxes: number;
-        NetFare: any;
+        NetFare: number;
         GrossFare: number;
         Fees: number;
         TimeLimit: string;

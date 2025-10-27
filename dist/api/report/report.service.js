@@ -45,7 +45,10 @@ let ReportService = class ReportService {
         const endOfYear = now.endOf('year').toDate();
         const [bookingData, agentData] = await Promise.all([
             this.bookingRepository.find({
-                where: { created_at: (0, typeorm_2.Between)(startOfYear, endOfYear) },
+                where: {
+                    created_at: (0, typeorm_2.Between)(startOfYear, endOfYear),
+                    status: (0, typeorm_2.Not)((0, typeorm_2.In)(['Hold', 'Cancelled', 'Issue Request Rejected'])),
+                },
                 select: ['id', 'created_at'],
             }),
             this.agentRepository.find({
@@ -148,6 +151,12 @@ let ReportService = class ReportService {
             .select('COUNT(booking.id)', 'rowCount')
             .andWhere('booking.created_at BETWEEN :startDate AND :endDate', { startDate: startDate, endDate: endDate })
             .getRawOne();
+        const bookingHold = await this.bookingRepository
+            .createQueryBuilder('booking')
+            .select('COUNT(booking.id)', 'rowCount')
+            .andWhere('booking.status = :status', { status: 'Hold' })
+            .andWhere('booking.created_at BETWEEN :startDate AND :endDate', { startDate: startDate, endDate: endDate })
+            .getRawOne();
         const bookingTicketed = await this.bookingRepository
             .createQueryBuilder('booking')
             .select('COUNT(booking.id)', 'rowCount')
@@ -215,7 +224,7 @@ let ReportService = class ReportService {
             },
             {
                 "name": "Booking Count",
-                "value": booking.rowCount
+                "value": booking.rowCount - bookingHold.rowCount - bookingCancelled.rowCount
             },
             {
                 "name": "Booking Cancelled",

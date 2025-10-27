@@ -337,20 +337,20 @@ let AlhindAPI = class AlhindAPI {
                 airlineCache.set(code, await this.airlinesService.getAirlines(code));
             return airlineCache.get(code);
         };
-        const getAirlineMarkUp = async (code) => {
-            if (!airlineMarkUpCache.has(code)) {
-                airlineMarkUpCache.set(code, await this.airlineDiscountRepository.find({ where: { airline: code } }));
+        const rateMap = new Map();
+        if (agentdata.currency === 'PKR') {
+            const allRates = await this.currencyConverterRepository.find();
+            for (const rate of allRates) {
+                const key = `${rate.source}-${rate.alternate}`;
+                rateMap.set(key, rate);
             }
-            return airlineMarkUpCache.get(code);
-        };
-        const getCurrencyRate = async (base, agentCurrency) => {
-            const key = `${base}_${agentCurrency}`;
-            if (!currencyCache.has(key)) {
-                const currencyData = await this.currencyConverterRepository.findOne({ where: { base, alternate: agentCurrency } });
-                currencyCache.set(key, currencyData?.exchange_rate || 1);
-            }
-            return currencyCache.get(key);
-        };
+        }
+        const airlinesMarkUp = new Map();
+        const allRates = await this.currencyConverterRepository.find();
+        for (const rate of allRates) {
+            const key = `${rate.source}-${rate.alternate}`;
+            rateMap.set(key, rate);
+        }
         const FlightItenary = await Promise.all(AllFareWithPrice.map(async (flights) => {
             const Token = result?.Token || '';
             const Key = flights?.Key;
@@ -360,10 +360,12 @@ let AlhindAPI = class AlhindAPI {
             const ProviderCode = flights?.ProviderCode || 'NF';
             const { AprxTotalBaseFare, AprxTotalTax, TotalAmount, Fares, RefundableInfo, FareName, FID } = flights?.PriceBreakDown;
             const isRefundable = RefundableInfo === "Refundable";
-            const airlineMarkUps = await getAirlineMarkUp(flights?.TicketingCarrier);
-            const airlineMarkUp = airlineMarkUps[0];
-            const conversionRate = await getCurrencyRate(airlineMarkUp?.base || 'AED', agentdata.currency);
-            const addAmount = airlineMarkUp?.addAmount || 0;
+            let conversionRate = 1;
+            if (agentdata.currency === 'PKR') {
+                const key = `${ProviderCode}-${agentdata.currency}`;
+                const data = rateMap.get(key);
+                conversionRate = data?.exchange_rate || 1;
+            }
             const equivalentAmount = AprxTotalBaseFare * conversionRate;
             const Taxes = AprxTotalTax * conversionRate;
             let TotalFare = TotalAmount * conversionRate;
@@ -373,38 +375,9 @@ let AlhindAPI = class AlhindAPI {
             const agentMarkUpAmount = agentdata?.clientmarkuptype === 'percent'
                 ? equivalentAmount * (agentdata.clientmarkup / 100)
                 : agentdata?.clientmarkuptype === 'amount' ? agentdata.clientmarkup : 0;
-            let NetFare = equivalentAmount + adminMarkUpAmount + addAmount + agentMarkUpAmount + Taxes;
+            let NetFare = equivalentAmount + adminMarkUpAmount + agentMarkUpAmount + Taxes;
             const Fees = agentMarkUpAmount;
             const legs = flights?.FlightLegs ?? [];
-            if (airlineMarkUp) {
-                for (const leg of legs) {
-                    const travelDate = leg.DepartureTime ? new Date(leg.DepartureTime) : null;
-                    const bookingDate = new Date();
-                    const offerTravelDate = airlineMarkUp.travel_date ? new Date(airlineMarkUp.travel_date) : null;
-                    const offerBookingDate = airlineMarkUp.booking_date ? new Date(airlineMarkUp.booking_date) : null;
-                    const dep = leg.Origin;
-                    const arr = leg.Destination;
-                    const rbd = leg.RBD;
-                    const dateValid = (!offerTravelDate || travelDate <= offerTravelDate) &&
-                        (!offerBookingDate || bookingDate <= offerBookingDate);
-                    const fromMatch = airlineMarkUp.from_list?.includes(dep);
-                    const fromExceptMatch = !airlineMarkUp.from_except?.includes(dep);
-                    const toMatch = airlineMarkUp.to_list?.includes(arr);
-                    const toExceptMatch = !airlineMarkUp.to_except?.includes(arr);
-                    const rbdMatch = airlineMarkUp.rbd?.includes(rbd);
-                    if (dateValid && fromMatch && fromExceptMatch && toMatch && toExceptMatch && rbdMatch) {
-                        const discountAmount = (parseFloat(airlineMarkUp.discount_percent) / 100) * NetFare + parseFloat(airlineMarkUp.fix_discount);
-                        NetFare -= discountAmount;
-                        break;
-                    }
-                    else if (dateValid && (airlineMarkUp.from_list?.includes('ALL') || airlineMarkUp.to_list?.includes('ALL') ||
-                        airlineMarkUp.rbd?.includes('ALL') || (!airlineMarkUp.travel_date && !airlineMarkUp.booking_date))) {
-                        const discountAmount = (parseFloat(airlineMarkUp.discount_percent) / 100) * NetFare + parseFloat(airlineMarkUp.fix_discount);
-                        NetFare -= discountAmount;
-                        break;
-                    }
-                }
-            }
             if (NetFare > TotalFare)
                 TotalFare = NetFare;
             const PriceBreakDown = Fares.map(pax => {

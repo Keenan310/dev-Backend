@@ -189,6 +189,7 @@ let BookingService = class BookingService {
             'booking.grossfare',
             'booking.flightdate',
             'booking.pnr',
+            'booking.airlinespnr',
             'booking.depfrom',
             'booking.companyname',
             'booking.arrto',
@@ -203,7 +204,7 @@ let BookingService = class BookingService {
             queryBuilder = queryBuilder.where("booking.status = :status", { status });
         }
         if (filter) {
-            queryBuilder = queryBuilder.andWhere("(booking.bookingId LIKE :filter OR booking.companyname LIKE :filter OR booking.name LIKE :filter OR booking.pnr LIKE :filter)", { filter: `%${filter}%` });
+            queryBuilder = queryBuilder.andWhere("(booking.bookingId LIKE :filter OR booking.companyname LIKE :filter OR booking.name LIKE :filter OR booking.pnr LIKE :filter OR booking.airlinespnr LIKE :filter)", { filter: `%${filter}%` });
         }
         const totaldata = await queryBuilder.getCount();
         const bookings = await queryBuilder

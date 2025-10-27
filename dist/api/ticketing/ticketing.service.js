@@ -86,12 +86,6 @@ let TicketingService = class TicketingService {
                 ticketnumber: item.ticketnumber
             };
             paxData.push(ticketedData);
-            paxTicketData.push({
-                airlines: booking.carrier_name,
-                surname: item.surname,
-                givenName: item.givenname,
-                ticketNumber: item.ticketnumber
-            });
             const passenger = await this.passengerRepository.findOne({
                 where: {
                     agentId: booking.agentId,
@@ -99,6 +93,13 @@ let TicketingService = class TicketingService {
                     givenname: item.givenname,
                     surname: item.surname
                 }
+            });
+            paxTicketData.push({
+                airlines: booking.carrier_name,
+                prefix: passenger.prefix,
+                surname: item.surname,
+                givenName: item.givenname,
+                ticketNumber: item.ticketnumber
             });
             passenger.ticketnumber = '' + item.ticketnumber;
             passenger.ticketstatus = 'unused';
@@ -110,9 +111,9 @@ let TicketingService = class TicketingService {
         booking.sellprice = makeTicketModel.sellprice;
         booking.purchaseprice = makeTicketModel.purchaseprice;
         booking.ticketed_at = new Date();
-        const ticketInfo = paxTicketData.map(p => `${p.surname} ${p.givenName} ${p.ticketNumber}`).join(', ');
+        const ticketInfo = paxTicketData.map(p => `${p.prefix} ${p.surname} ${p.givenName}`).join(', ');
         const Route = booking.triptype === "Oneway" ? `${booking.depfrom}-${booking.arrto}` : `${booking.depfrom}-${booking.arrto}-${booking.depfrom}`;
-        const details = ticketInfo + '/' + Route + '/' + booking.pnr + '-' + booking.carrier_name;
+        const details = ticketInfo + ' - ' + Route + ' - ' + booking.airlinespnr + '-' + booking.flightdate;
         const AgentLedgerData = {
             agentId: booking.agentId,
             trxtype: 'ticket',

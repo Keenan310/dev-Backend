@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { AgentLedgerModel, AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto, UpdateAgentLedgerDto, UpdateAdminExpenseDto } from './report.model';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource, Between } from 'typeorm';
+import { Repository, DataSource, Between, Not, In } from 'typeorm';
 import * as dayjs from 'dayjs';
 import { AgentBalanceUpdate, AgentModel } from '../agent/agent.model';
 import { BookingModel } from '../booking/booking.model';
@@ -44,8 +44,12 @@ export class ReportService {
     // 1️⃣ Fetch all bookings and agents for current year
     const [bookingData, agentData] = await Promise.all([
       this.bookingRepository.find({
-        where: { created_at: Between(startOfYear, endOfYear) },
+        where: {
+          created_at: Between(startOfYear, endOfYear),
+          status: Not(In(['Hold', 'Cancelled', 'Issue Request Rejected'])),
+         },
         select: ['id', 'created_at'],
+        
       }),
       this.agentRepository.find({
         where: { created_at: Between(startOfYear, endOfYear) },
@@ -179,6 +183,13 @@ export class ReportService {
     .andWhere('booking.created_at BETWEEN :startDate AND :endDate', {startDate: startDate, endDate: endDate})
     .getRawOne();
 
+    const bookingHold = await this.bookingRepository
+    .createQueryBuilder('booking')
+    .select('COUNT(booking.id)', 'rowCount')
+    .andWhere('booking.status = :status', { status: 'Hold' })
+    .andWhere('booking.created_at BETWEEN :startDate AND :endDate', {startDate: startDate, endDate: endDate})
+    .getRawOne();
+
     const bookingTicketed = await this.bookingRepository
     .createQueryBuilder('booking')
     .select('COUNT(booking.id)', 'rowCount')
@@ -226,7 +237,7 @@ export class ReportService {
     .addSelect('SUM(ledger.debit)', 'totalAmount')
     .where('ledger.trxtype = :trxtype', { trxtype: 'reissue' })
     .andWhere('ledger.created_at BETWEEN :startDate AND :endDate', {
-      startDate: startDate, 
+      startDate: startDate,
       endDate: endDate
     })
     .getRawOne(); 
@@ -253,7 +264,7 @@ export class ReportService {
       },
       { 
         "name": "Booking Count",
-        "value": booking.rowCount
+        "value": booking.rowCount - bookingHold.rowCount - bookingCancelled.rowCount
       },
       { 
         "name": "Booking Cancelled",
