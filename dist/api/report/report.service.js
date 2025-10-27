@@ -506,7 +506,7 @@ let ReportService = class ReportService {
         });
         const totaldeposit = await this.depositRepository.count();
         const totalagent = await this.agentRepository.count();
-        const totalbooking = await this.bookingRepository.count();
+        const totalbooking = await this.bookingRepository.count({ where: { status: (0, typeorm_2.Not)((0, typeorm_2.In)(['Hold', 'Cancelled', 'Issue Request Rejected'])) } });
         const totalcancelled = await this.bookingRepository.count({ where: { status: 'Cancelled' } });
         const totalticketed = await this.bookingRepository.count({ where: { status: 'Ticketed' } });
         const totaldepositamount = await this.depositRepository
