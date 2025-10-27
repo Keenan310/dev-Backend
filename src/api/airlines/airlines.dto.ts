@@ -14,11 +14,11 @@ export class CreateAirlineDiscountDto {
   fix_discount?: number;
 
   @IsOptional()
-  @IsDateString()
+  @IsString()
   travel_date: string;
 
   @IsOptional()
-  @IsDateString()
+  @IsString()
   booking_date: string;
 
   @IsString()

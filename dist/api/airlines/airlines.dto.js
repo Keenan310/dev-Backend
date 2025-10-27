@@ -31,12 +31,12 @@ __decorate([
 ], CreateAirlineDiscountDto.prototype, "fix_discount", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateAirlineDiscountDto.prototype, "travel_date", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateAirlineDiscountDto.prototype, "booking_date", void 0);
 __decorate([
