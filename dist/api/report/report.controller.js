@@ -40,6 +40,9 @@ let ReportController = class ReportController {
     editAgentLedgerByAdmin(header, id, updateAgentLedgerDto) {
         return this.reportService.editAgentLedgerByAdmin(header, +id, updateAgentLedgerDto);
     }
+    deleteAgentLedgerByAdmin(header, id) {
+        return this.reportService.deleteAgentLedgerByAdmin(header, +id);
+    }
     findAllAdminLedger(header, startDate, endDate, agentId) {
         return this.reportService.findAllAdminLedger(header, startDate, endDate, agentId);
     }
@@ -134,6 +137,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, agent_model_1.AgentBalanceUpdate]),
     __metadata("design:returntype", void 0)
 ], ReportController.prototype, "editAgentLedgerByAdmin", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, common_1.Delete)('admin/ledger/single/:id'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], ReportController.prototype, "deleteAgentLedgerByAdmin", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, swagger_1.ApiQuery)({ name: 'agentId', required: false }),

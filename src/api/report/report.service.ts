@@ -146,9 +146,17 @@ export class ReportService {
     if(!verifyAdminId){
         throw new UnauthorizedException();
     }
+    return await this.ledgerRepository.update(+id, updateAgentBalanceUpdate);
+  }
 
-    await this.ledgerRepository.update(+id, updateAgentBalanceUpdate);
+  async deleteAgentLedgerByAdmin(header : any, id:number){
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
 
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
+
+    return await this.ledgerRepository.delete(+id);
   }
   
   async findAllReportAdmin(header: any, startDate: Date, endDate: Date) {
@@ -437,7 +445,6 @@ export class ReportService {
     .andWhere(`DATE(created_at) = CURDATE()`)
     .getRawOne(); 
 
-
     const totaldeposit = await this.ledgerRepository
     .createQueryBuilder('ledger')
     .select('SUM(ledger.credit)', 'totalAmount')
@@ -602,7 +609,6 @@ export class ReportService {
     const totaldepositapproved = await this.depositRepository.count({where :{status:'approved'}});
     const totaldepositpending = await this.depositRepository.count({where :{status:'pending'}});
     const totaldepositrejected = await this.depositRepository.count({where :{status:'rejected'}});
-
 
     const DataResponse = {
       "AgentData": agentData,

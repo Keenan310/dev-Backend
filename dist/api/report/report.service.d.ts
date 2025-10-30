@@ -27,7 +27,8 @@ export declare class ReportService {
     editAdminExpense(header: any, id: number, UpdateAdminExpenseDto: UpdateAdminExpenseDto): Promise<import("typeorm").UpdateResult>;
     addAdminLedger(header: any, adminLedgerModel: AdminLedger): Promise<void>;
     editAdminLedger(header: any, id: number, updateAdminLedgerDto: UpdateAdminLedgerDto): Promise<void>;
-    editAgentLedgerByAdmin(header: any, id: number, updateAgentBalanceUpdate: AgentBalanceUpdate): Promise<void>;
+    editAgentLedgerByAdmin(header: any, id: number, updateAgentBalanceUpdate: AgentBalanceUpdate): Promise<import("typeorm").UpdateResult>;
+    deleteAgentLedgerByAdmin(header: any, id: number): Promise<import("typeorm").DeleteResult>;
     findAllReportAdmin(header: any, startDate: Date, endDate: Date): Promise<{
         name: string;
         value: any;

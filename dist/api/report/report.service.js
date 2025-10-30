@@ -123,7 +123,14 @@ let ReportService = class ReportService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        await this.ledgerRepository.update(+id, updateAgentBalanceUpdate);
+        return await this.ledgerRepository.update(+id, updateAgentBalanceUpdate);
+    }
+    async deleteAgentLedgerByAdmin(header, id) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        return await this.ledgerRepository.delete(+id);
     }
     async findAllReportAdmin(header, startDate, endDate) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);

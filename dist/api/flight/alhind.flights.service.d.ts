@@ -56,7 +56,7 @@ export declare class AlhindAPI {
         PriceBreakDown: any;
         AllLegsInfo: any[];
     }[]>;
-    flightsUtilsUpdate(result: any, agentdata: AgentModel, flighDto: FlightSearchModel): Promise<{
+    flightsUtilsUpdate(result: any, agentdata: AgentModel, flightDto: FlightSearchModel): Promise<{
         Token: any;
         Key: any;
         System: string;

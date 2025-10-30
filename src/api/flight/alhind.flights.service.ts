@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import * as dotenv from "dotenv";
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { FlightSearchModel } from './dto/search-flight.dto';
 import { AgentModel } from '../agent/agent.model';
 import { AirlinesService } from '../airlines/airlines.service';
@@ -360,10 +360,10 @@ export class AlhindAPI {
 
     return FlightItenary;
   }
-  async flightsUtilsUpdate(result: any, agentdata: AgentModel, flighDto: FlightSearchModel) {
+  async flightsUtilsUpdate(result: any, agentdata: AgentModel, flightDto: FlightSearchModel) {
     if (!(result?.Journy?.FlightOptions?.length > 0)) return [];
 
-    const TripType = flighDto?.segments?.length === 1 ? 'Oneway' : 'Return';
+    const TripType = flightDto?.segments?.length === 1 ? 'Oneway' : 'Return';
     const AllFlights: any[] = result?.Journy?.FlightOptions || [];
 
     // ---- Flatten all fares ----
@@ -374,6 +374,8 @@ export class AlhindAPI {
             return copy;
         })
     );
+
+    //return AllFareWithPrice;
 
     // ---- Save raw flights data ----
     await this.saveFlightsData.save({
@@ -408,14 +410,6 @@ export class AlhindAPI {
         }
     }
 
-    // Currency converter
-    const airlinesMarkUp = new Map<string, any>();
-    const allRates = await this.currencyConverterRepository.find();
-    for (const rate of allRates) {
-        const key = `${rate.source}-${rate.alternate}`;
-        rateMap.set(key, rate);
-    }
-
     // ---- Process all flights ----
     const FlightItenary = await Promise.all(AllFareWithPrice.map(async flights => {
 
@@ -434,7 +428,7 @@ export class AlhindAPI {
         if(agentdata.currency === 'PKR'){
             const key = `${ProviderCode}-${agentdata.currency}`;
             const data = rateMap.get(key);
-            conversionRate = data?.exchange_rate || 1;
+            conversionRate = data?.exchange_rate || rateMap.get('DF-PKR').exchange_rate;
         }
 
         // ---- Base fare & taxes ----
@@ -452,6 +446,36 @@ export class AlhindAPI {
             ? equivalentAmount * (agentdata.clientmarkup / 100)
             : agentdata?.clientmarkuptype === 'amount' ? agentdata.clientmarkup : 0;
 
+        //Airlines comission
+
+        const filter = {
+            airline: flights?.TicketingCarrier,
+            currency: agentdata.currency,
+            from_list: flightDto?.segments[0]?.depfrom,
+            to_list: flightDto?.segments[0]?.arrto,
+            rbd: flights?.FlightLegs[0]?.RBD,
+            source: ProviderCode
+        };
+        
+        const allAirlines = await this.airlineDiscountRepository.find({
+            where: {
+                currency: agentdata?.currency,
+                airline: flights?.TicketingCarrier,
+                source: Like(`%${flights?.ProviderCode}%`),
+            },
+        });
+
+        const today = new Date();
+        if(allAirlines.length > 0){
+            const validDiscounts = allAirlines.filter(item => {
+                const travelDate = new Date(item.travel_date);
+                const bookingDate = new Date(item.booking_date);
+                return travelDate >= today && bookingDate >= today;
+            });
+
+            console.log(validDiscounts);
+        }
+
         let NetFare = equivalentAmount + adminMarkUpAmount + agentMarkUpAmount + Taxes;
         const Fees = agentMarkUpAmount;
 
@@ -463,9 +487,9 @@ export class AlhindAPI {
         const PriceBreakDown = Fares.map(pax => {
             const PaxType = pax?.PTC === 'CHD' ? 'CNN' : pax?.PTC;
             const paxCount =
-                PaxType === 'ADT' ? flighDto.adultcount
-                : PaxType === 'CHD' || PaxType === 'CNN' ? flighDto.childcount
-                : flighDto.infantcount || 0;
+                PaxType === 'ADT' ? flightDto.adultcount
+                : PaxType === 'CHD' || PaxType === 'CNN' ? flightDto.childcount
+                : flightDto.infantcount || 0;
 
             const bagType = PaxType === 'ADT' ? 'Adt_Baggage'
                           : PaxType === 'CHD' || PaxType === 'CNN' ? 'Chd_Baggage'
@@ -543,7 +567,7 @@ export class AlhindAPI {
         const AllLegsInfo = [];
         if (onwardSegments.length > 0) {
             AllLegsInfo.push({
-                DepDate: flighDto.segments[0].depdate,
+                DepDate: flightDto?.segments[0].depdate,
                 DepFrom: onwardSegments[0]?.Origin,
                 ArrTo: onwardSegments[onwardSegments.length - 1]?.Destination,
                 Duration: '',
@@ -552,7 +576,7 @@ export class AlhindAPI {
         }
         if (returnSegments.length > 0) {
             AllLegsInfo.push({
-                DepDate: flighDto.segments[flighDto.segments.length - 1]?.depdate,
+                DepDate: flightDto.segments[flightDto.segments.length - 1]?.depdate,
                 DepFrom: returnSegments[0]?.Origin,
                 ArrTo: returnSegments[returnSegments.length - 1]?.Destination,
                 Duration: '',

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Headers, Query, NotAcceptableException, Post, Body, Patch } from '@nestjs/common';
+import { Controller, Get, Param, Headers, Query, NotAcceptableException, Post, Body, Patch, Delete } from '@nestjs/common';
 import { ReportService } from './report.service';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto, UpdateAgentLedgerDto } from './report.model';
@@ -58,6 +58,14 @@ export class ReportController {
     @Param('id') id: string,
     @Body() updateAgentLedgerDto: AgentBalanceUpdate) {
     return this.reportService.editAgentLedgerByAdmin(header, +id, updateAgentLedgerDto);
+  }
+
+  @ApiBearerAuth('access_token')
+  @Delete('admin/ledger/single/:id')
+  deleteAgentLedgerByAdmin(
+    @Headers() header: Headers,
+    @Param('id') id: string) {
+    return this.reportService.deleteAgentLedgerByAdmin(header, +id);
   }
 
   @ApiBearerAuth('access_token')
