@@ -19,10 +19,10 @@ export declare class PreFlightController {
         Currency: string;
         BaseFare: number;
         Taxes: number;
-        NetFare: any;
+        NetFare: number;
         GrossFare: number;
         Fees: number;
-        Comission: any;
+        Discount: number;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: any;

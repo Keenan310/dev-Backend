@@ -26,10 +26,10 @@ export declare class AlhindAPI {
         Currency: string;
         BaseFare: number;
         Taxes: number;
-        NetFare: any;
+        NetFare: number;
         GrossFare: number;
         Fees: number;
-        Comission: any;
+        Discount: number;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: any;
@@ -71,6 +71,7 @@ export declare class AlhindAPI {
         NetFare: number;
         GrossFare: number;
         Fees: number;
+        Discount: number;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: any;

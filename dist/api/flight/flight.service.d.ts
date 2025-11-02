@@ -46,10 +46,10 @@ export declare class FlightService {
         Currency: string;
         BaseFare: number;
         Taxes: number;
-        NetFare: any;
+        NetFare: number;
         GrossFare: number;
         Fees: number;
-        Comission: any;
+        Discount: number;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: any;

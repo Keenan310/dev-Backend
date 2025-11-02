@@ -95,7 +95,7 @@ let AlhindAPI = class AlhindAPI {
         try {
             const response = await axios_1.default.post(`https://b2b.keenantravel.com/search.php`, data, { headers });
             const result = response?.data;
-            return this.flightUtils(result, agent, flightDto);
+            return this.flightsUtilsUpdate(result, agent, flightDto);
         }
         catch (err) {
             console.log(err.response.data);
@@ -369,13 +369,12 @@ let AlhindAPI = class AlhindAPI {
             const agentMarkUpAmount = agentdata?.clientmarkuptype === 'percent'
                 ? equivalentAmount * (agentdata.clientmarkup / 100)
                 : agentdata?.clientmarkuptype === 'amount' ? agentdata.clientmarkup : 0;
+            const TotalFareWithMarkUp = equivalentAmount + adminMarkUpAmount + agentMarkUpAmount + Taxes;
             const filter = {
-                airline: flights?.TicketingCarrier,
-                currency: agentdata.currency,
+                travel_date: flightDto?.segments[0]?.depdate,
                 from_list: flightDto?.segments[0]?.depfrom,
                 to_list: flightDto?.segments[0]?.arrto,
                 rbd: flights?.FlightLegs[0]?.RBD,
-                source: ProviderCode
             };
             const allAirlines = await this.airlineDiscountRepository.find({
                 where: {
@@ -385,15 +384,107 @@ let AlhindAPI = class AlhindAPI {
                 },
             });
             const today = new Date();
+            let airlinesDiscountPercent = 0;
+            let airlinesDiscountAmount = 0;
             if (allAirlines.length > 0) {
-                const validDiscounts = allAirlines.filter(item => {
-                    const travelDate = new Date(item.travel_date);
-                    const bookingDate = new Date(item.booking_date);
-                    return travelDate >= today && bookingDate >= today;
+                const selectedBookingDate = [];
+                const bookingDateFilter = allAirlines.filter(item => {
+                    const bookingDate = item.booking_date ? new Date(item.booking_date) : null;
+                    if (bookingDate && bookingDate <= today) {
+                        selectedBookingDate.push(item);
+                        return true;
+                    }
+                    else if (item.booking_date === '') {
+                        selectedBookingDate.push(item);
+                        return true;
+                    }
+                    else if (item.booking_date === 'ALL') {
+                        selectedBookingDate.push(item);
+                        return true;
+                    }
+                    return false;
                 });
-                console.log(validDiscounts);
+                const selectedTravelDate = [];
+                const travelDateFilter = selectedBookingDate.filter(item => {
+                    const travelDate = item.travel_date ? new Date(item.travel_date) : null;
+                    if (travelDate && travelDate <= filter.travel_date) {
+                        selectedTravelDate.push(item);
+                        return true;
+                    }
+                    else if (item.travel_date === '') {
+                        selectedTravelDate.push(item);
+                        return true;
+                    }
+                    else if (item.travel_date === 'ALL') {
+                        selectedTravelDate.push(item);
+                        return true;
+                    }
+                    return false;
+                });
+                const selectedFromList = [];
+                const fromList = selectedTravelDate.filter(item => {
+                    const from_list = item.from_list;
+                    if (from_list.includes(filter.from_list)) {
+                        selectedFromList.push(item);
+                        return true;
+                    }
+                    else if (from_list.includes('[-]')) {
+                        selectedFromList.push(item);
+                        return true;
+                    }
+                    else if (from_list.includes('ALL')) {
+                        selectedFromList.push(item);
+                        return true;
+                    }
+                    return false;
+                });
+                const selectedToList = [];
+                const toList = selectedFromList.filter(item => {
+                    const to_list = item.to_list;
+                    if (to_list.includes(filter.from_list)) {
+                        selectedToList.push(item);
+                        return true;
+                    }
+                    else if (to_list.includes('[-]')) {
+                        selectedToList.push(item);
+                        return true;
+                    }
+                    else if (to_list.includes('ALL')) {
+                        selectedToList.push(item);
+                        return true;
+                    }
+                    return false;
+                });
+                const selectedRBDList = [];
+                const RBDList = selectedToList.filter(item => {
+                    const rbd_list = item.rbd;
+                    if (rbd_list.includes(filter.rbd)) {
+                        selectedRBDList.push(item);
+                        return true;
+                    }
+                    else if (rbd_list.includes('[-]')) {
+                        selectedRBDList.push(item);
+                        return true;
+                    }
+                    else if (rbd_list.includes('ALL')) {
+                        selectedRBDList.push(item);
+                        return true;
+                    }
+                    return false;
+                });
+                if (selectedRBDList.length > 0) {
+                    airlinesDiscountPercent = selectedRBDList[0]?.discount_percent || 0;
+                    airlinesDiscountAmount = selectedRBDList[0]?.fix_discount || 0;
+                }
+                else {
+                    airlinesDiscountPercent = 0;
+                    airlinesDiscountAmount = 0;
+                }
             }
-            let NetFare = equivalentAmount + adminMarkUpAmount + agentMarkUpAmount + Taxes;
+            const discountPercentValue = (TotalFareWithMarkUp * (airlinesDiscountPercent / 100));
+            const FareAfterDiscount = TotalFareWithMarkUp - discountPercentValue - airlinesDiscountAmount;
+            const DiscountAmount = discountPercentValue + airlinesDiscountAmount;
+            const NetFare = FareAfterDiscount;
             const Fees = agentMarkUpAmount;
             const legs = flights?.FlightLegs ?? [];
             if (NetFare > TotalFare)
@@ -502,6 +593,7 @@ let AlhindAPI = class AlhindAPI {
                 NetFare,
                 GrossFare: TotalFare,
                 Fees,
+                Discount: DiscountAmount,
                 TimeLimit: '',
                 Refundable: isRefundable,
                 PriceBreakDown,

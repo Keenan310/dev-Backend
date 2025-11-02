@@ -131,7 +131,7 @@ let ReportService = class ReportService {
             throw new common_1.UnauthorizedException();
         }
         const ledgerEntry = await this.ledgerRepository.findOne({ where: { uid: uid } });
-        if (ledgerEntry) {
+        if (!ledgerEntry) {
             throw new common_1.NotFoundException();
         }
         return await this.ledgerRepository.delete(ledgerEntry.id);
@@ -480,6 +480,10 @@ let ReportService = class ReportService {
         return ledgerData;
     }
     async findDashboard(header) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
         const now = dayjs();
         const startOfYear = now.startOf('year').toDate();
         const endOfYear = now.endOf('year').toDate();

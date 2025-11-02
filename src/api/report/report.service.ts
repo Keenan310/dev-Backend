@@ -157,7 +157,7 @@ export class ReportService {
     }
 
     const ledgerEntry = await this.ledgerRepository.findOne({ where: { uid: uid } });
-    if(ledgerEntry){
+    if(!ledgerEntry){
       throw new NotFoundException();
     }
 
@@ -559,11 +559,11 @@ export class ReportService {
 
   async findDashboard(header: any){
 
-    // const verifyAdminId = await this.authService.verifyAdminToken(header);
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    // if(!verifyAdminId){
-    //     throw new UnauthorizedException();
-    // }
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
 
     const now = dayjs();
     const startOfYear = now.startOf('year').toDate();
