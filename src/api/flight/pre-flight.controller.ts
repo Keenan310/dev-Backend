@@ -44,6 +44,14 @@ export class PreFlightController {
   }
 
   @ApiBearerAuth('access_token')
+  @Post("agent/flight/farerules")
+  FareRules(
+    @Headers() header: string,
+    @Body() getFareDto: GetFare) {
+    return this.flightService.farerules(header, getFareDto);
+  }
+
+  @ApiBearerAuth('access_token')
   @Post("agent/flight/booking")
   AirBooking(
     @Headers() header: string,

@@ -167,6 +167,50 @@ export class FlightService {
 
   }
 
+  async farerules(header: any, getFare: GetFare){
+
+    const agent = await this.authService.verifyAgentToken(header);
+
+    if(!agent){
+      throw new UnauthorizedException();
+    }
+
+    const rawdata = await this.saveFlightsDataRepository.findOne({ where: { token: getFare.token} });
+    const key = getFare?.key;
+
+    const flightsArray = Array.isArray(rawdata.data) ? rawdata.data : JSON.parse(rawdata.data);
+    const singleFlight = flightsArray.find(item => item.Key === key);
+
+    if (!singleFlight) {
+      throw new Error('Flight not found for the given key');
+    }
+
+    let data = JSON.stringify({
+      "Token": getFare.token,
+      "UserId": "AEAUH001035200",
+      "ItineraryId": singleFlight?.Journy?.FlightOption?.FlightFares[0]?.FID
+    });
+
+    let getfarerequest = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'https://b2b.keenantravel.com/farerules.php',
+      headers: { 
+        'Content-Type': 'application/json',
+      },
+      data : data
+    };
+    
+    try {
+      const response = await axios.request(getfarerequest);
+      return response.data;
+    }catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }
+
   async pricecheck(agentUId : string, revalidationDto: any){
 
     const agentdata = await this.agentRepository.findOne({ where : { uid: agentUId}});

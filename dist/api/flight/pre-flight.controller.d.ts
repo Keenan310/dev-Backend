@@ -30,6 +30,7 @@ export declare class PreFlightController {
     }[]>;
     Revalidation(header: string, revalidationDto: Revalidation): Promise<any>;
     GetFare(header: string, getFareDto: GetFare): Promise<any>;
+    FareRules(header: string, getFareDto: GetFare): Promise<any>;
     AirBooking(header: string, bookingDto: AirBookingModel): Promise<({
         agentId: string;
         bookingId: string;

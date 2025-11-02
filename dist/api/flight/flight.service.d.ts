@@ -57,6 +57,7 @@ export declare class FlightService {
     }[]>;
     airrevalidation(header: any, revalidationDto: any): Promise<any>;
     getfare(header: any, getFare: GetFare): Promise<any>;
+    farerules(header: any, getFare: GetFare): Promise<any>;
     pricecheck(agentUId: string, revalidationDto: any): Promise<any[] | "Other System">;
     airbooking(header: any, bookingDto: AirBookingModel): Promise<({
         agentId: string;

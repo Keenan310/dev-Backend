@@ -37,6 +37,9 @@ let PreFlightController = class PreFlightController {
     GetFare(header, getFareDto) {
         return this.flightService.getfare(header, getFareDto);
     }
+    FareRules(header, getFareDto) {
+        return this.flightService.farerules(header, getFareDto);
+    }
     AirBooking(header, bookingDto) {
         return this.flightService.airbooking(header, bookingDto);
     }
@@ -94,6 +97,15 @@ __decorate([
     __metadata("design:paramtypes", [String, getfare_flight_dto_1.GetFare]),
     __metadata("design:returntype", void 0)
 ], PreFlightController.prototype, "GetFare", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, common_1.Post)("agent/flight/farerules"),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, getfare_flight_dto_1.GetFare]),
+    __metadata("design:returntype", void 0)
+], PreFlightController.prototype, "FareRules", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Post)("agent/flight/booking"),

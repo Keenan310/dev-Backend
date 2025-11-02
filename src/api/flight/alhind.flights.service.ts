@@ -360,6 +360,7 @@ export class AlhindAPI {
 
     return FlightItenary;
   }
+
   async flightsUtilsUpdate(result: any, agentdata: AgentModel, flightDto: FlightSearchModel) {
     if (!(result?.Journy?.FlightOptions?.length > 0)) return [];
 
@@ -614,21 +615,21 @@ export class AlhindAPI {
   async priceCheck(agent : AgentModel, revalidation: Revalidation){
     return revalidation;
   }
-    async getAirports(code: string) {
-        const foundItem = airportsData.find(item => item.code === code);
-        if (foundItem) {
-          return foundItem;
-        } else {
-          return {code: '', name : '', location: ''};
-        }
+  async getAirports(code: string) {
+    const foundItem = airportsData.find(item => item.code === code);
+    if (foundItem) {
+        return foundItem;
+    } else {
+        return {code: '', name : '', location: ''};
     }
+  }
 
-    async getAirlineName(code: string) {
-        const foundItem = airlinesData.find(item => item.iata === code);
-        if (foundItem) {
-          return foundItem.marketing_name;
-        } else {
-          return 'N/F';
-        }
+  async getAirlineName(code: string) {
+    const foundItem = airlinesData.find(item => item.iata === code);
+    if (foundItem) {
+        return foundItem.marketing_name;
+    } else {
+        return 'N/F';
     }
+  }
 }
