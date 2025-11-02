@@ -17,7 +17,7 @@ const common_1 = require("@nestjs/common");
 const report_model_1 = require("./report.model");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const dayjs = require("dayjs");
+const dayjs_1 = require("dayjs");
 const agent_model_1 = require("../agent/agent.model");
 const booking_model_1 = require("../booking/booking.model");
 const deposit_model_1 = require("../deposit/deposit.model");
@@ -40,7 +40,7 @@ let ReportService = class ReportService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        const now = dayjs();
+        const now = (0, dayjs_1.default)();
         const startOfYear = now.startOf('year').toDate();
         const endOfYear = now.endOf('year').toDate();
         const [bookingData, agentData] = await Promise.all([
@@ -58,7 +58,7 @@ let ReportService = class ReportService {
         ]);
         const currentMonth = now.month();
         const months = Array.from({ length: currentMonth + 1 }).map((_, i) => {
-            const date = dayjs().month(i).startOf('month');
+            const date = (0, dayjs_1.default)().month(i).startOf('month');
             return {
                 month: date.format('MMM YYYY'),
                 bookingCount: 0,
@@ -68,13 +68,13 @@ let ReportService = class ReportService {
             };
         });
         bookingData.forEach(b => {
-            const month = dayjs(b.created_at).format('MMM YYYY');
+            const month = (0, dayjs_1.default)(b.created_at).format('MMM YYYY');
             const bucket = months.find(m => m.month === month);
             if (bucket)
                 bucket.bookingCount++;
         });
         agentData.forEach(a => {
-            const month = dayjs(a.created_at).format('MMM YYYY');
+            const month = (0, dayjs_1.default)(a.created_at).format('MMM YYYY');
             const bucket = months.find(m => m.month === month);
             if (bucket)
                 bucket.agentCount++;
@@ -125,12 +125,16 @@ let ReportService = class ReportService {
         }
         return await this.ledgerRepository.update(+id, updateAgentBalanceUpdate);
     }
-    async deleteAgentLedgerByAdmin(header, id) {
+    async deleteAgentLedgerByAdmin(header, uid) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        return await this.ledgerRepository.delete(+id);
+        const ledgerEntry = await this.ledgerRepository.findOne({ where: { uid: uid } });
+        if (ledgerEntry) {
+            throw new common_1.NotFoundException();
+        }
+        return await this.ledgerRepository.delete(ledgerEntry.id);
     }
     async findAllReportAdmin(header, startDate, endDate) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
@@ -480,11 +484,54 @@ let ReportService = class ReportService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        const search = await this.searchHistoryRepository.find({
-            order: { updated_at: 'DESC' },
-            take: 50
+        const now = (0, dayjs_1.default)();
+        const startOfYear = now.startOf('year').toDate();
+        const endOfYear = now.endOf('year').toDate();
+        const [bookingData, agentData] = await Promise.all([
+            this.bookingRepository.find({
+                where: {
+                    created_at: (0, typeorm_2.Between)(startOfYear, endOfYear),
+                    status: (0, typeorm_2.Not)((0, typeorm_2.In)(['Hold', 'Cancelled', 'Issue Request Rejected'])),
+                },
+                select: ['id', 'created_at'],
+            }),
+            this.agentRepository.find({
+                where: { created_at: (0, typeorm_2.Between)(startOfYear, endOfYear) },
+                select: ['id', 'created_at'],
+            }),
+        ]);
+        const currentMonth = now.month();
+        const months = Array.from({ length: currentMonth + 1 }).map((_, i) => {
+            const date = (0, dayjs_1.default)().month(i).startOf('month');
+            return {
+                month: date.format('MMM YYYY'),
+                bookingCount: 0,
+                agentCount: 0,
+                cumulativeBooking: 0,
+                cumulativeAgent: 0,
+            };
         });
-        const bookingData = await this.bookingRepository.find({
+        bookingData.forEach(b => {
+            const month = (0, dayjs_1.default)(b.created_at).format('MMM YYYY');
+            const bucket = months.find(m => m.month === month);
+            if (bucket)
+                bucket.bookingCount++;
+        });
+        agentData.forEach(a => {
+            const month = (0, dayjs_1.default)(a.created_at).format('MMM YYYY');
+            const bucket = months.find(m => m.month === month);
+            if (bucket)
+                bucket.agentCount++;
+        });
+        let bookingRunningTotal = 0;
+        let agentRunningTotal = 0;
+        months.forEach(m => {
+            bookingRunningTotal += m.bookingCount;
+            agentRunningTotal += m.agentCount;
+            m.cumulativeBooking = bookingRunningTotal;
+            m.cumulativeAgent = agentRunningTotal;
+        });
+        const recentbookingData = await this.bookingRepository.find({
             select: [
                 'created_at',
                 'bookingId',
@@ -501,44 +548,23 @@ let ReportService = class ReportService {
             order: { updated_at: 'DESC' },
             take: 100
         });
-        const agentData = await this.agentRepository.find({
-            select: ['company', 'status', 'phone', 'created_at', 'uid'],
-            order: { created_at: 'DESC' },
-            take: 100
-        });
-        const depositData = await this.depositRepository.find({
-            select: ['depositId', 'status', 'amount', 'companyname', 'created_at', 'uid'],
-            order: { created_at: 'DESC' },
-            take: 100
-        });
-        const totaldeposit = await this.depositRepository.count();
         const totalagent = await this.agentRepository.count();
-        const totalbooking = await this.bookingRepository.count({ where: { status: (0, typeorm_2.Not)((0, typeorm_2.In)(['Hold', 'Cancelled', 'Issue Request Rejected'])) } });
-        const totalcancelled = await this.bookingRepository.count({ where: { status: 'Cancelled' } });
+        const totalbooking = await this.bookingRepository.count({ where: { status: (0, typeorm_2.Not)((0, typeorm_2.In)(['Hold', 'Cancelled', 'Issue Request Rejected', 'Reissue In Process', 'Reissue Rejected', 'Reissue Quotation Rejected', 'Reissued', 'ReIssue In Process', 'Reissue Quotation Send'])) } });
+        const totalHold = await this.bookingRepository.count({ where: { status: 'Hold' } });
+        const totalVoid = await this.bookingRepository.count({ where: { status: (0, typeorm_2.Like)('%Void%') } });
         const totalticketed = await this.bookingRepository.count({ where: { status: 'Ticketed' } });
-        const totaldepositamount = await this.depositRepository
-            .createQueryBuilder()
-            .select('SUM(amount)', 'sum')
-            .where('Status = :status', { status: 'approved' })
-            .getRawOne();
-        const totaldepositapproved = await this.depositRepository.count({ where: { status: 'approved' } });
-        const totaldepositpending = await this.depositRepository.count({ where: { status: 'pending' } });
-        const totaldepositrejected = await this.depositRepository.count({ where: { status: 'rejected' } });
+        const totalRefund = await this.bookingRepository.count({ where: { status: (0, typeorm_2.Like)('%Refund%') } });
+        const totalReissue = await this.bookingRepository.count({ where: { status: (0, typeorm_2.Like)('%Reissue%') } });
         const DataResponse = {
-            "AgentData": agentData,
-            "SearchData": search,
-            "TotalAgent": totalagent || 0,
-            "TotalBookingData": bookingData,
-            "TotalBooking": totalbooking || 0,
-            "Cancelled": totalcancelled,
-            "Ticketed": totalticketed,
-            "TotalDepositAmount": totaldepositamount || 0,
-            "TotalDepositData": depositData,
-            "TotalDeposit": totaldeposit,
-            "TotalDepositApproved": totaldepositapproved,
-            "TotalDepositPending": totaldepositpending,
-            "TotalDepositRejected": totaldepositrejected,
-            "GraphData": []
+            "TotalFlightBooking": totalbooking,
+            "TotalHold": totalHold || 0,
+            "TotalTicketed": totalticketed,
+            "TotalVoid": totalVoid,
+            "TotalRefund": totalRefund,
+            "TotalReissue": totalReissue,
+            "TotalAgents": totalagent || 0,
+            "BookingData": bookingData,
+            "GraphData": months
         };
         return DataResponse;
     }

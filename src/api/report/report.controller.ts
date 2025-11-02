@@ -64,8 +64,8 @@ export class ReportController {
   @Delete('admin/ledger/single/:id')
   deleteAgentLedgerByAdmin(
     @Headers() header: Headers,
-    @Param('id') id: string) {
-    return this.reportService.deleteAgentLedgerByAdmin(header, +id);
+    @Param('id') uid: string) {
+    return this.reportService.deleteAgentLedgerByAdmin(header, uid);
   }
 
   @ApiBearerAuth('access_token')

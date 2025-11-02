@@ -16,7 +16,7 @@ export declare class ReportController {
     addAdminLedger(header: Headers, adminledgerModel: AdminLedger): Promise<void>;
     editAdminLedger(header: Headers, id: string, adminLedgerDto: UpdateAdminLedgerDto): Promise<void>;
     editAgentLedgerByAdmin(header: Headers, id: string, updateAgentLedgerDto: AgentBalanceUpdate): Promise<import("typeorm").UpdateResult>;
-    deleteAgentLedgerByAdmin(header: Headers, id: string): Promise<import("typeorm").DeleteResult>;
+    deleteAgentLedgerByAdmin(header: Headers, uid: string): Promise<import("typeorm").DeleteResult>;
     findAllAdminLedger(header: string, startDate: Date, endDate: Date, agentId: string): Promise<{
         lossProfit: number;
         ledger: any[];
@@ -64,20 +64,21 @@ export declare class ReportController {
         totalIncome: any;
     }>;
     findDashboard(header: Headers): Promise<{
-        AgentData: import("../agent/agent.model").AgentModel[];
-        SearchData: import("../searchhistory/searchhistory.model").SearchHistoryModel[];
-        TotalAgent: number;
-        TotalBookingData: import("../booking/booking.model").BookingModel[];
-        TotalBooking: number;
-        Cancelled: number;
-        Ticketed: number;
-        TotalDepositAmount: any;
-        TotalDepositData: import("../deposit/deposit.model").DepositModel[];
-        TotalDeposit: number;
-        TotalDepositApproved: number;
-        TotalDepositPending: number;
-        TotalDepositRejected: number;
-        GraphData: any[];
+        TotalFlightBooking: number;
+        TotalHold: number;
+        TotalTicketed: number;
+        TotalVoid: number;
+        TotalRefund: number;
+        TotalReissue: number;
+        TotalAgents: number;
+        BookingData: import("../booking/booking.model").BookingModel[];
+        GraphData: {
+            month: string;
+            bookingCount: number;
+            agentCount: number;
+            cumulativeBooking: number;
+            cumulativeAgent: number;
+        }[];
     }>;
     findDashboardAgent(header: string): Promise<{
         todaybooking: number;

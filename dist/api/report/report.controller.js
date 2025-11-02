@@ -40,8 +40,8 @@ let ReportController = class ReportController {
     editAgentLedgerByAdmin(header, id, updateAgentLedgerDto) {
         return this.reportService.editAgentLedgerByAdmin(header, +id, updateAgentLedgerDto);
     }
-    deleteAgentLedgerByAdmin(header, id) {
-        return this.reportService.deleteAgentLedgerByAdmin(header, +id);
+    deleteAgentLedgerByAdmin(header, uid) {
+        return this.reportService.deleteAgentLedgerByAdmin(header, uid);
     }
     findAllAdminLedger(header, startDate, endDate, agentId) {
         return this.reportService.findAllAdminLedger(header, startDate, endDate, agentId);

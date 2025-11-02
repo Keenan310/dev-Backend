@@ -28,7 +28,7 @@ export declare class ReportService {
     addAdminLedger(header: any, adminLedgerModel: AdminLedger): Promise<void>;
     editAdminLedger(header: any, id: number, updateAdminLedgerDto: UpdateAdminLedgerDto): Promise<void>;
     editAgentLedgerByAdmin(header: any, id: number, updateAgentBalanceUpdate: AgentBalanceUpdate): Promise<import("typeorm").UpdateResult>;
-    deleteAgentLedgerByAdmin(header: any, id: number): Promise<import("typeorm").DeleteResult>;
+    deleteAgentLedgerByAdmin(header: any, uid: string): Promise<import("typeorm").DeleteResult>;
     findAllReportAdmin(header: any, startDate: Date, endDate: Date): Promise<{
         name: string;
         value: any;
@@ -62,20 +62,21 @@ export declare class ReportService {
         totalIncome: any;
     }>;
     findDashboard(header: any): Promise<{
-        AgentData: AgentModel[];
-        SearchData: SearchHistoryModel[];
-        TotalAgent: number;
-        TotalBookingData: BookingModel[];
-        TotalBooking: number;
-        Cancelled: number;
-        Ticketed: number;
-        TotalDepositAmount: any;
-        TotalDepositData: DepositModel[];
-        TotalDeposit: number;
-        TotalDepositApproved: number;
-        TotalDepositPending: number;
-        TotalDepositRejected: number;
-        GraphData: any[];
+        TotalFlightBooking: number;
+        TotalHold: number;
+        TotalTicketed: number;
+        TotalVoid: number;
+        TotalRefund: number;
+        TotalReissue: number;
+        TotalAgents: number;
+        BookingData: BookingModel[];
+        GraphData: {
+            month: string;
+            bookingCount: number;
+            agentCount: number;
+            cumulativeBooking: number;
+            cumulativeAgent: number;
+        }[];
     }>;
     findAdminExpense(header: any, page: number, filter: string, limit: number): Promise<{
         limit: number;
