@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { AgentLedgerModel, AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto, UpdateAgentLedgerDto, UpdateAdminExpenseDto } from './report.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, Between, Not, In, Like } from 'typeorm';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import { AgentBalanceUpdate, AgentModel } from '../agent/agent.model';
 import { BookingModel } from '../booking/booking.model';
 import { DepositModel } from '../deposit/deposit.model';
@@ -559,11 +559,11 @@ export class ReportService {
 
   async findDashboard(header: any){
 
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
+    // const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
+    // if(!verifyAdminId){
+    //     throw new UnauthorizedException();
+    // }
 
     const now = dayjs();
     const startOfYear = now.startOf('year').toDate();
@@ -650,14 +650,14 @@ export class ReportService {
     const totalReissue = await this.bookingRepository.count({where :{status: Like('%Reissue%')}});
 
     const DataResponse = {
-      "TotalFlightBooking": totalbooking,
+      "TotalFlightBooking": totalbooking ||0,
       "TotalHold": totalHold || 0,
-      "TotalTicketed": totalticketed,
-      "TotalVoid": totalVoid,
-      "TotalRefund": totalRefund,
-      "TotalReissue": totalReissue,
+      "TotalTicketed": totalticketed || 0,
+      "TotalVoid": totalVoid || 0,
+      "TotalRefund": totalRefund || 0,
+      "TotalReissue": totalReissue || 0,
       "TotalAgents": totalagent || 0,
-      "BookingData": bookingData,
+      "BookingData": recentbookingData,
       "GraphData": months
     }
     return DataResponse;

@@ -17,7 +17,7 @@ const common_1 = require("@nestjs/common");
 const report_model_1 = require("./report.model");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const dayjs_1 = require("dayjs");
+const dayjs = require("dayjs");
 const agent_model_1 = require("../agent/agent.model");
 const booking_model_1 = require("../booking/booking.model");
 const deposit_model_1 = require("../deposit/deposit.model");
@@ -40,7 +40,7 @@ let ReportService = class ReportService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        const now = (0, dayjs_1.default)();
+        const now = dayjs();
         const startOfYear = now.startOf('year').toDate();
         const endOfYear = now.endOf('year').toDate();
         const [bookingData, agentData] = await Promise.all([
@@ -58,7 +58,7 @@ let ReportService = class ReportService {
         ]);
         const currentMonth = now.month();
         const months = Array.from({ length: currentMonth + 1 }).map((_, i) => {
-            const date = (0, dayjs_1.default)().month(i).startOf('month');
+            const date = dayjs().month(i).startOf('month');
             return {
                 month: date.format('MMM YYYY'),
                 bookingCount: 0,
@@ -68,13 +68,13 @@ let ReportService = class ReportService {
             };
         });
         bookingData.forEach(b => {
-            const month = (0, dayjs_1.default)(b.created_at).format('MMM YYYY');
+            const month = dayjs(b.created_at).format('MMM YYYY');
             const bucket = months.find(m => m.month === month);
             if (bucket)
                 bucket.bookingCount++;
         });
         agentData.forEach(a => {
-            const month = (0, dayjs_1.default)(a.created_at).format('MMM YYYY');
+            const month = dayjs(a.created_at).format('MMM YYYY');
             const bucket = months.find(m => m.month === month);
             if (bucket)
                 bucket.agentCount++;
@@ -480,11 +480,7 @@ let ReportService = class ReportService {
         return ledgerData;
     }
     async findDashboard(header) {
-        const verifyAdminId = await this.authService.verifyAdminToken(header);
-        if (!verifyAdminId) {
-            throw new common_1.UnauthorizedException();
-        }
-        const now = (0, dayjs_1.default)();
+        const now = dayjs();
         const startOfYear = now.startOf('year').toDate();
         const endOfYear = now.endOf('year').toDate();
         const [bookingData, agentData] = await Promise.all([
@@ -502,7 +498,7 @@ let ReportService = class ReportService {
         ]);
         const currentMonth = now.month();
         const months = Array.from({ length: currentMonth + 1 }).map((_, i) => {
-            const date = (0, dayjs_1.default)().month(i).startOf('month');
+            const date = dayjs().month(i).startOf('month');
             return {
                 month: date.format('MMM YYYY'),
                 bookingCount: 0,
@@ -512,13 +508,13 @@ let ReportService = class ReportService {
             };
         });
         bookingData.forEach(b => {
-            const month = (0, dayjs_1.default)(b.created_at).format('MMM YYYY');
+            const month = dayjs(b.created_at).format('MMM YYYY');
             const bucket = months.find(m => m.month === month);
             if (bucket)
                 bucket.bookingCount++;
         });
         agentData.forEach(a => {
-            const month = (0, dayjs_1.default)(a.created_at).format('MMM YYYY');
+            const month = dayjs(a.created_at).format('MMM YYYY');
             const bucket = months.find(m => m.month === month);
             if (bucket)
                 bucket.agentCount++;
@@ -556,14 +552,14 @@ let ReportService = class ReportService {
         const totalRefund = await this.bookingRepository.count({ where: { status: (0, typeorm_2.Like)('%Refund%') } });
         const totalReissue = await this.bookingRepository.count({ where: { status: (0, typeorm_2.Like)('%Reissue%') } });
         const DataResponse = {
-            "TotalFlightBooking": totalbooking,
+            "TotalFlightBooking": totalbooking || 0,
             "TotalHold": totalHold || 0,
-            "TotalTicketed": totalticketed,
-            "TotalVoid": totalVoid,
-            "TotalRefund": totalRefund,
-            "TotalReissue": totalReissue,
+            "TotalTicketed": totalticketed || 0,
+            "TotalVoid": totalVoid || 0,
+            "TotalRefund": totalRefund || 0,
+            "TotalReissue": totalReissue || 0,
             "TotalAgents": totalagent || 0,
-            "BookingData": bookingData,
+            "BookingData": recentbookingData,
             "GraphData": months
         };
         return DataResponse;
