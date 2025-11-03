@@ -71,7 +71,7 @@ export declare class ReportController {
         TotalRefund: number;
         TotalReissue: number;
         TotalAgents: number;
-        BookingData: import("../booking/booking.model").BookingModel[];
+        TotalBookingData: import("../booking/booking.model").BookingModel[];
         GraphData: {
             month: string;
             bookingCount: number;

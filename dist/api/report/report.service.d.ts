@@ -69,7 +69,7 @@ export declare class ReportService {
         TotalRefund: number;
         TotalReissue: number;
         TotalAgents: number;
-        BookingData: BookingModel[];
+        TotalBookingData: BookingModel[];
         GraphData: {
             month: string;
             bookingCount: number;

@@ -657,7 +657,7 @@ export class ReportService {
       "TotalRefund": totalRefund || 0,
       "TotalReissue": totalReissue || 0,
       "TotalAgents": totalagent || 0,
-      "BookingData": recentbookingData,
+      "TotalBookingData": recentbookingData,
       "GraphData": months
     }
     return DataResponse;
