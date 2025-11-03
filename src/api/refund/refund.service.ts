@@ -45,6 +45,7 @@ export class RefundService {
 
       await this.refundRepository.save(RequestRefund);
       booking.status = 'Refund Requested';
+      booking.updated_at = new Date();
       const bookingResponse = await this.bookingRepository.update(booking.id, booking);
 
       if(bookingResponse.affected === 1){
@@ -80,6 +81,7 @@ export class RefundService {
     if(booking.status === 'Refund Requested'){
 
       booking['status'] = 'Refund Quotation Send';
+      booking.updated_at = new Date();
       
       refund['netfare'] = booking.netfare;
       refund['refundpenalty'] = quotationRefundDto.refundpenalty;
@@ -131,7 +133,8 @@ export class RefundService {
     }
 
     if(booking.status === 'Refund Quotation Send'){
-      booking['status'] = bookingstatus;
+      booking.status = bookingstatus;
+      booking.updated_at = new Date();
       const bookingResponse = await this.bookingRepository.update(booking.id, booking);
 
       if(bookingResponse.affected === 1 && status === 'accept'){
@@ -175,10 +178,11 @@ export class RefundService {
     }
 
     if(booking.status === 'Refund Quotation Accepted' || 'Refund Requested' || 'Refund Quotation Send'){
-      booking['status'] = bookingstatus;
+      booking.status = bookingstatus;
+      booking.updated_at = new Date();
 
-      refund['status'] = status;
-      refund['remarks'] = refundDecisionDto.remarks;
+      refund.status = status;
+      refund.remarks = refundDecisionDto.remarks;
       await this.refundRepository.update(refund.id, refund);
       const bookingResponse = await this.bookingRepository.update(booking.id, booking);
       if(bookingResponse.affected === 1){

@@ -45,6 +45,7 @@ let RefundService = class RefundService {
             };
             await this.refundRepository.save(RequestRefund);
             booking.status = 'Refund Requested';
+            booking.updated_at = new Date();
             const bookingResponse = await this.bookingRepository.update(booking.id, booking);
             if (bookingResponse.affected === 1) {
                 return { message: booking.status + ' successfully.' };
@@ -72,6 +73,7 @@ let RefundService = class RefundService {
         }
         if (booking.status === 'Refund Requested') {
             booking['status'] = 'Refund Quotation Send';
+            booking.updated_at = new Date();
             refund['netfare'] = booking.netfare;
             refund['refundpenalty'] = quotationRefundDto.refundpenalty;
             refund['servicefee'] = quotationRefundDto.servicefee;
@@ -111,7 +113,8 @@ let RefundService = class RefundService {
             bookingstatus = 'Refund Quotation Rejected';
         }
         if (booking.status === 'Refund Quotation Send') {
-            booking['status'] = bookingstatus;
+            booking.status = bookingstatus;
+            booking.updated_at = new Date();
             const bookingResponse = await this.bookingRepository.update(booking.id, booking);
             if (bookingResponse.affected === 1 && status === 'accept') {
                 return { message: 'Refund Quotation Accepted.' };
@@ -148,9 +151,10 @@ let RefundService = class RefundService {
             bookingstatus = 'Refund Rejected';
         }
         if (booking.status === 'Refund Quotation Accepted' || 'Refund Requested' || 'Refund Quotation Send') {
-            booking['status'] = bookingstatus;
-            refund['status'] = status;
-            refund['remarks'] = refundDecisionDto.remarks;
+            booking.status = bookingstatus;
+            booking.updated_at = new Date();
+            refund.status = status;
+            refund.remarks = refundDecisionDto.remarks;
             await this.refundRepository.update(refund.id, refund);
             const bookingResponse = await this.bookingRepository.update(booking.id, booking);
             if (bookingResponse.affected === 1) {

@@ -46,6 +46,7 @@ let ReissueService = class ReissueService {
             };
             await this.reissueRepository.save(RequestReissue);
             booking.status = 'Reissue Requested';
+            booking.updated_at = new Date();
             const bookingResponse = await this.bookingRepository.update(booking.id, booking);
             if (bookingResponse.affected === 1) {
                 return { message: booking.status + ' Successfully.' };
@@ -80,6 +81,7 @@ let ReissueService = class ReissueService {
                 reissue['remarks'] = quotationReissueDto.remarks || '';
             await this.reissueRepository.update(reissue.id, reissue);
             booking.status = 'Reissue Quotation Send';
+            booking.updated_at = new Date();
             const bookingResponse = await this.bookingRepository.update(booking.id, booking);
             if (bookingResponse.affected === 1) {
                 return { message: booking.status + ' successfully.' };
@@ -133,6 +135,7 @@ let ReissueService = class ReissueService {
         }
         else if (status === 'reject') {
             booking.status = 'Reissue Quotation Rejected';
+            booking.updated_at = new Date();
             const bookingResponse = await this.bookingRepository.update(booking.id, booking);
             if (bookingResponse.affected === 1) {
                 return { message: booking.status };
@@ -167,6 +170,7 @@ let ReissueService = class ReissueService {
         }
         if (booking.status === 'Reissue Quotation Accepted' || booking.status === 'Reissue Requested' || booking.status === 'Reissue Quotation Send') {
             booking.status = bookingstatus;
+            booking.updated_at = new Date();
             const bookingResponse = await this.bookingRepository.update(booking.id, booking);
             reissue['remarks'] = reissueDecisionDto.remarks;
             reissue['status'] = status;

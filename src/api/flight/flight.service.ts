@@ -309,6 +309,7 @@ export class FlightService {
         }
       }else if(booking.system === 'AlHind'){
           booking.status = 'Cancelled';
+          booking.updated_at = new Date();
           const res =  await this.bookingRepository.update(booking.id, booking);
           if(res.affected === 1){
             return {
@@ -349,6 +350,7 @@ export class FlightService {
         const bookingResponse = await this.sabreService.aircancel(booking.pnr);
         if(bookingResponse.request.cancelAll === true){
           booking.status = 'Cancelled';
+          booking.updated_at = new Date();
     
           await this.bookingRepository.update(booking.id, booking);
 

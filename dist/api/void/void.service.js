@@ -49,6 +49,7 @@ let VoidService = class VoidService {
             };
             await this.voidRepository.save(RequestVoid);
             booking.status = 'Void Requested';
+            booking.updated_at = new Date();
             const bookingResponse = await this.bookingRepository.update(booking.id, booking);
             if (bookingResponse.affected === 1) {
                 await this.mailService.voidRequestMail(booking);
@@ -83,6 +84,7 @@ let VoidService = class VoidService {
             bookingstatus = 'Void Rejected';
         }
         booking['status'] = bookingstatus;
+        booking.updated_at = new Date();
         const bookingResponse = await this.bookingRepository.update(booking.id, booking);
         voidData['remarks'] = voidDesicionDto.remarks;
         voidData['status'] = status;

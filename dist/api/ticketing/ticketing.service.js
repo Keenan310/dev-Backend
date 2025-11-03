@@ -48,6 +48,7 @@ let TicketingService = class TicketingService {
             throw new common_1.HttpException(`Booking already ${booking.status}`, axios_1.HttpStatusCode.AlreadyReported);
         }
         booking.status = 'Issue In Process';
+        booking.updated_at = new Date();
         const bookingResponse = await this.bookingRepository.update(booking.id, booking);
         if (bookingResponse.affected === 1) {
             await this.mailService.IssueRequestMail(booking);
@@ -107,6 +108,7 @@ let TicketingService = class TicketingService {
         }
         await this.ticketingRepository.save(paxData);
         booking.status = 'Ticketed';
+        booking.updated_at = new Date();
         booking.airlinespnr = makeTicketModel.airlinespnr;
         booking.sellprice = makeTicketModel.sellprice;
         booking.purchaseprice = makeTicketModel.purchaseprice;
@@ -154,6 +156,7 @@ let TicketingService = class TicketingService {
             throw new common_1.HttpException(`Agnet not Found`, axios_1.HttpStatusCode.NotFound);
         }
         booking.status = 'Issue Request Rejected';
+        booking.updated_at = new Date();
         const bookingResponse = await this.bookingRepository.update(booking.id, booking);
         if (bookingResponse.affected === 1) {
             await this.mailService.IssueRequestRejectMail(booking);

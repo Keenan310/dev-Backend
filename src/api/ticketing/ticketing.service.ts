@@ -47,6 +47,7 @@ export class TicketingService {
       throw new HttpException(`Booking already ${booking.status}`, HttpStatusCode.AlreadyReported);
     }
       booking.status = 'Issue In Process';
+      booking.updated_at = new Date();
       const bookingResponse = await this.bookingRepository.update(booking.id, booking);
 
       if(bookingResponse.affected === 1){
@@ -114,6 +115,7 @@ export class TicketingService {
 
     await this.ticketingRepository.save(paxData);
     booking.status = 'Ticketed';
+    booking.updated_at = new Date();
     booking.airlinespnr = makeTicketModel.airlinespnr;
     booking.sellprice = makeTicketModel.sellprice;
     booking.purchaseprice = makeTicketModel.purchaseprice;
@@ -170,6 +172,7 @@ export class TicketingService {
     }
 
     booking.status = 'Issue Request Rejected';
+    booking.updated_at = new Date();
     const bookingResponse = await this.bookingRepository.update(booking.id, booking);
 
     if(bookingResponse.affected === 1){
