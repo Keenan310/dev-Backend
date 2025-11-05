@@ -551,10 +551,10 @@ let ReportService = class ReportService {
         const totalagent = await this.agentRepository.count();
         const totalbooking = await this.bookingRepository.count({ where: { status: (0, typeorm_2.Not)((0, typeorm_2.In)(['Hold', 'Cancelled', 'Issue Request Rejected', 'Reissue In Process', 'Reissue Rejected', 'Reissue Quotation Rejected', 'Reissued', 'ReIssue In Process', 'Reissue Quotation Send'])) } });
         const totalHold = await this.bookingRepository.count({ where: { status: 'Hold' } });
-        const totalVoid = await this.bookingRepository.count({ where: { status: (0, typeorm_2.Like)('%Void%') } });
+        const totalVoid = await this.bookingRepository.count({ where: { status: 'Voided' } });
         const totalticketed = await this.bookingRepository.count({ where: { status: 'Ticketed' } });
-        const totalRefund = await this.bookingRepository.count({ where: { status: (0, typeorm_2.Like)('%Refund%') } });
-        const totalReissue = await this.bookingRepository.count({ where: { status: (0, typeorm_2.Like)('%Reissue%') } });
+        const totalRefund = await this.bookingRepository.count({ where: { status: 'Refunded' } });
+        const totalReissue = await this.bookingRepository.count({ where: { status: 'Reissued' } });
         const DataResponse = {
             "TotalFlightBooking": totalbooking || 0,
             "TotalHold": totalHold || 0,

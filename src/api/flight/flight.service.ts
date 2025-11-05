@@ -361,6 +361,7 @@ export class FlightService {
         }else{
           
           booking.status = 'Cancelled';
+          booking.updated_at = new Date();
           await this.bookingRepository.update(booking.id, booking);
           return {
             status: 'success',
