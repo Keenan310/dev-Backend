@@ -30,6 +30,7 @@ export declare class AlhindAPI {
         GrossFare: number;
         Fees: number;
         Discount: number;
+        ConversionRate: any;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: any;
@@ -72,6 +73,7 @@ export declare class AlhindAPI {
         GrossFare: number;
         Fees: number;
         Discount: number;
+        ConversionRate: any;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: any;

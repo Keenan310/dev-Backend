@@ -358,7 +358,7 @@ let AlhindAPI = class AlhindAPI {
             if (agentdata.currency === 'PKR') {
                 const key = `${ProviderCode}-${agentdata.currency}`;
                 const data = rateMap.get(key);
-                conversionRate = data?.exchange_rate || rateMap.get('DF-PKR').exchange_rate;
+                conversionRate = data?.exchange_rate || rateMap?.get('DF-PKR').exchange_rate;
             }
             const equivalentAmount = AprxTotalBaseFare * conversionRate;
             const Taxes = AprxTotalTax * conversionRate;
@@ -472,6 +472,7 @@ let AlhindAPI = class AlhindAPI {
                     }
                     return false;
                 });
+                console.log(`Comission :${CarrierName}-${selectedRBDList[0].discount_percent}-${selectedRBDList[0].fix_discount}`);
                 if (selectedRBDList.length > 0) {
                     airlinesDiscountPercent = selectedRBDList[0]?.discount_percent || 0;
                     airlinesDiscountAmount = selectedRBDList[0]?.fix_discount || 0;
@@ -481,7 +482,7 @@ let AlhindAPI = class AlhindAPI {
                     airlinesDiscountAmount = 0;
                 }
             }
-            const discountPercentValue = (TotalFareWithMarkUp * (airlinesDiscountPercent / 100));
+            const discountPercentValue = (TotalFareWithMarkUp * (airlinesDiscountPercent / 100)) || 0;
             const FareAfterDiscount = TotalFareWithMarkUp - discountPercentValue - airlinesDiscountAmount;
             const DiscountAmount = discountPercentValue + airlinesDiscountAmount;
             const NetFare = FareAfterDiscount;
@@ -594,6 +595,7 @@ let AlhindAPI = class AlhindAPI {
                 GrossFare: TotalFare,
                 Fees,
                 Discount: DiscountAmount,
+                ConversionRate: conversionRate,
                 TimeLimit: '',
                 Refundable: isRefundable,
                 PriceBreakDown,
