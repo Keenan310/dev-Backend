@@ -472,7 +472,6 @@ let AlhindAPI = class AlhindAPI {
                     }
                     return false;
                 });
-                console.log(`Comission :${CarrierName}-${selectedRBDList[0].discount_percent}-${selectedRBDList[0].fix_discount}`);
                 if (selectedRBDList.length > 0) {
                     airlinesDiscountPercent = selectedRBDList[0]?.discount_percent || 0;
                     airlinesDiscountAmount = selectedRBDList[0]?.fix_discount || 0;
