@@ -15,6 +15,7 @@ export declare class ReportController {
     editExpense(header: Headers, id: string, adminExpenseModel: AdminExpenseModel): Promise<import("typeorm").UpdateResult>;
     addAdminLedger(header: Headers, adminledgerModel: AdminLedger): Promise<void>;
     editAdminLedger(header: Headers, id: string, adminLedgerDto: UpdateAdminLedgerDto): Promise<void>;
+    deleteAdminLedger(header: Headers, id: string): Promise<void>;
     editAgentLedgerByAdmin(header: Headers, id: string, updateAgentLedgerDto: AgentBalanceUpdate): Promise<import("typeorm").UpdateResult>;
     deleteAgentLedgerByAdmin(header: Headers, uid: string): Promise<import("typeorm").DeleteResult>;
     findAllAdminLedger(header: string, startDate: Date, endDate: Date, agentId: string): Promise<{

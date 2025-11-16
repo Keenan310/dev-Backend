@@ -550,8 +550,6 @@ export class AlhindAPI {
                 return false;
             });
 
-            //console.log(`Comission :${CarrierName}-${selectedRBDList[0]?.discount_percent}-${selectedRBDList[0]?.fix_discount}`);
-
             if(selectedRBDList.length > 0){
                 airlinesDiscountPercent = selectedRBDList[0]?.discount_percent || 0;
                 airlinesDiscountAmount = selectedRBDList[0]?.fix_discount || 0;
@@ -591,9 +589,13 @@ export class AlhindAPI {
             const baggageInfo = [{ Airline: flights?.TicketingCarrier, Allowance: firstLegBagAllowance?.[bagType] || '' }];
             if (legs.length > 1) baggageInfo.push({ Airline: flights?.TicketingCarrier, Allowance: lastLegBagAllowance?.[bagType] || '' });
 
-            const totalTaxAmount = Math.ceil(pax?.Tax * conversionRate * 100) / 100;
-            const PaxequivalentAmount = Math.ceil(pax?.BaseFare * conversionRate * 100) / 100;
-            const PaxtotalFare = Math.ceil((PaxequivalentAmount + totalTaxAmount) * 100) / 100;
+            let addValue = 0;
+            if (DiscountAmount > 0) {
+                addValue = DiscountAmount;
+            }
+            const totalTaxAmount = pax?.Tax * conversionRate * 100;
+            const PaxequivalentAmount = (pax?.BaseFare + addValue) * conversionRate;
+            const PaxtotalFare = PaxequivalentAmount + totalTaxAmount;
 
             return {
                 PaxType,

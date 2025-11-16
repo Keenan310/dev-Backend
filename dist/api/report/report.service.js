@@ -118,6 +118,13 @@ let ReportService = class ReportService {
         }
         await this.adminLedgerRepository.update(+id, updateAdminLedgerDto);
     }
+    async deleteAdminLedger(header, id) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        await this.adminLedgerRepository.delete(+id);
+    }
     async editAgentLedgerByAdmin(header, id, updateAgentBalanceUpdate) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {

@@ -140,6 +140,17 @@ export class ReportService {
 
   }
 
+  async deleteAdminLedger(header : any, id:number){
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
+
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
+
+    await this.adminLedgerRepository.delete(+id);
+
+  }
+
   async editAgentLedgerByAdmin(header : any, id:number, updateAgentBalanceUpdate : AgentBalanceUpdate){
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
