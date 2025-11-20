@@ -45,14 +45,14 @@ let SearchhistoryService = class SearchhistoryService {
             throw new common_1.UnauthorizedException();
         }
         const now = new Date();
-        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         return await this.searchHistoryRepository.find({
             where: {
-                created_at: (0, typeorm_2.MoreThan)(startOfToday),
+                depdate: (0, typeorm_2.MoreThan)(now),
             },
             order: {
                 created_at: 'DESC',
             },
+            take: 1000,
         });
     }
     async findByAgentId(header) {

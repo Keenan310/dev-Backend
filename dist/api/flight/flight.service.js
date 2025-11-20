@@ -58,7 +58,7 @@ let FlightService = class FlightService {
         if (!agent) {
             throw new common_1.UnauthorizedException();
         }
-        this.searchhistoryService.create(agent, flightDto);
+        await this.searchhistoryService.create(agent, flightDto);
         const AlhindData = await this.alhindAPI.flights(agent, flightDto);
         AlhindData.sort((a, b) => a.NetFare - b.NetFare);
         return AlhindData;

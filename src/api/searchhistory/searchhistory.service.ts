@@ -43,16 +43,15 @@ export class SearchhistoryService {
     }
 
     const now = new Date();
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
     return await this.searchHistoryRepository.find({
-        where: {
-          created_at: MoreThan(startOfToday),
-        },
-        order: {
-          created_at: 'DESC',
-        },
-      });
+      where: {
+        depdate: MoreThan(now),          
+      },
+      order: {
+        created_at: 'DESC',
+      },
+      take: 1000,
+    });
 
   }
 

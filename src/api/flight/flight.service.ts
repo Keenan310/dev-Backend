@@ -61,7 +61,7 @@ export class FlightService {
       throw new UnauthorizedException();
     }
 
-    this.searchhistoryService.create(agent, flightDto);
+    await this.searchhistoryService.create(agent, flightDto);
 
     //const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
 

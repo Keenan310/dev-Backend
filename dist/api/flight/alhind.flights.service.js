@@ -98,7 +98,7 @@ let AlhindAPI = class AlhindAPI {
             return this.flightsUtilsUpdate(result, agent, flightDto);
         }
         catch (err) {
-            console.log(err.response.data);
+            console.log(err?.response?.data);
             return [];
         }
     }
@@ -508,7 +508,7 @@ let AlhindAPI = class AlhindAPI {
                 if (DiscountAmount > 0) {
                     addValue = DiscountAmount;
                 }
-                const totalTaxAmount = pax?.Tax * conversionRate * 100;
+                const totalTaxAmount = pax?.Tax * conversionRate;
                 const PaxequivalentAmount = (pax?.BaseFare + addValue) * conversionRate;
                 const PaxtotalFare = PaxequivalentAmount + totalTaxAmount;
                 return {
