@@ -49,7 +49,7 @@ export declare class FlightService {
         NetFare: number;
         GrossFare: number;
         Fees: number;
-        Discount: number;
+        MarkUp: number;
         ConversionRate: any;
         TimeLimit: string;
         Refundable: boolean;

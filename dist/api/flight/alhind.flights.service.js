@@ -362,7 +362,7 @@ let AlhindAPI = class AlhindAPI {
             }
             const equivalentAmount = AprxTotalBaseFare * conversionRate;
             const Taxes = AprxTotalTax * conversionRate;
-            let TotalFare = TotalAmount * conversionRate;
+            let TotalFare = (TotalAmount * conversionRate);
             const adminMarkUpAmount = agentdata?.markuptype === 'percent'
                 ? equivalentAmount * (agentdata.markup / 100)
                 : agentdata?.markuptype === 'amount' ? agentdata.markup : 0;
@@ -483,8 +483,8 @@ let AlhindAPI = class AlhindAPI {
             }
             const discountPercentValue = (TotalFareWithMarkUp * (airlinesDiscountPercent / 100)) || 0;
             const FareAfterDiscount = TotalFareWithMarkUp - discountPercentValue - airlinesDiscountAmount;
-            const DiscountAmount = discountPercentValue + airlinesDiscountAmount;
-            const NetFare = FareAfterDiscount;
+            const DiscountAmount = Number(discountPercentValue + airlinesDiscountAmount);
+            const NetFare = Number(FareAfterDiscount.toFixed(2));
             const Fees = agentMarkUpAmount;
             const legs = flights?.FlightLegs ?? [];
             if (NetFare > TotalFare)
@@ -505,12 +505,12 @@ let AlhindAPI = class AlhindAPI {
                 if (legs.length > 1)
                     baggageInfo.push({ Airline: flights?.TicketingCarrier, Allowance: lastLegBagAllowance?.[bagType] || '' });
                 let addValue = 0;
-                if (DiscountAmount > 0) {
+                if (DiscountAmount < 0) {
                     addValue = DiscountAmount;
                 }
-                const totalTaxAmount = pax?.Tax * conversionRate;
                 const PaxequivalentAmount = (pax?.BaseFare + addValue) * conversionRate;
-                const PaxtotalFare = PaxequivalentAmount + totalTaxAmount;
+                const totalTaxAmount = pax?.Tax * conversionRate;
+                const PaxtotalFare = Number((PaxequivalentAmount + totalTaxAmount).toFixed(2));
                 return {
                     PaxType,
                     BaseFare: PaxequivalentAmount,
@@ -597,7 +597,7 @@ let AlhindAPI = class AlhindAPI {
                 NetFare,
                 GrossFare: TotalFare,
                 Fees,
-                Discount: DiscountAmount,
+                MarkUp: DiscountAmount,
                 ConversionRate: conversionRate,
                 TimeLimit: '',
                 Refundable: isRefundable,

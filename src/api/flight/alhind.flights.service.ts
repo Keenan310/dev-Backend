@@ -13,6 +13,7 @@ import { Revalidation } from './dto/revalidation-flight.dto';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
 import { SaveFlightsData } from './entity/save-flight.entity';
 import { AirlineDiscount } from '../airlines/airlines.model';
+import { add } from 'node_modules/date-fns';
 dotenv.config()
 
 
@@ -435,7 +436,7 @@ export class AlhindAPI {
         // ---- Base fare & taxes ----
         const equivalentAmount = AprxTotalBaseFare * conversionRate;
         const Taxes = AprxTotalTax * conversionRate;
-        let TotalFare = TotalAmount * conversionRate;
+        let TotalFare = (TotalAmount * conversionRate);
 
         // Admin markup
         const adminMarkUpAmount = agentdata?.markuptype === 'percent'
@@ -560,8 +561,8 @@ export class AlhindAPI {
 
         const discountPercentValue = (TotalFareWithMarkUp * (airlinesDiscountPercent / 100)) || 0;
         const FareAfterDiscount = TotalFareWithMarkUp - discountPercentValue - airlinesDiscountAmount;
-        const DiscountAmount = discountPercentValue + airlinesDiscountAmount;
-        const NetFare = FareAfterDiscount;
+        const DiscountAmount = Number(discountPercentValue + airlinesDiscountAmount);
+        const NetFare = Number(FareAfterDiscount.toFixed(2));
         const Fees = agentMarkUpAmount;
 
         // ---- Apply airline discount ----
@@ -588,13 +589,14 @@ export class AlhindAPI {
             const baggageInfo = [{ Airline: flights?.TicketingCarrier, Allowance: firstLegBagAllowance?.[bagType] || '' }];
             if (legs.length > 1) baggageInfo.push({ Airline: flights?.TicketingCarrier, Allowance: lastLegBagAllowance?.[bagType] || '' });
 
-            let addValue = 0;
-            if (DiscountAmount > 0) {
+            let addValue : Number = 0;
+            if (DiscountAmount < 0) {
                 addValue = DiscountAmount;
             }
-            const totalTaxAmount = pax?.Tax * conversionRate;
+            
             const PaxequivalentAmount = (pax?.BaseFare + addValue) * conversionRate;
-            const PaxtotalFare = PaxequivalentAmount + totalTaxAmount;
+            const totalTaxAmount = pax?.Tax * conversionRate;
+            const PaxtotalFare = Number((PaxequivalentAmount + totalTaxAmount).toFixed(2));
 
             return {
                 PaxType,
@@ -688,7 +690,7 @@ export class AlhindAPI {
             NetFare,
             GrossFare: TotalFare,
             Fees,
-            Discount: DiscountAmount,
+            MarkUp: DiscountAmount,
             ConversionRate : conversionRate,
             TimeLimit: '',
             Refundable: isRefundable,

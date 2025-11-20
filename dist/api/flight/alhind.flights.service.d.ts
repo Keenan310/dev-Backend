@@ -29,7 +29,7 @@ export declare class AlhindAPI {
         NetFare: number;
         GrossFare: number;
         Fees: number;
-        Discount: number;
+        MarkUp: number;
         ConversionRate: any;
         TimeLimit: string;
         Refundable: boolean;
@@ -72,7 +72,7 @@ export declare class AlhindAPI {
         NetFare: number;
         GrossFare: number;
         Fees: number;
-        Discount: number;
+        MarkUp: number;
         ConversionRate: any;
         TimeLimit: string;
         Refundable: boolean;
