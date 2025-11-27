@@ -508,7 +508,8 @@ let AlhindAPI = class AlhindAPI {
                 if (DiscountAmount < 0) {
                     addValue = DiscountAmount;
                 }
-                const PaxequivalentAmount = (pax?.BaseFare + addValue) * conversionRate;
+                const anotherFees = (adminMarkUpAmount + agentMarkUpAmount);
+                const PaxequivalentAmount = (pax?.BaseFare + addValue + anotherFees) * conversionRate;
                 const totalTaxAmount = pax?.Tax * conversionRate;
                 const PaxtotalFare = Number((PaxequivalentAmount + totalTaxAmount).toFixed(2));
                 return {

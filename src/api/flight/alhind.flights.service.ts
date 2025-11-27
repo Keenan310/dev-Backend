@@ -594,7 +594,9 @@ export class AlhindAPI {
                 addValue = DiscountAmount;
             }
             
-            const PaxequivalentAmount = (pax?.BaseFare + addValue) * conversionRate;
+
+            const anotherFees: Number = (adminMarkUpAmount + agentMarkUpAmount);
+            const PaxequivalentAmount = (pax?.BaseFare + addValue + anotherFees ) * conversionRate;
             const totalTaxAmount = pax?.Tax * conversionRate;
             const PaxtotalFare = Number((PaxequivalentAmount + totalTaxAmount).toFixed(2));
 
