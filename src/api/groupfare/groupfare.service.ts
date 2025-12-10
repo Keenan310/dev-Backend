@@ -6,8 +6,8 @@ import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { AirlinesService } from '../airlines/airlines.service';
 import { AirportsService } from '../airports/airports.service';
-import { CurrencyConverter } from '../currency/entities/currency.entity';
 import { MoreThan } from "typeorm";
+import { CurrencyConverter } from '../currency/entities/currency.entity';
 
 @Injectable()
 export class GroupfareService {
@@ -15,6 +15,8 @@ export class GroupfareService {
   constructor(
     @InjectRepository(GroupFareModel)
     private readonly groupFareRepository: Repository<GroupFareModel>,
+    @InjectRepository(CurrencyConverter)
+    private readonly  CurrencyConverterRepository: Repository<CurrencyConverter>,
     private readonly authService: AuthService,
     private readonly airlinesService: AirlinesService,
     private readonly airportsService: AirportsService,
@@ -157,8 +159,11 @@ export class GroupfareService {
   async flightParser(agent: AgentModel, resultData: any){
 
     let Leg = resultData;
-    //const conversionData = await this.currencyConverterRepository.findOne({where: {alternate: agent?.currency}});
-    const converstionrate = 1;
+    const conversionData = await this.CurrencyConverterRepository.findOne({where: {source: 'Group'}});
+    let converstionrate = 1;
+    if(agent?.currency === 'PKR' && conversionData){
+        converstionrate = conversionData.exchange_rate;
+    }
     const NetFareConv = Leg.NetFare * converstionrate;
     const PriceBreakdown = [
         {
