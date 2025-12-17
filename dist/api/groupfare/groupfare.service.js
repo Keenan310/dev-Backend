@@ -145,11 +145,9 @@ let GroupfareService = class GroupfareService {
         return this.groupFareRepository.delete(groupfaredata.id);
     }
     async flightParser(agent, resultData) {
-        console.log(agent);
         let Leg = resultData;
         const conversionData = await this.CurrencyConverterRepository.findOne({ where: { source: 'Group' } });
         let converstionrate = 1;
-        console.log('agent currency', agent?.currency);
         if (agent?.currency === 'PKR' && conversionData) {
             converstionrate = conversionData.exchange_rate;
         }

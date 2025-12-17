@@ -606,8 +606,9 @@ let ReportService = class ReportService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
+        const limitation = 2000;
         const skip = (page - 1) * limit;
-        const take = limit;
+        const take = limitation;
         let queryBuilder = this.ledgerRepository.createQueryBuilder("ledger");
         queryBuilder = queryBuilder.andWhere("ledger.agentId = :agentId", { agentId });
         const totaldata = await queryBuilder.getCount();
