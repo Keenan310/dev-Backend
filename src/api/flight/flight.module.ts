@@ -37,28 +37,19 @@ import { ActivityLogModel } from '../activitylog/entities/activitylog.entity';
 import { AlhindAPI } from './alhind.flights.service';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
-import { CHScraper } from './chtravel.flights.service';
 import { VoidModel } from '../void/void.model';
 import { SaveFlightsData } from './entity/save-flight.entity';
 
 @Module({
-  imports: [CacheModule.register({
-      ttl: 5, // seconds
-      max: 100,
-      isGlobal: true,  // 👈 very important
-    }),
+  imports: [
     TypeOrmModule.forFeature(
     [AirlinesModel, AirlineDiscount, SearchHistoryModel, GroupFareModel, TravellerModel,TicketModel, AirportsModel,
     BookingModel, PassengerModel, AgentModel, StaffModel, AdminModel,RefundModel, ReissueModel, VoidModel,
     AgentLedgerModel, OTPModel, ActivityLogModel, CurrencyConverter, SaveFlightsData])],
   controllers: [PreFlightController, PostFlightController],
-  providers: [{
-          provide: APP_INTERCEPTOR,
-          useClass: CacheInterceptor,
-        },
+  providers: [
         FlightService, TravellerService , GroupfareService, SabreService, AirlinesService, BookingUtils,
     MailService, AirportsService, BookingService , PassengerService, AuthService, JwtService, SabreUtils,
-    SearchhistoryService, AuthUtils, ActivitylogService, AlhindAPI, CHScraper]
+    SearchhistoryService, AuthUtils, ActivitylogService, AlhindAPI]
 })
 export class FlightModule {}

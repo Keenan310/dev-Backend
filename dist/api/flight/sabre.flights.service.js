@@ -16,7 +16,6 @@ exports.SabreService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const axios_1 = require("axios");
-const base64 = require("base-64");
 const dotenv = require("dotenv");
 const typeorm_2 = require("typeorm");
 const passenger_service_1 = require("../passenger/passenger.service");
@@ -34,10 +33,11 @@ let SabreService = class SabreService {
         this.searchHistoryService = searchHistoryService;
     }
     async restToken() {
+        const encodeBase64 = (value) => Buffer.from(value).toString('base64');
         const client_id_raw = `V1:${process.env.SABRE_ID}:${process.env.SABRE_PCC}:AA`;
-        const client_id = base64.encode(client_id_raw);
-        const client_secret = base64.encode(process.env.SABRE_PASSWORD);
-        const token = base64.encode(`${client_id}:${client_secret}`);
+        const client_id = encodeBase64(client_id_raw);
+        const client_secret = encodeBase64(process.env.SABRE_PASSWORD ?? '');
+        const token = encodeBase64(`${client_id}:${client_secret}`);
         const data = 'grant_type=client_credentials';
         const headers = {
             Authorization: `Basic ${token}`,

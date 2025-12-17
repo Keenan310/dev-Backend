@@ -21,9 +21,11 @@ const auth_service_1 = require("../auth/auth.service");
 const airlines_service_1 = require("../airlines/airlines.service");
 const airports_service_1 = require("../airports/airports.service");
 const typeorm_3 = require("typeorm");
+const currency_entity_1 = require("../currency/entities/currency.entity");
 let GroupfareService = class GroupfareService {
-    constructor(groupFareRepository, authService, airlinesService, airportsService) {
+    constructor(groupFareRepository, CurrencyConverterRepository, authService, airlinesService, airportsService) {
         this.groupFareRepository = groupFareRepository;
+        this.CurrencyConverterRepository = CurrencyConverterRepository;
         this.authService = authService;
         this.airlinesService = airlinesService;
         this.airportsService = airportsService;
@@ -143,8 +145,14 @@ let GroupfareService = class GroupfareService {
         return this.groupFareRepository.delete(groupfaredata.id);
     }
     async flightParser(agent, resultData) {
+        console.log(agent);
         let Leg = resultData;
-        const converstionrate = 1;
+        const conversionData = await this.CurrencyConverterRepository.findOne({ where: { source: 'Group' } });
+        let converstionrate = 1;
+        console.log('agent currency', agent?.currency);
+        if (agent?.currency === 'PKR' && conversionData) {
+            converstionrate = conversionData.exchange_rate;
+        }
         const NetFareConv = Leg.NetFare * converstionrate;
         const PriceBreakdown = [
             {
@@ -503,7 +511,9 @@ exports.GroupfareService = GroupfareService;
 exports.GroupfareService = GroupfareService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(groupfare_model_1.GroupFareModel)),
+    __param(1, (0, typeorm_1.InjectRepository)(currency_entity_1.CurrencyConverter)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         auth_service_1.AuthService,
         airlines_service_1.AirlinesService,
         airports_service_1.AirportsService])

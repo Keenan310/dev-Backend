@@ -28,12 +28,11 @@ const groupfare_service_1 = require("../groupfare/groupfare.service");
 const booking_service_1 = require("../booking/booking.service");
 const auth_service_1 = require("../auth/auth.service");
 const alhind_flights_service_1 = require("./alhind.flights.service");
-const chtravel_flights_service_1 = require("./chtravel.flights.service");
 const void_model_1 = require("../void/void.model");
 const searchhistory_service_1 = require("../searchhistory/searchhistory.service");
 const save_flight_entity_1 = require("./entity/save-flight.entity");
 let FlightService = class FlightService {
-    constructor(bookingRepository, agentRepository, passengerRepository, reissueRepository, refundRepository, voidRepository, ticketingRepository, saveFlightsDataRepository, searchhistoryService, authService, sabreService, bookingService, groupFareService, alhindAPI, ch) {
+    constructor(bookingRepository, agentRepository, passengerRepository, reissueRepository, refundRepository, voidRepository, ticketingRepository, saveFlightsDataRepository, searchhistoryService, authService, sabreService, bookingService, groupFareService, alhindAPI) {
         this.bookingRepository = bookingRepository;
         this.agentRepository = agentRepository;
         this.passengerRepository = passengerRepository;
@@ -48,10 +47,6 @@ let FlightService = class FlightService {
         this.bookingService = bookingService;
         this.groupFareService = groupFareService;
         this.alhindAPI = alhindAPI;
-        this.ch = ch;
-    }
-    async airsearchch(flightDto) {
-        const Sabre_FlightData = await this.ch.shopping(flightDto);
     }
     async airsearch(header, flightDto) {
         const agent = await this.authService.verifyAgentToken(header);
@@ -528,7 +523,6 @@ exports.FlightService = FlightService = __decorate([
         sabre_flights_service_1.SabreService,
         booking_service_1.BookingService,
         groupfare_service_1.GroupfareService,
-        alhind_flights_service_1.AlhindAPI,
-        chtravel_flights_service_1.CHScraper])
+        alhind_flights_service_1.AlhindAPI])
 ], FlightService);
 //# sourceMappingURL=flight.service.js.map

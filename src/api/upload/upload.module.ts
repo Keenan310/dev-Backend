@@ -13,7 +13,6 @@ import { ReissueModel } from '../reissue/reissue.model';
 import { PromotionModel } from '../promotion/promotion.model';
 import { DepositModel } from '../deposit/deposit.model';
 import { PassengerModel } from '../passenger/passenger.model';
-import { EventsGateway } from 'src/gateway/gateway';
 import { MailService } from 'src/mail/mail.service';
 import { AuthUtils } from '../auth/auth.utils';
 import { OTPModel } from '../auth/auth.model';
@@ -22,6 +21,6 @@ import { OTPModel } from '../auth/auth.model';
   imports: [TypeOrmModule.forFeature([AgentModel,PassengerModel, DepositModel, AdminModel,
      StaffModel, AgentModel, BookingModel, ReissueModel, PromotionModel, OTPModel])],
   controllers: [UploadController],
-  providers: [UploadService, DoSpacesServicerovider, AuthService, JwtService, AuthUtils, EventsGateway, MailService],
+  providers: [UploadService, DoSpacesServicerovider, AuthService, JwtService, AuthUtils, MailService],
 })
 export class UploadModule {}

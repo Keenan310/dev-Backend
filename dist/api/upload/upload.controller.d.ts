@@ -1,4 +1,3 @@
-/// <reference types="multer" />
 import { UploadService } from './upload.service';
 import { AgentModel } from '../agent/agent.model';
 export declare class UploadController {

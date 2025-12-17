@@ -11,7 +11,6 @@ import { AirBookingModel } from './dto/booking-flight.dto';
 import { FlightSearchModel } from './dto/search-flight.dto';
 import { AuthService } from '../auth/auth.service';
 import { AlhindAPI } from './alhind.flights.service';
-import { CHScraper } from './chtravel.flights.service';
 import { VoidModel } from '../void/void.model';
 import { SearchhistoryService } from '../searchhistory/searchhistory.service';
 import { GetFare } from './dto/getfare-flight.dto';
@@ -31,9 +30,7 @@ export declare class FlightService {
     private readonly bookingService;
     private readonly groupFareService;
     private readonly alhindAPI;
-    private readonly ch;
-    constructor(bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, reissueRepository: Repository<ReissueModel>, refundRepository: Repository<RefundModel>, voidRepository: Repository<VoidModel>, ticketingRepository: Repository<TicketModel>, saveFlightsDataRepository: Repository<SaveFlightsData>, searchhistoryService: SearchhistoryService, authService: AuthService, sabreService: SabreService, bookingService: BookingService, groupFareService: GroupfareService, alhindAPI: AlhindAPI, ch: CHScraper);
-    airsearchch(flightDto: FlightSearchModel): Promise<void>;
+    constructor(bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, reissueRepository: Repository<ReissueModel>, refundRepository: Repository<RefundModel>, voidRepository: Repository<VoidModel>, ticketingRepository: Repository<TicketModel>, saveFlightsDataRepository: Repository<SaveFlightsData>, searchhistoryService: SearchhistoryService, authService: AuthService, sabreService: SabreService, bookingService: BookingService, groupFareService: GroupfareService, alhindAPI: AlhindAPI);
     airsearch(header: any, flightDto: FlightSearchModel): Promise<{
         Token: any;
         Key: any;

@@ -3,7 +3,6 @@ import * as dotenv from "dotenv";
 import { AirlinesService } from '../airlines/airlines.service';
 import { AirportsService } from '../airports/airports.service';
 import { AgentModel } from '../agent/agent.model';
-import { parseString } from "xml2js";  
 import { airportsData } from './data/airports.data';
 import { airlinesData } from './data/airlines.data';
 dotenv.config()

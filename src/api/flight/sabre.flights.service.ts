@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
-import * as base64 from 'base-64';
-import * as dotenv from "dotenv";
+import * as dotenv from 'dotenv';
 import { Repository } from 'typeorm';
 import { PassengerService } from '../passenger/passenger.service';
 import { BookingModel } from '../booking/booking.model';
@@ -25,11 +24,12 @@ export class SabreService {
     ) {}
 
   async restToken(): Promise<string> {
+    const encodeBase64 = (value: string) => Buffer.from(value).toString('base64');
 
     const client_id_raw = `V1:${process.env.SABRE_ID}:${process.env.SABRE_PCC}:AA`;
-    const client_id = base64.encode(client_id_raw);
-    const client_secret = base64.encode(process.env.SABRE_PASSWORD);
-    const token = base64.encode(`${client_id}:${client_secret}`);
+    const client_id = encodeBase64(client_id_raw);
+    const client_secret = encodeBase64(process.env.SABRE_PASSWORD ?? '');
+    const token = encodeBase64(`${client_id}:${client_secret}`);
     const data = 'grant_type=client_credentials';
 
     const headers = {

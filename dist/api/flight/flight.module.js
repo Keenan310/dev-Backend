@@ -45,9 +45,6 @@ const activitylog_service_1 = require("../activitylog/activitylog.service");
 const activitylog_entity_1 = require("../activitylog/entities/activitylog.entity");
 const alhind_flights_service_1 = require("./alhind.flights.service");
 const currency_entity_1 = require("../currency/entities/currency.entity");
-const core_1 = require("@nestjs/core");
-const cache_manager_1 = require("@nestjs/cache-manager");
-const chtravel_flights_service_1 = require("./chtravel.flights.service");
 const void_model_1 = require("../void/void.model");
 const save_flight_entity_1 = require("./entity/save-flight.entity");
 let FlightModule = class FlightModule {
@@ -55,22 +52,17 @@ let FlightModule = class FlightModule {
 exports.FlightModule = FlightModule;
 exports.FlightModule = FlightModule = __decorate([
     (0, common_1.Module)({
-        imports: [cache_manager_1.CacheModule.register({
-                ttl: 5,
-                max: 100,
-                isGlobal: true,
-            }),
+        imports: [
             typeorm_1.TypeOrmModule.forFeature([airlines_model_1.AirlinesModel, airlines_model_1.AirlineDiscount, searchhistory_model_1.SearchHistoryModel, groupfare_model_1.GroupFareModel, traveller_model_1.TravellerModel, ticketing_model_1.TicketModel, airports_model_1.AirportsModel,
                 booking_model_1.BookingModel, passenger_model_1.PassengerModel, agent_model_1.AgentModel, staff_model_1.StaffModel, admin_model_1.AdminModel, refund_model_1.RefundModel, reissue_model_1.ReissueModel, void_model_1.VoidModel,
-                report_model_1.AgentLedgerModel, auth_model_1.OTPModel, activitylog_entity_1.ActivityLogModel, currency_entity_1.CurrencyConverter, save_flight_entity_1.SaveFlightsData])],
+                report_model_1.AgentLedgerModel, auth_model_1.OTPModel, activitylog_entity_1.ActivityLogModel, currency_entity_1.CurrencyConverter, save_flight_entity_1.SaveFlightsData])
+        ],
         controllers: [pre_flight_controller_1.PreFlightController, post_flight_controller_1.PostFlightController],
-        providers: [{
-                provide: core_1.APP_INTERCEPTOR,
-                useClass: cache_manager_1.CacheInterceptor,
-            },
+        providers: [
             flight_service_1.FlightService, traveller_service_1.TravellerService, groupfare_service_1.GroupfareService, sabre_flights_service_1.SabreService, airlines_service_1.AirlinesService, booking_utils_1.BookingUtils,
             mail_service_1.MailService, airports_service_1.AirportsService, booking_service_1.BookingService, passenger_service_1.PassengerService, auth_service_1.AuthService, jwt_1.JwtService, sabre_flight_utils_1.SabreUtils,
-            searchhistory_service_1.SearchhistoryService, auth_utils_1.AuthUtils, activitylog_service_1.ActivitylogService, alhind_flights_service_1.AlhindAPI, chtravel_flights_service_1.CHScraper]
+            searchhistory_service_1.SearchhistoryService, auth_utils_1.AuthUtils, activitylog_service_1.ActivitylogService, alhind_flights_service_1.AlhindAPI
+        ]
     })
 ], FlightModule);
 //# sourceMappingURL=flight.module.js.map

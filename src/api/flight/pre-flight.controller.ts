@@ -4,21 +4,14 @@ import { FlightService } from './flight.service';
 import { AirBookingModel } from './dto/booking-flight.dto';
 import { Revalidation } from './dto/revalidation-flight.dto';
 import { FlightSearchModel } from './dto/search-flight.dto';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { GetFare } from './dto/getfare-flight.dto';
 
 @ApiBearerAuth('access_token')
 @ApiTags('Pre Ticketing Modules')
-@UseInterceptors(CacheInterceptor)
 @Controller()
 export class PreFlightController {
   constructor(private readonly flightService: FlightService) {}
 
-  @Post("agent/flight/search/ch")
-  AirSearchCH(
-    @Body() flightDto: FlightSearchModel) {
-    return this.flightService.airsearchch(flightDto);
-  }
   @ApiBearerAuth('access_token')
   @Post("agent/flight/search")
   AirSearch(

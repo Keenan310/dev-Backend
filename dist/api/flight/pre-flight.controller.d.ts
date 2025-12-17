@@ -6,7 +6,6 @@ import { GetFare } from './dto/getfare-flight.dto';
 export declare class PreFlightController {
     private readonly flightService;
     constructor(flightService: FlightService);
-    AirSearchCH(flightDto: FlightSearchModel): Promise<void>;
     AirSearch(header: string, flightDto: FlightSearchModel): Promise<{
         Token: any;
         Key: any;

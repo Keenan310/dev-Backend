@@ -1,9 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { CreateControlDto } from './dto/create-control.dto';
-import { UpdateControlDto } from './dto/update-control.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ControlModel } from './entities/control.entity';
-import { Control } from 'aws-sdk/clients/auditmanager';
 import { Repository } from 'typeorm';
 import { AuthService } from 'src/api/auth/auth.service';
 

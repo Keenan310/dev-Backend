@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { integer } from "aws-sdk/clients/cloudfront";
 import { IsAlpha, IsNotEmpty, IsString } from "class-validator";
 import { Column, Entity, Generated, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 

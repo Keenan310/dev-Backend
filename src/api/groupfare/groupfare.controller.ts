@@ -2,15 +2,12 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Headers, UseIntercep
 import { GroupfareService } from './groupfare.service';
 import { GroupFareDto, GroupFareModel, GroupFareModelUpdate, GroupFareSearch } from './groupfare.model';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @ApiTags('GroupFare Modules')
 @Controller('groupfare')
-@UseInterceptors(CacheInterceptor)
 export class GroupfareController {
   constructor(private readonly groupfareService: GroupfareService) {}
 
-  
   @ApiBearerAuth('access_token')
   @Post()
   create(
@@ -20,7 +17,7 @@ export class GroupfareController {
   }
 
   @ApiBearerAuth('access_token')
-  @Get()
+  @Get('admin')
   findAllAdmin(
     @Headers() header: Headers) {
     return this.groupfareService.findAllAdmin(header);

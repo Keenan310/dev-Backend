@@ -1,12 +1,10 @@
 import { Controller, Get, Headers, Param, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { FlightService } from './flight.service';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @ApiBearerAuth('access_token')
 @ApiTags('Post Ticketing Modules')
 @Controller()
-@UseInterceptors(CacheInterceptor)
 export class PostFlightController {
   constructor(private readonly flightService: FlightService) {}
 

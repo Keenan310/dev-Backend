@@ -19,14 +19,10 @@ const flight_service_1 = require("./flight.service");
 const booking_flight_dto_1 = require("./dto/booking-flight.dto");
 const revalidation_flight_dto_1 = require("./dto/revalidation-flight.dto");
 const search_flight_dto_1 = require("./dto/search-flight.dto");
-const cache_manager_1 = require("@nestjs/cache-manager");
 const getfare_flight_dto_1 = require("./dto/getfare-flight.dto");
 let PreFlightController = class PreFlightController {
     constructor(flightService) {
         this.flightService = flightService;
-    }
-    AirSearchCH(flightDto) {
-        return this.flightService.airsearchch(flightDto);
     }
     AirSearch(header, flightDto) {
         return this.flightService.airsearch(header, flightDto);
@@ -63,13 +59,6 @@ let PreFlightController = class PreFlightController {
     }
 };
 exports.PreFlightController = PreFlightController;
-__decorate([
-    (0, common_1.Post)("agent/flight/search/ch"),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [search_flight_dto_1.FlightSearchModel]),
-    __metadata("design:returntype", void 0)
-], PreFlightController.prototype, "AirSearchCH", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Post)("agent/flight/search"),
@@ -174,7 +163,6 @@ __decorate([
 exports.PreFlightController = PreFlightController = __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, swagger_1.ApiTags)('Pre Ticketing Modules'),
-    (0, common_1.UseInterceptors)(cache_manager_1.CacheInterceptor),
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [flight_service_1.FlightService])
 ], PreFlightController);

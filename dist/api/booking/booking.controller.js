@@ -17,7 +17,6 @@ const common_1 = require("@nestjs/common");
 const booking_service_1 = require("./booking.service");
 const booking_model_1 = require("./booking.model");
 const swagger_1 = require("@nestjs/swagger");
-const cache_manager_1 = require("@nestjs/cache-manager");
 let BookingController = class BookingController {
     constructor(bookingService) {
         this.bookingService = bookingService;
@@ -172,7 +171,6 @@ __decorate([
 exports.BookingController = BookingController = __decorate([
     (0, swagger_1.ApiTags)("Booking Modules"),
     (0, common_1.Controller)(),
-    (0, common_1.UseInterceptors)(cache_manager_1.CacheInterceptor),
     __metadata("design:paramtypes", [booking_service_1.BookingService])
 ], BookingController);
 //# sourceMappingURL=booking.controller.js.map

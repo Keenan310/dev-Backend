@@ -22,7 +22,6 @@ const reissue_model_1 = require("../reissue/reissue.model");
 const promotion_model_1 = require("../promotion/promotion.model");
 const deposit_model_1 = require("../deposit/deposit.model");
 const passenger_model_1 = require("../passenger/passenger.model");
-const gateway_1 = require("../../gateway/gateway");
 const mail_service_1 = require("../../mail/mail.service");
 const auth_utils_1 = require("../auth/auth.utils");
 const auth_model_1 = require("../auth/auth.model");
@@ -34,7 +33,7 @@ exports.UploadModule = UploadModule = __decorate([
         imports: [typeorm_1.TypeOrmModule.forFeature([agent_model_1.AgentModel, passenger_model_1.PassengerModel, deposit_model_1.DepositModel, admin_model_1.AdminModel,
                 staff_model_1.StaffModel, agent_model_1.AgentModel, booking_model_1.BookingModel, reissue_model_1.ReissueModel, promotion_model_1.PromotionModel, auth_model_1.OTPModel])],
         controllers: [upload_controller_1.UploadController],
-        providers: [upload_service_1.UploadService, upload_provider_service_1.DoSpacesServicerovider, auth_service_1.AuthService, jwt_1.JwtService, auth_utils_1.AuthUtils, gateway_1.EventsGateway, mail_service_1.MailService],
+        providers: [upload_service_1.UploadService, upload_provider_service_1.DoSpacesServicerovider, auth_service_1.AuthService, jwt_1.JwtService, auth_utils_1.AuthUtils, mail_service_1.MailService],
     })
 ], UploadModule);
 //# sourceMappingURL=upload.module.js.map

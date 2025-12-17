@@ -15,7 +15,6 @@ import { AirBookingModel } from './dto/booking-flight.dto';
 import { FlightSearchModel } from './dto/search-flight.dto';
 import { AuthService } from '../auth/auth.service';
 import { AlhindAPI } from './alhind.flights.service';
-import { CHScraper } from './chtravel.flights.service';
 import { VoidModel } from '../void/void.model';
 import { SearchhistoryService } from '../searchhistory/searchhistory.service';
 import { GetFare } from './dto/getfare-flight.dto';
@@ -46,14 +45,8 @@ export class FlightService {
       private readonly bookingService: BookingService,
       private readonly groupFareService: GroupfareService,
       private readonly alhindAPI: AlhindAPI,
-      private readonly ch: CHScraper,
     ) {}
 
-  async airsearchch(flightDto :FlightSearchModel){
-
-    const Sabre_FlightData = await this.ch.shopping(flightDto);
-
-  }
   async airsearch(header: any, flightDto :FlightSearchModel){
     const agent = await this.authService.verifyAgentToken(header);
 

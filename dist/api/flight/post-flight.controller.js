@@ -16,7 +16,6 @@ exports.PostFlightController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const flight_service_1 = require("./flight.service");
-const cache_manager_1 = require("@nestjs/cache-manager");
 let PostFlightController = class PostFlightController {
     constructor(flightService) {
         this.flightService = flightService;
@@ -101,7 +100,6 @@ exports.PostFlightController = PostFlightController = __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, swagger_1.ApiTags)('Post Ticketing Modules'),
     (0, common_1.Controller)(),
-    (0, common_1.UseInterceptors)(cache_manager_1.CacheInterceptor),
     __metadata("design:paramtypes", [flight_service_1.FlightService])
 ], PostFlightController);
 //# sourceMappingURL=post-flight.controller.js.map
