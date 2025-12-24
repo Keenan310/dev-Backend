@@ -510,12 +510,12 @@ let AlhindAPI = class AlhindAPI {
                 }
                 const anotherFees = (adminMarkUpAmount + agentMarkUpAmount);
                 const PaxequivalentAmount = (pax?.BaseFare + addValue + anotherFees) * conversionRate;
-                const totalTaxAmount = pax?.Tax * conversionRate;
+                const totalTaxAmount = Number(pax?.Tax * conversionRate);
                 const PaxtotalFare = Number((PaxequivalentAmount + totalTaxAmount).toFixed(2));
                 return {
                     PaxType,
                     BaseFare: PaxequivalentAmount,
-                    Taxes: totalTaxAmount,
+                    Taxes: Number(totalTaxAmount).toFixed(2),
                     TotalFare: PaxtotalFare,
                     PaxCount: paxCount,
                     Bag: baggageInfo,
@@ -594,7 +594,7 @@ let AlhindAPI = class AlhindAPI {
                 Cabinclass: FareName,
                 Currency: agentdata?.currency,
                 BaseFare: equivalentAmount,
-                Taxes,
+                Taxes: Number(Taxes).toFixed(2),
                 NetFare,
                 GrossFare: TotalFare,
                 Fees,

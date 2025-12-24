@@ -4,8 +4,7 @@ export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
     signin(authModel: AuthModel): Promise<{
-        status: string;
-        message: string;
+        access_token: string;
     }>;
     adminsignin(authModel: AuthModel): Promise<{
         status: string;

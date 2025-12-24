@@ -151,7 +151,7 @@ let GroupfareService = class GroupfareService {
         if (agent?.currency === 'PKR' && conversionData) {
             converstionrate = conversionData.exchange_rate;
         }
-        const NetFareConv = Leg.NetFare * converstionrate;
+        const NetFareConv = Leg.NetFare / converstionrate;
         const PriceBreakdown = [
             {
                 "PaxType": "ADT",

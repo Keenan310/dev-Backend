@@ -17,7 +17,7 @@ export declare class PreFlightController {
         Cabinclass: any;
         Currency: string;
         BaseFare: number;
-        Taxes: number;
+        Taxes: string;
         NetFare: number;
         GrossFare: number;
         Fees: number;

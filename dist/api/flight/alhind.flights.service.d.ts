@@ -25,7 +25,7 @@ export declare class AlhindAPI {
         Cabinclass: any;
         Currency: string;
         BaseFare: number;
-        Taxes: number;
+        Taxes: string;
         NetFare: number;
         GrossFare: number;
         Fees: number;
@@ -68,7 +68,7 @@ export declare class AlhindAPI {
         Cabinclass: any;
         Currency: string;
         BaseFare: number;
-        Taxes: number;
+        Taxes: string;
         NetFare: number;
         GrossFare: number;
         Fees: number;

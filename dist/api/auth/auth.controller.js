@@ -22,7 +22,7 @@ let AuthController = class AuthController {
         this.authService = authService;
     }
     signin(authModel) {
-        return this.authService.agentLogin(authModel);
+        return this.authService.agentsignin(authModel);
     }
     adminsignin(authModel) {
         return this.authService.adminLogin(authModel);

@@ -11,7 +11,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Agent sign in', description: 'Only agent can sign in here' })
   @Post('signin')
   signin(@Body() authModel: AuthModel,) {
-    return this.authService.agentLogin(authModel);
+    return this.authService.agentsignin(authModel);
   }
 
   @ApiOperation({ summary: 'Admin sign in', description: 'Only admin can sign in' })
