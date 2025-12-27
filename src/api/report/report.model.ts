@@ -116,9 +116,6 @@ export class AdminLedger {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   netfare: number;
 
-  // @Column({ type: 'decimal', precision: 10, scale: 2 })
-  // profit: number;
-
   @ApiProperty()
   @Column({ name: 'deposit', type: 'decimal', precision: 10, scale: 2 })
   depositAmount: number;
@@ -126,6 +123,10 @@ export class AdminLedger {
   @ApiProperty()
   @Column({ type: 'varchar', length: 50 })
   status: string;
+
+  @ApiProperty()
+  @Column({ type: 'varchar', length: 50 })
+  liable: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
