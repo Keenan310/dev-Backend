@@ -4,15 +4,13 @@ import { AgentModel } from '../agent/agent.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookingModel } from './booking.model';
 import { Repository } from 'typeorm';
-import { ActivitylogService } from '../activitylog/activitylog.service';
 dotenv.config()
 
 @Injectable()
 export class BookingUtils {
     constructor(
         @InjectRepository(BookingModel)
-        private readonly bookingRepository: Repository<BookingModel>,
-        private readonly activityLogService: ActivitylogService){}
+        private readonly bookingRepository: Repository<BookingModel>){}
 
     async bookingParser(agentdata: AgentModel, responseData: any,  bookingDto: any, priceCheck: any){
 
@@ -79,8 +77,6 @@ export class BookingUtils {
 
         const activityLog = {agentId: agentId, status: 'Hold', platform: 'B2B',
         refId: bookingId, module: 'Booking', action_by: agentdata.name};
-
-        await this.activityLogService.create(activityLog);
 
         return bookingData
     }

@@ -26,7 +26,7 @@ let AirlinesModule = class AirlinesModule {
 exports.AirlinesModule = AirlinesModule;
 exports.AirlinesModule = AirlinesModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([airlines_model_1.AirlinesModel, airlines_model_1.AirlineDiscount, booking_model_1.BookingModel, agent_model_1.AgentModel, admin_model_1.AdminModel, staff_model_1.StaffModel, auth_model_1.OTPModel])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([airlines_model_1.AirlinesModel, airlines_model_1.AirlineDiscount, airlines_model_1.AirlineDiscountForAgent, booking_model_1.BookingModel, agent_model_1.AgentModel, admin_model_1.AdminModel, staff_model_1.StaffModel, auth_model_1.OTPModel])],
         controllers: [airlines_controller_1.AirlinesController],
         providers: [airlines_service_1.AirlinesService, jwt_1.JwtService, auth_service_1.AuthService, auth_utils_1.AuthUtils, mail_service_1.MailService],
     })

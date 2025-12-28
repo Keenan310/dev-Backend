@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { FlightService } from './flight.service';
 import { SabreService } from './sabre.flights.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AirlinesModel, AirlineDiscount } from '../airlines/airlines.model';
+import { AirlinesModel, AirlineDiscount, AirlineDiscountForAgent } from '../airlines/airlines.model';
 import { AirportsModel } from '../airports/airports.model';
 import { BookingService } from '../booking/booking.service';
 import { PassengerService } from '../passenger/passenger.service';
@@ -32,8 +32,6 @@ import { AuthUtils } from '../auth/auth.utils';
 import { OTPModel } from '../auth/auth.model';
 import { PreFlightController } from './pre-flight.controller';
 import { PostFlightController } from './post-flight.controller';
-import { ActivitylogService } from '../activitylog/activitylog.service';
-import { ActivityLogModel } from '../activitylog/entities/activitylog.entity';
 import { AlhindAPI } from './alhind.flights.service';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
@@ -43,13 +41,13 @@ import { SaveFlightsData } from './entity/save-flight.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature(
-    [AirlinesModel, AirlineDiscount, SearchHistoryModel, GroupFareModel, TravellerModel,TicketModel, AirportsModel,
+    [AirlinesModel, AirlineDiscount, AirlineDiscountForAgent, SearchHistoryModel, GroupFareModel, TravellerModel,TicketModel, AirportsModel,
     BookingModel, PassengerModel, AgentModel, StaffModel, AdminModel,RefundModel, ReissueModel, VoidModel,
-    AgentLedgerModel, OTPModel, ActivityLogModel, CurrencyConverter, SaveFlightsData])],
+    AgentLedgerModel, OTPModel, CurrencyConverter, SaveFlightsData])],
   controllers: [PreFlightController, PostFlightController],
   providers: [
         FlightService, TravellerService , GroupfareService, SabreService, AirlinesService, BookingUtils,
     MailService, AirportsService, BookingService , PassengerService, AuthService, JwtService, SabreUtils,
-    SearchhistoryService, AuthUtils, ActivitylogService, AlhindAPI]
+    SearchhistoryService, AuthUtils, AlhindAPI]
 })
 export class FlightModule {}

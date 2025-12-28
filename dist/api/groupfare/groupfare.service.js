@@ -148,7 +148,7 @@ let GroupfareService = class GroupfareService {
         let Leg = resultData;
         const conversionData = await this.CurrencyConverterRepository.findOne({ where: { source: 'Group' } });
         let converstionrate = 1;
-        if (agent?.currency === 'PKR' && conversionData) {
+        if (agent?.currency === 'AED' && conversionData) {
             converstionrate = conversionData.exchange_rate;
         }
         const NetFareConv = Leg.NetFare / converstionrate;

@@ -31,7 +31,7 @@ let GroupfareModule = class GroupfareModule {
 exports.GroupfareModule = GroupfareModule;
 exports.GroupfareModule = GroupfareModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([airlines_model_1.AirlineDiscount, groupfare_model_1.GroupFareModel, booking_model_1.BookingModel, agent_model_1.AgentModel, staff_model_1.StaffModel, admin_model_1.AdminModel, airlines_model_1.AirlinesModel, airports_model_1.AirportsModel, auth_model_1.OTPModel, currency_entity_1.CurrencyConverter])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([airlines_model_1.AirlineDiscount, airlines_model_1.AirlineDiscountForAgent, groupfare_model_1.GroupFareModel, booking_model_1.BookingModel, agent_model_1.AgentModel, staff_model_1.StaffModel, admin_model_1.AdminModel, airlines_model_1.AirlinesModel, airports_model_1.AirportsModel, auth_model_1.OTPModel, currency_entity_1.CurrencyConverter])],
         controllers: [groupfare_controller_1.GroupfareController],
         providers: [groupfare_service_1.GroupfareService, auth_service_1.AuthService, jwt_1.JwtService, auth_utils_1.AuthUtils, airlines_service_1.AirlinesService, airports_service_1.AirportsService, mail_service_1.MailService],
     })

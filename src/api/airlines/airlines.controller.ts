@@ -14,7 +14,7 @@ export class AirlinesController {
   createAirlineDiscount(
     @Headers() header: Headers,
     @Body() dto: CreateAirlineDiscountDto) {
-    return this.airlinesService.createAirlineDiscount(header, dto);
+    return this.airlinesService.createAirlineDiscountMain(header, dto);
   }
 
 
@@ -23,7 +23,7 @@ export class AirlinesController {
   viewAirlineDiscount(
     @Headers() header: Headers,
     @Query('currency') currency: string,) {
-    return this.airlinesService.viewAirlineDiscount(header, currency);
+    return this.airlinesService.viewAirlineDiscountMain(header, currency);
   }
 
   @Patch('admin/airline/discount/:id')
@@ -31,23 +31,48 @@ export class AirlinesController {
     @Headers() header: Headers,
     @Param('id') id: string,
     @Body() updateAirlineDiscountDto: UpdateAirlineDiscountDto) {
-    return this.airlinesService.updateAirlineDiscount(header, +id, updateAirlineDiscountDto);
+    return this.airlinesService.updateAirlineDiscountMain(header, +id, updateAirlineDiscountDto);
   }
 
   @Delete('admin/airline/discount/:id')
   deleteAirlineDiscount(
     @Headers() header: Headers,
     @Param('id') id: string) {
-    return this.airlinesService.deleteAirlineDiscount(header, +id);
+    return this.airlinesService.deleteAirlineDiscountMain(header, +id);
   }
 
-  @Get('admin/airlines/all')
-  findAll(
-    @Headers() header: Headers) {
-    return this.airlinesService.findAll(header);
+  @Post('admin/singleagent/airline/discount')
+  createAirlineDiscountForAgent(
+    @Headers() header: Headers,
+    @Body() dto: CreateAirlineDiscountDto) {
+    return this.airlinesService.createAirlineDiscountForAgent(header, dto);
   }
 
-  @Patch('admin/airlines/markup/:id')
+
+  @Get('admin/singleagent/airline/discount')
+  @ApiQuery({ name: 'agentId', required: true })
+  viewAirlineDiscountForAgent(
+    @Headers() header: Headers,
+    @Query('agentId') agentId: string,) {
+    return this.airlinesService.viewAirlineDiscountForAgent(header, agentId);
+  }
+
+  @Patch('admin/singleagent/airline/discount/:id')
+  updateAirlineDiscountForAgent(
+    @Headers() header: Headers,
+    @Param('id') id: string,
+    @Body() updateAirlineDiscountDto: UpdateAirlineDiscountDto) {
+    return this.airlinesService.updateAirlineDiscountForAgent(header, +id, updateAirlineDiscountDto);
+  }
+
+  @Delete('admin/singleagent/airline/discount/:id')
+  deleteAirlineDiscountForAgent(
+    @Headers() header: Headers,
+    @Param('id') id: string) {
+    return this.airlinesService.deleteAirlineDiscountForAgent(header, +id);
+  }
+
+  @Patch('agent/airlines/markup/:id')
   updatemarkup(
     @Headers() header: Headers,
     @Param('id') id: string,

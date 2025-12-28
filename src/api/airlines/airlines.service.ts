@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AirlineDiscount, AirlinesModel, AirlinesUpdateModel } from './airlines.model';
+import { AirlineDiscount, AirlineDiscountForAgent, AirlinesModel, AirlinesUpdateModel } from './airlines.model';
 import { AuthService } from '../auth/auth.service';
-import { CreateAirlineDiscountDto, UpdateAirlineDiscountDto } from './airlines.dto';
+import { CreateAirlineDiscountDto, UpdateAirlineDiscountDto, UpdateAirlineDiscountForAgentDto } from './airlines.dto';
 
 @Injectable()
 export class AirlinesService {
@@ -12,10 +12,12 @@ export class AirlinesService {
     private readonly airlinesRepository: Repository<AirlinesModel>,
     @InjectRepository(AirlineDiscount)
     private readonly airlineDiscountRepository: Repository<AirlineDiscount>,
+    @InjectRepository(AirlineDiscountForAgent)
+    private readonly airlineDiscountForAgentRepository: Repository<AirlineDiscountForAgent>,
     private readonly authService: AuthService
   ) {}
 
-  async createAirlineDiscount(header: any, createAirlineDiscountDto : CreateAirlineDiscountDto){
+  async createAirlineDiscountMain(header: any, createAirlineDiscountDto : CreateAirlineDiscountDto){
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
     if(!verifyAdminId){
@@ -26,7 +28,7 @@ export class AirlinesService {
     return this.airlineDiscountRepository.save(discount);
   }
 
-  async viewAirlineDiscount(header: any, currency: string){
+  async viewAirlineDiscountMain(header: any, currency: string){
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
     if(!verifyAdminId){
@@ -43,7 +45,7 @@ export class AirlinesService {
     }
   }
 
-  async updateAirlineDiscount(header: any, id: number, updateAirlineDiscountDto: UpdateAirlineDiscountDto){
+  async updateAirlineDiscountMain(header: any, id: number, updateAirlineDiscountDto: UpdateAirlineDiscountDto){
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
     if(!verifyAdminId){
@@ -57,7 +59,7 @@ export class AirlinesService {
     return this.airlineDiscountRepository.update(id, updateAirlineDiscountDto);
   }
 
-  async deleteAirlineDiscount(header: any, id: number) {
+  async deleteAirlineDiscountMain(header: any, id: number) {
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
     if(!verifyAdminId){
@@ -71,24 +73,53 @@ export class AirlinesService {
     return await this.airlineDiscountRepository.delete(data.id);
   }
 
-
-  //OlD  Features
-  async create(header : any, createAirlineDto: AirlinesModel) {
+  async createAirlineDiscountForAgent(header: any, createAirlineDiscountDto : CreateAirlineDiscountDto){
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
     if(!verifyAdminId){
         throw new UnauthorizedException();
     }
 
-    const airlinesData = await this.airlinesRepository.findOne(
-      {where: { iata: createAirlineDto.iata }
-    });
+    const discount = this.airlineDiscountForAgentRepository.create(createAirlineDiscountDto);
+    return this.airlineDiscountForAgentRepository.save(discount);
+  }
 
-    if(airlinesData){
-      throw new HttpException("Airlines already exist", HttpStatus.CONFLICT);
+  async viewAirlineDiscountForAgent(header: any, agentId: string){
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
+
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
     }
-    
-    return await this.airlinesRepository.save(createAirlineDto);
+
+    return await this.airlineDiscountForAgentRepository.find({ where: { agentId } });
+  }
+
+  async updateAirlineDiscountForAgent(header: any, id: number, updateAirlineDiscountForAgentDto: UpdateAirlineDiscountForAgentDto){
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
+
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
+
+    const data = await this.airlineDiscountForAgentRepository.findOneBy({ id: id });
+    if(!data){
+      throw new NotFoundException("Not found");
+    }
+    return this.airlineDiscountForAgentRepository.update(id, updateAirlineDiscountForAgentDto);
+  }
+
+  async deleteAirlineDiscountForAgent(header: any, id: number) {
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
+
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
+
+    const data = await this.airlineDiscountForAgentRepository.findOneBy({ id: id });
+    if(!data){
+      throw new NotFoundException("Not found");
+    }
+    return await this.airlineDiscountForAgentRepository.delete(data.id);
   }
 
   async getAirlines(code: string) {
@@ -115,37 +146,6 @@ export class AirlinesService {
     }
 
     return airlinesData.marketing_name;
-  }
-
-  async findAll(header: any) {
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
-
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
-
-    const data = await this.airlinesRepository.find({
-      select:['id','iata','marketing_name', 'soto', 'soti', 'sito', 'domestic', 'addAmount', 'isBlocked','issuePermit','instantPayment','bookable'],
-      order: {updatedAt: 'DESC'}
-    });
-
-    return data;
-  }
-
-  async findOne(header : any, id: number) {
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
-
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
-
-    const airlinesData = await this.airlinesRepository.findOne({where: { id: id }});
-
-    if(!airlinesData){
-      throw new NotFoundException("Not found");
-    }
-
-    return airlinesData;
   }
 
   async update(header: any, id: number, updateAirlineDto: AirlinesUpdateModel) {

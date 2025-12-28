@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { AgentLedgerModel, AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto, UpdateAgentLedgerDto, UpdateAdminExpenseDto } from './report.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, Between, Not, In, Like } from 'typeorm';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { AgentBalanceUpdate, AgentModel } from '../agent/agent.model';
 import { BookingModel } from '../booking/booking.model';
 import { DepositModel } from '../deposit/deposit.model';
@@ -553,7 +553,7 @@ export class ReportService {
     const expense = await this.adminExpenseRepository
     .createQueryBuilder('expense')
     .select('SUM(expense.amount)', 'totalAmount')
-    .where('ledger.created_at BETWEEN :startDate AND :endDate', {
+    .where('expense.created_at BETWEEN :startDate AND :endDate', {
       startDate: startDate, 
       endDate: endDate
     }).getRawOne();
@@ -561,7 +561,7 @@ export class ReportService {
     const ledgerData={
       lossProfit: bookingTicketed?.totalProfit || 0,
       ledger: ledger,
-      totalExpense: expense.totalAmount,
+      totalExpense: expense?.totalAmount || 0,
       totalIncome: sell?.totalAmount || 0,
     }
 

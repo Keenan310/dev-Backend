@@ -18,13 +18,11 @@ import { TravellerModel } from '../traveller/traveller.model';
 import { BookingUtils } from './booking.utils';
 import { AuthUtils } from '../auth/auth.utils';
 import { OTPModel } from '../auth/auth.model';
-import { ActivitylogService } from '../activitylog/activitylog.service';
-import { ActivityLogModel } from '../activitylog/entities/activitylog.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([BookingModel, TravellerModel, AgentModel, StaffModel,
-     AdminModel, PassengerModel, AgentLedgerModel, GroupFareModel, OTPModel, ActivityLogModel])],
+     AdminModel, PassengerModel, AgentLedgerModel, GroupFareModel, OTPModel])],
   controllers: [BookingController],
-  providers: [BookingService, BookingUtils, AuthService, JwtService, MailService, PassengerService, TravellerService, AuthUtils,ActivitylogService],
+  providers: [BookingService, BookingUtils, AuthService, JwtService, MailService, PassengerService, TravellerService, AuthUtils],
 })
 export class BookingModule {}

@@ -7,10 +7,10 @@ export declare class UploadController {
         nid?: Express.Multer.File[];
         tl?: Express.Multer.File[];
     }): Promise<any>;
-    uploadAgentLogo(header: string, file: Express.Multer.File, res: any): Promise<void>;
-    updateDocuments(header: string, file: Express.Multer.File, option: string, res: any): Promise<void>;
-    uploadDepositFile(header: string, amount: number, sender: string, paymentway: string, receiver: string, reference: string, file: Express.Multer.File, res: any): Promise<void>;
-    addPromotion(header: Headers, file: Express.Multer.File, category: string, res: any): Promise<void>;
-    uploadPassportCopy(docs: string, paxUId: string, file: Express.Multer.File, res: any): Promise<void>;
-    uploadReissueTicketCopy(header: Headers, bookingUId: string, UId: string, file: Express.Multer.File, res: any): Promise<void>;
+    uploadAgentLogo(header: string, file: Express.Multer.File, res: any): Promise<any>;
+    updateDocuments(header: string, file: Express.Multer.File, option: string, res: any): Promise<any>;
+    uploadDepositFile(header: string, amount: number, sender: string, paymentway: string, receiver: string, reference: string, file: Express.Multer.File, res: any): Promise<any>;
+    addPromotion(header: Headers, file: Express.Multer.File, category: string, res: any): Promise<any>;
+    uploadPassportCopy(docs: string, paxUId: string, file: Express.Multer.File, res: any): Promise<any>;
+    uploadReissueTicketCopy(header: Headers, bookingUId: string, UId: string, file: Express.Multer.File, res: any): Promise<any>;
 }

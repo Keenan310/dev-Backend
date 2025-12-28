@@ -19,12 +19,13 @@ const typeorm_2 = require("typeorm");
 const airlines_model_1 = require("./airlines.model");
 const auth_service_1 = require("../auth/auth.service");
 let AirlinesService = class AirlinesService {
-    constructor(airlinesRepository, airlineDiscountRepository, authService) {
+    constructor(airlinesRepository, airlineDiscountRepository, airlineDiscountForAgentRepository, authService) {
         this.airlinesRepository = airlinesRepository;
         this.airlineDiscountRepository = airlineDiscountRepository;
+        this.airlineDiscountForAgentRepository = airlineDiscountForAgentRepository;
         this.authService = authService;
     }
-    async createAirlineDiscount(header, createAirlineDiscountDto) {
+    async createAirlineDiscountMain(header, createAirlineDiscountDto) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
@@ -32,7 +33,7 @@ let AirlinesService = class AirlinesService {
         const discount = this.airlineDiscountRepository.create(createAirlineDiscountDto);
         return this.airlineDiscountRepository.save(discount);
     }
-    async viewAirlineDiscount(header, currency) {
+    async viewAirlineDiscountMain(header, currency) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
@@ -45,7 +46,7 @@ let AirlinesService = class AirlinesService {
             return await this.airlineDiscountRepository.find();
         }
     }
-    async updateAirlineDiscount(header, id, updateAirlineDiscountDto) {
+    async updateAirlineDiscountMain(header, id, updateAirlineDiscountDto) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
@@ -56,7 +57,7 @@ let AirlinesService = class AirlinesService {
         }
         return this.airlineDiscountRepository.update(id, updateAirlineDiscountDto);
     }
-    async deleteAirlineDiscount(header, id) {
+    async deleteAirlineDiscountMain(header, id) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
@@ -67,17 +68,42 @@ let AirlinesService = class AirlinesService {
         }
         return await this.airlineDiscountRepository.delete(data.id);
     }
-    async create(header, createAirlineDto) {
+    async createAirlineDiscountForAgent(header, createAirlineDiscountDto) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        const airlinesData = await this.airlinesRepository.findOne({ where: { iata: createAirlineDto.iata }
-        });
-        if (airlinesData) {
-            throw new common_1.HttpException("Airlines already exist", common_1.HttpStatus.CONFLICT);
+        const discount = this.airlineDiscountForAgentRepository.create(createAirlineDiscountDto);
+        return this.airlineDiscountForAgentRepository.save(discount);
+    }
+    async viewAirlineDiscountForAgent(header, agentId) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
         }
-        return await this.airlinesRepository.save(createAirlineDto);
+        return await this.airlineDiscountForAgentRepository.find({ where: { agentId } });
+    }
+    async updateAirlineDiscountForAgent(header, id, updateAirlineDiscountForAgentDto) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        const data = await this.airlineDiscountForAgentRepository.findOneBy({ id: id });
+        if (!data) {
+            throw new common_1.NotFoundException("Not found");
+        }
+        return this.airlineDiscountForAgentRepository.update(id, updateAirlineDiscountForAgentDto);
+    }
+    async deleteAirlineDiscountForAgent(header, id) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        const data = await this.airlineDiscountForAgentRepository.findOneBy({ id: id });
+        if (!data) {
+            throw new common_1.NotFoundException("Not found");
+        }
+        return await this.airlineDiscountForAgentRepository.delete(data.id);
     }
     async getAirlines(code) {
         const airlinesData = await this.airlinesRepository.findOne({
@@ -99,28 +125,6 @@ let AirlinesService = class AirlinesService {
         }
         return airlinesData.marketing_name;
     }
-    async findAll(header) {
-        const verifyAdminId = await this.authService.verifyAdminToken(header);
-        if (!verifyAdminId) {
-            throw new common_1.UnauthorizedException();
-        }
-        const data = await this.airlinesRepository.find({
-            select: ['id', 'iata', 'marketing_name', 'soto', 'soti', 'sito', 'domestic', 'addAmount', 'isBlocked', 'issuePermit', 'instantPayment', 'bookable'],
-            order: { updatedAt: 'DESC' }
-        });
-        return data;
-    }
-    async findOne(header, id) {
-        const verifyAdminId = await this.authService.verifyAdminToken(header);
-        if (!verifyAdminId) {
-            throw new common_1.UnauthorizedException();
-        }
-        const airlinesData = await this.airlinesRepository.findOne({ where: { id: id } });
-        if (!airlinesData) {
-            throw new common_1.NotFoundException("Not found");
-        }
-        return airlinesData;
-    }
     async update(header, id, updateAirlineDto) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {
@@ -138,7 +142,9 @@ exports.AirlinesService = AirlinesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(airlines_model_1.AirlinesModel)),
     __param(1, (0, typeorm_1.InjectRepository)(airlines_model_1.AirlineDiscount)),
+    __param(2, (0, typeorm_1.InjectRepository)(airlines_model_1.AirlineDiscountForAgent)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         auth_service_1.AuthService])
 ], AirlinesService);

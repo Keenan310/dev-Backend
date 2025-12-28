@@ -171,6 +171,11 @@ __decorate([
     __metadata("design:type", String)
 ], AdminLedger.prototype, "status", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 50 }),
+    __metadata("design:type", String)
+], AdminLedger.prototype, "liable", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
     __metadata("design:type", Date)
 ], AdminLedger.prototype, "created_at", void 0);

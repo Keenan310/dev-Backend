@@ -97,7 +97,6 @@ export class AirlinesModel{
 }
 
 export class AirlinesUpdateModel {
-  
   @ApiProperty()
   @IsNumber()
   soto: number;
@@ -160,6 +159,48 @@ export class AirlineDiscount {
   currency : string;
 
   // <--- CHANGE HERE: JSON columns
+  @Column('simple-json', { nullable: true })
+  from_list: string[];
+
+  @Column('simple-json', { nullable: true })
+  to_list: string[];
+
+  @Column('simple-json', { nullable: true })
+  rbd: string[];
+
+  @Column('simple-json', { nullable: true })
+  source: string[];
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  update_at: Date;
+}
+
+@Entity('airline_discounts_for_agent')
+export class AirlineDiscountForAgent {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  agentId: string;
+
+  @Column()
+  airline: string;
+
+  @Column('decimal', { precision: 5, scale: 2, nullable: true })
+  discount_percent: number;
+
+  @Column('decimal', { precision: 10, scale: 2, nullable: true })
+  fix_discount: number;
+
+  @Column()
+  travel_date: string;
+
+  @Column()
+  booking_date: string;
+
   @Column('simple-json', { nullable: true })
   from_list: string[];
 

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateAirlineDiscountDto = exports.CreateAirlineDiscountDto = void 0;
+exports.UpdateAirlineDiscountForAgentDto = exports.UpdateAirlineDiscountDto = exports.CreateAirlineDiscountForAgentDto = exports.CreateAirlineDiscountDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class CreateAirlineDiscountDto {
@@ -63,7 +63,61 @@ __decorate([
     (0, class_validator_1.IsArray)(),
     __metadata("design:type", Array)
 ], CreateAirlineDiscountDto.prototype, "source", void 0);
+class CreateAirlineDiscountForAgentDto {
+}
+exports.CreateAirlineDiscountForAgentDto = CreateAirlineDiscountForAgentDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateAirlineDiscountForAgentDto.prototype, "airline", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateAirlineDiscountForAgentDto.prototype, "discount_percent", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateAirlineDiscountForAgentDto.prototype, "fix_discount", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateAirlineDiscountForAgentDto.prototype, "travel_date", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateAirlineDiscountForAgentDto.prototype, "booking_date", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateAirlineDiscountForAgentDto.prototype, "currency", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
+], CreateAirlineDiscountForAgentDto.prototype, "from_list", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
+], CreateAirlineDiscountForAgentDto.prototype, "to_list", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
+], CreateAirlineDiscountForAgentDto.prototype, "rbd", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
+], CreateAirlineDiscountForAgentDto.prototype, "source", void 0);
 class UpdateAirlineDiscountDto extends (0, swagger_1.PartialType)(CreateAirlineDiscountDto) {
 }
 exports.UpdateAirlineDiscountDto = UpdateAirlineDiscountDto;
+class UpdateAirlineDiscountForAgentDto extends (0, swagger_1.PartialType)(CreateAirlineDiscountForAgentDto) {
+}
+exports.UpdateAirlineDiscountForAgentDto = UpdateAirlineDiscountForAgentDto;
 //# sourceMappingURL=airlines.dto.js.map

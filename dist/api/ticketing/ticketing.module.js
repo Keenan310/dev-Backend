@@ -23,16 +23,14 @@ const mail_service_1 = require("../../mail/mail.service");
 const passenger_model_1 = require("../passenger/passenger.model");
 const auth_utils_1 = require("../auth/auth.utils");
 const auth_model_1 = require("../auth/auth.model");
-const activitylog_service_1 = require("../activitylog/activitylog.service");
-const activitylog_entity_1 = require("../activitylog/entities/activitylog.entity");
 let TicketingModule = class TicketingModule {
 };
 exports.TicketingModule = TicketingModule;
 exports.TicketingModule = TicketingModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([agent_model_1.AgentModel, passenger_model_1.PassengerModel, ticketing_model_1.TicketModel, report_model_1.AgentLedgerModel, admin_model_1.AdminModel, booking_model_1.BookingModel, staff_model_1.StaffModel, auth_model_1.OTPModel, activitylog_entity_1.ActivityLogModel])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([agent_model_1.AgentModel, passenger_model_1.PassengerModel, ticketing_model_1.TicketModel, report_model_1.AgentLedgerModel, admin_model_1.AdminModel, booking_model_1.BookingModel, staff_model_1.StaffModel, auth_model_1.OTPModel])],
         controllers: [ticketing_controller_1.TicketingController],
-        providers: [ticketing_service_1.TicketingService, auth_service_1.AuthService, jwt_1.JwtService, auth_utils_1.AuthUtils, mail_service_1.MailService, activitylog_service_1.ActivitylogService],
+        providers: [ticketing_service_1.TicketingService, auth_service_1.AuthService, jwt_1.JwtService, auth_utils_1.AuthUtils, mail_service_1.MailService],
     })
 ], TicketingModule);
 //# sourceMappingURL=ticketing.module.js.map

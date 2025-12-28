@@ -56,3 +56,18 @@ export declare class AirlineDiscount {
     created_at: Date;
     update_at: Date;
 }
+export declare class AirlineDiscountForAgent {
+    id: number;
+    agentId: string;
+    airline: string;
+    discount_percent: number;
+    fix_discount: number;
+    travel_date: string;
+    booking_date: string;
+    from_list: string[];
+    to_list: string[];
+    rbd: string[];
+    source: string[];
+    created_at: Date;
+    update_at: Date;
+}

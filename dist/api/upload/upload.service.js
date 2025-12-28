@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UploadService = void 0;
 const common_1 = require("@nestjs/common");
 const path_1 = require("path");
-const AWS = require("aws-sdk");
+const client_s3_1 = require("@aws-sdk/client-s3");
 const bcrypt = require("bcrypt");
 const upload_provider_service_1 = require("./upload.provider.service");
 const uuid_1 = require("uuid");
@@ -34,6 +34,7 @@ const staff_model_1 = require("../staff/staff.model");
 const admin_model_1 = require("../admin/admin.model");
 const auth_utils_1 = require("../auth/auth.utils");
 dotenv.config();
+const publicReadAcl = 'public-read';
 let UploadService = class UploadService {
     constructor(s3, agentRepository, passengerRepository, adminRepository, bookingRepository, staffRepository, promotionRepository, reissueRepository, depositRepository, authService, mailService, authUtils) {
         this.s3 = s3;
@@ -90,10 +91,10 @@ let UploadService = class UploadService {
                     Bucket: process.env.BUCKET_NAME,
                     Key: nidKey,
                     Body: files.nid[0].buffer,
-                    ACL: 'public-read',
+                    ACL: publicReadAcl,
                     ContentType: files.nid[0].mimetype
                 };
-                uploads.push(this.s3.upload(nidParams).promise().then(() => `${process.env.CDN_SPACES}/${nidKey}`));
+                uploads.push(this.s3.send(new client_s3_1.PutObjectCommand(nidParams)).then(() => `${process.env.CDN_SPACES}/${nidKey}`));
             }
             if (files?.tl && files?.tl[0]) {
                 const tlFileType = files.tl[0].originalname.split('.').pop();
@@ -102,10 +103,10 @@ let UploadService = class UploadService {
                     Bucket: process.env.BUCKET_NAME,
                     Key: tlKey,
                     Body: files.tl[0].buffer,
-                    ACL: 'public-read',
+                    ACL: publicReadAcl,
                     ContentType: files.tl[0].mimetype
                 };
-                uploads.push(this.s3.upload(tlParams).promise().then(() => `${process.env.CDN_SPACES}/${tlKey}`));
+                uploads.push(this.s3.send(new client_s3_1.PutObjectCommand(tlParams)).then(() => `${process.env.CDN_SPACES}/${tlKey}`));
             }
             const [nidUrl, tlUrl] = await Promise.all(uploads);
             if (nidUrl)
@@ -136,20 +137,19 @@ let UploadService = class UploadService {
             Bucket: process.env.BUCKET_NAME,
             Key: 'B2B/' + keyvalue,
             Body: file.buffer,
-            ACL: 'public-read',
+            ACL: publicReadAcl,
             ContentType: file.mimetype
         };
-        this.s3.putObject(params, (err, data) => {
-            if (err) {
-                res.status(500).json({ status: 'error', message: 'Something Error In Code' });
-            }
-            else {
-                const url = process.env.CDN_SPACES + '/B2B/' + keyvalue;
-                agent['logo'] = url;
-                this.agentRepository.update(agent.id, agent);
-                res.status(201).json({ status: 'success', message: 'Logo uploaded successfully', fileurl: url });
-            }
-        });
+        try {
+            await this.s3.send(new client_s3_1.PutObjectCommand(params));
+        }
+        catch (err) {
+            return res.status(500).json({ status: 'error', message: 'Something Error In Code' });
+        }
+        const url = process.env.CDN_SPACES + '/B2B/' + keyvalue;
+        agent['logo'] = url;
+        this.agentRepository.update(agent.id, agent);
+        return res.status(201).json({ status: 'success', message: 'Logo uploaded successfully', fileurl: url });
     }
     async updateDocuments(header, option, file, res) {
         const agent = await this.authService.verifyAgentToken(header);
@@ -173,20 +173,19 @@ let UploadService = class UploadService {
             Bucket: process.env.BUCKET_NAME,
             Key: 'B2B/' + keyvalue,
             Body: file.buffer,
-            ACL: 'public-read',
+            ACL: publicReadAcl,
             ContentType: file.mimetype
         };
-        this.s3.putObject(params, (err, data) => {
-            if (err) {
-                res.status(500).json({ status: 'error', message: 'Something Error In Code' });
-            }
-            else {
-                const url = process.env.CDN_SPACES + '/B2B/' + keyvalue;
-                agent[folder] = url;
-                this.agentRepository.update(agent.id, agent);
-                res.status(201).json({ status: 'success', message: folder + ' uploaded successfully', fileurl: url });
-            }
-        });
+        try {
+            await this.s3.send(new client_s3_1.PutObjectCommand(params));
+        }
+        catch (err) {
+            return res.status(500).json({ status: 'error', message: 'Something Error In Code' });
+        }
+        const url = process.env.CDN_SPACES + '/B2B/' + keyvalue;
+        agent[folder] = url;
+        this.agentRepository.update(agent.id, agent);
+        return res.status(201).json({ status: 'success', message: folder + ' uploaded successfully', fileurl: url });
     }
     async uploadPassengerDocs(docs, paxUId, file, res) {
         if (!file) {
@@ -208,25 +207,24 @@ let UploadService = class UploadService {
             Bucket: process.env.BUCKET_NAME,
             Key: 'B2B/' + keyvalue,
             Body: file.buffer,
-            ACL: 'public-read',
+            ACL: publicReadAcl,
             ContentType: file.mimetype
         };
-        this.s3.putObject(params, async (err, data) => {
-            if (err) {
-                res.status(500).json({ status: 'error', message: 'Something Error In Code' });
-            }
-            else {
-                const url = process.env.CDN_SPACES + '/B2B/' + keyvalue;
-                if (docs === 'visa') {
-                    passenger['visa'] = url;
-                }
-                else if (docs === 'passport') {
-                    passenger['passport'] = url;
-                }
-                await this.passengerRepository.update(passenger.id, passenger);
-                res.status(201).json({ status: 'success', message: docs.toLocaleUpperCase() + ' Copy uploaded successfully', fileurl: url });
-            }
-        });
+        try {
+            await this.s3.send(new client_s3_1.PutObjectCommand(params));
+        }
+        catch (err) {
+            return res.status(500).json({ status: 'error', message: 'Something Error In Code' });
+        }
+        const url = process.env.CDN_SPACES + '/B2B/' + keyvalue;
+        if (docs === 'visa') {
+            passenger['visa'] = url;
+        }
+        else if (docs === 'passport') {
+            passenger['passport'] = url;
+        }
+        await this.passengerRepository.update(passenger.id, passenger);
+        return res.status(201).json({ status: 'success', message: docs.toLocaleUpperCase() + ' Copy uploaded successfully', fileurl: url });
     }
     async addDeposit(header, amount, sender, receiver, paymentway, reference, file, res) {
         const agent = await this.authService.verifyAgentToken(header);
@@ -252,42 +250,41 @@ let UploadService = class UploadService {
             Bucket: process.env.BUCKET_NAME,
             Key: 'B2B/' + keyvalue,
             Body: file.buffer,
-            ACL: 'public-read',
+            ACL: publicReadAcl,
             ContentType: file.mimetype
         };
-        this.s3.putObject(params, async (err, data) => {
-            if (err) {
-                throw new common_1.HttpException('Something Error', common_1.HttpStatus.BAD_REQUEST);
-            }
-            else {
-                const url = process.env.CDN_SPACES + '/B2B/' + keyvalue;
-                const deposit = await this.depositRepository.find({
-                    order: { id: 'DESC' }, take: 1,
-                });
-                let depositId;
-                if (deposit.length === 1) {
-                    let old_deposit_id = (deposit[0].depositId).replace("KTD", '');
-                    depositId = "KTD" + (parseInt(old_deposit_id) + 1);
-                }
-                else {
-                    depositId = 'KTD1000';
-                }
-                const depositModel = new deposit_model_1.DepositModel;
-                depositModel.depositId = depositId;
-                depositModel.agentId = agent.agentId;
-                depositModel.sender = sender;
-                depositModel.receiver = receiver;
-                depositModel.paymentway = paymentway;
-                depositModel.ref = reference;
-                depositModel.status = "pending";
-                depositModel.amount = amount;
-                depositModel.attachment = url;
-                depositModel.companyname = agent.company;
-                const depostResult = await this.depositRepository.save(depositModel);
-                await this.mailService.depositRequest(depositModel, file);
-                res.status(201).json(depostResult);
-            }
+        try {
+            await this.s3.send(new client_s3_1.PutObjectCommand(params));
+        }
+        catch (err) {
+            throw new common_1.HttpException('Something Error', common_1.HttpStatus.BAD_REQUEST);
+        }
+        const url = process.env.CDN_SPACES + '/B2B/' + keyvalue;
+        const deposit = await this.depositRepository.find({
+            order: { id: 'DESC' }, take: 1,
         });
+        let depositId;
+        if (deposit.length === 1) {
+            let old_deposit_id = (deposit[0].depositId).replace("KTD", '');
+            depositId = "KTD" + (parseInt(old_deposit_id) + 1);
+        }
+        else {
+            depositId = 'KTD1000';
+        }
+        const depositModel = new deposit_model_1.DepositModel;
+        depositModel.depositId = depositId;
+        depositModel.agentId = agent.agentId;
+        depositModel.sender = sender;
+        depositModel.receiver = receiver;
+        depositModel.paymentway = paymentway;
+        depositModel.ref = reference;
+        depositModel.status = "pending";
+        depositModel.amount = amount;
+        depositModel.attachment = url;
+        depositModel.companyname = agent.company;
+        const depostResult = await this.depositRepository.save(depositModel);
+        await this.mailService.depositRequest(depositModel, file);
+        return res.status(201).json(depostResult);
     }
     async addPromotion(header, category, file, res) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
@@ -304,23 +301,22 @@ let UploadService = class UploadService {
             Bucket: process.env.BUCKET_NAME,
             Key: 'B2B/' + keyvalue,
             Body: file.buffer,
-            ACL: 'public-read',
+            ACL: publicReadAcl,
             ContentType: file.mimetype
         };
-        this.s3.putObject(params, (err, data) => {
-            if (err) {
-                res.status(500).json({ status: 'error', message: 'Something Error In Code' });
-            }
-            else {
-                const url = process.env.CDN_SPACES + '/B2B/' + keyvalue;
-                const data = new promotion_model_1.PromotionModel();
-                data.image = url;
-                data.category = category;
-                data.caption = category;
-                this.promotionRepository.save(data);
-                res.status(201).json({ status: 'success', message: 'Promotion uploaded successfully', fileurl: url });
-            }
-        });
+        try {
+            await this.s3.send(new client_s3_1.PutObjectCommand(params));
+        }
+        catch (err) {
+            return res.status(500).json({ status: 'error', message: 'Something Error In Code' });
+        }
+        const url = process.env.CDN_SPACES + '/B2B/' + keyvalue;
+        const data = new promotion_model_1.PromotionModel();
+        data.image = url;
+        data.category = category;
+        data.caption = category;
+        this.promotionRepository.save(data);
+        return res.status(201).json({ status: 'success', message: 'Promotion uploaded successfully', fileurl: url });
     }
     async uploadReissueTicketCopy(header, bookingUId, UId, file, res) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
@@ -339,21 +335,20 @@ let UploadService = class UploadService {
             Bucket: process.env.BUCKET_NAME,
             Key: 'B2B/' + keyvalue,
             Body: file.buffer,
-            ACL: 'public-read',
+            ACL: publicReadAcl,
             ContentType: file.mimetype
         };
         const reissue = await this.reissueRepository.findOne({ where: { uid: UId } });
-        this.s3.putObject(params, (err, data) => {
-            if (err) {
-                res.status(500).json({ status: 'error', message: 'Something Error In Code' });
-            }
-            else {
-                const url = process.env.CDN_SPACES + '/B2B/' + keyvalue;
-                reissue.reissuecopy = url;
-                this.reissueRepository.update(reissue.id, reissue);
-                res.status(201).json({ status: 'success', message: 'File uploaded successfully', fileurl: url });
-            }
-        });
+        try {
+            await this.s3.send(new client_s3_1.PutObjectCommand(params));
+        }
+        catch (err) {
+            return res.status(500).json({ status: 'error', message: 'Something Error In Code' });
+        }
+        const url = process.env.CDN_SPACES + '/B2B/' + keyvalue;
+        reissue.reissuecopy = url;
+        this.reissueRepository.update(reissue.id, reissue);
+        return res.status(201).json({ status: 'success', message: 'File uploaded successfully', fileurl: url });
     }
 };
 exports.UploadService = UploadService;
@@ -368,7 +363,8 @@ exports.UploadService = UploadService = __decorate([
     __param(6, (0, typeorm_1.InjectRepository)(promotion_model_1.PromotionModel)),
     __param(7, (0, typeorm_1.InjectRepository)(reissue_model_1.ReissueModel)),
     __param(8, (0, typeorm_1.InjectRepository)(deposit_model_1.DepositModel)),
-    __metadata("design:paramtypes", [AWS.S3, typeorm_2.Repository,
+    __metadata("design:paramtypes", [client_s3_1.S3Client,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

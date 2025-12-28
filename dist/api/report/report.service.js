@@ -17,7 +17,7 @@ const common_1 = require("@nestjs/common");
 const report_model_1 = require("./report.model");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const dayjs = require("dayjs");
+const dayjs_1 = require("dayjs");
 const agent_model_1 = require("../agent/agent.model");
 const booking_model_1 = require("../booking/booking.model");
 const deposit_model_1 = require("../deposit/deposit.model");
@@ -40,7 +40,7 @@ let ReportService = class ReportService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        const now = dayjs();
+        const now = (0, dayjs_1.default)();
         const startOfYear = now.startOf('year').toDate();
         const endOfYear = now.endOf('year').toDate();
         const [bookingData, agentData] = await Promise.all([
@@ -58,7 +58,7 @@ let ReportService = class ReportService {
         ]);
         const currentMonth = now.month();
         const months = Array.from({ length: currentMonth + 1 }).map((_, i) => {
-            const date = dayjs().month(i).startOf('month');
+            const date = (0, dayjs_1.default)().month(i).startOf('month');
             return {
                 month: date.format('MMM YYYY'),
                 bookingCount: 0,
@@ -68,13 +68,13 @@ let ReportService = class ReportService {
             };
         });
         bookingData.forEach(b => {
-            const month = dayjs(b.created_at).format('MMM YYYY');
+            const month = (0, dayjs_1.default)(b.created_at).format('MMM YYYY');
             const bucket = months.find(m => m.month === month);
             if (bucket)
                 bucket.bookingCount++;
         });
         agentData.forEach(a => {
-            const month = dayjs(a.created_at).format('MMM YYYY');
+            const month = (0, dayjs_1.default)(a.created_at).format('MMM YYYY');
             const bucket = months.find(m => m.month === month);
             if (bucket)
                 bucket.agentCount++;
@@ -474,14 +474,14 @@ let ReportService = class ReportService {
         const expense = await this.adminExpenseRepository
             .createQueryBuilder('expense')
             .select('SUM(expense.amount)', 'totalAmount')
-            .where('ledger.created_at BETWEEN :startDate AND :endDate', {
+            .where('expense.created_at BETWEEN :startDate AND :endDate', {
             startDate: startDate,
             endDate: endDate
         }).getRawOne();
         const ledgerData = {
             lossProfit: bookingTicketed?.totalProfit || 0,
             ledger: ledger,
-            totalExpense: expense.totalAmount,
+            totalExpense: expense?.totalAmount || 0,
             totalIncome: sell?.totalAmount || 0,
         };
         return ledgerData;
@@ -491,7 +491,7 @@ let ReportService = class ReportService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        const now = dayjs();
+        const now = (0, dayjs_1.default)();
         const startOfYear = now.startOf('year').toDate();
         const endOfYear = now.endOf('year').toDate();
         const [bookingData, agentData] = await Promise.all([
@@ -509,7 +509,7 @@ let ReportService = class ReportService {
         ]);
         const currentMonth = now.month();
         const months = Array.from({ length: currentMonth + 1 }).map((_, i) => {
-            const date = dayjs().month(i).startOf('month');
+            const date = (0, dayjs_1.default)().month(i).startOf('month');
             return {
                 month: date.format('MMM YYYY'),
                 bookingCount: 0,
@@ -519,13 +519,13 @@ let ReportService = class ReportService {
             };
         });
         bookingData.forEach(b => {
-            const month = dayjs(b.created_at).format('MMM YYYY');
+            const month = (0, dayjs_1.default)(b.created_at).format('MMM YYYY');
             const bucket = months.find(m => m.month === month);
             if (bucket)
                 bucket.bookingCount++;
         });
         agentData.forEach(a => {
-            const month = dayjs(a.created_at).format('MMM YYYY');
+            const month = (0, dayjs_1.default)(a.created_at).format('MMM YYYY');
             const bucket = months.find(m => m.month === month);
             if (bucket)
                 bucket.agentCount++;

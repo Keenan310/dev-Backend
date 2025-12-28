@@ -18,12 +18,10 @@ const dotenv = require("dotenv");
 const typeorm_1 = require("@nestjs/typeorm");
 const booking_model_1 = require("./booking.model");
 const typeorm_2 = require("typeorm");
-const activitylog_service_1 = require("../activitylog/activitylog.service");
 dotenv.config();
 let BookingUtils = class BookingUtils {
-    constructor(bookingRepository, activityLogService) {
+    constructor(bookingRepository) {
         this.bookingRepository = bookingRepository;
-        this.activityLogService = activityLogService;
     }
     async bookingParser(agentdata, responseData, bookingDto, priceCheck) {
         const agentId = agentdata.agentId;
@@ -84,7 +82,6 @@ let BookingUtils = class BookingUtils {
         };
         const activityLog = { agentId: agentId, status: 'Hold', platform: 'B2B',
             refId: bookingId, module: 'Booking', action_by: agentdata.name };
-        await this.activityLogService.create(activityLog);
         return bookingData;
     }
     async generatePNR() {
@@ -110,7 +107,6 @@ exports.BookingUtils = BookingUtils;
 exports.BookingUtils = BookingUtils = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(booking_model_1.BookingModel)),
-    __metadata("design:paramtypes", [typeorm_2.Repository,
-        activitylog_service_1.ActivitylogService])
+    __metadata("design:paramtypes", [typeorm_2.Repository])
 ], BookingUtils);
 //# sourceMappingURL=booking.utils.js.map

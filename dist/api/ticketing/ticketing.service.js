@@ -23,10 +23,8 @@ const auth_service_1 = require("../auth/auth.service");
 const axios_1 = require("axios");
 const passenger_model_1 = require("../passenger/passenger.model");
 const mail_service_1 = require("../../mail/mail.service");
-const activitylog_service_1 = require("../activitylog/activitylog.service");
 let TicketingService = class TicketingService {
-    constructor(activityLogService, agentRepository, agentLedgerRepository, ticketingRepository, bookingRepository, passengerRepository, mailService, authService) {
-        this.activityLogService = activityLogService;
+    constructor(agentRepository, agentLedgerRepository, ticketingRepository, bookingRepository, passengerRepository, mailService, authService) {
         this.agentRepository = agentRepository;
         this.agentLedgerRepository = agentLedgerRepository;
         this.ticketingRepository = ticketingRepository;
@@ -131,8 +129,6 @@ let TicketingService = class TicketingService {
         await this.agentLedgerRepository.save(AgentLedgerData);
         const bookingResponse = await this.bookingRepository.update(booking.id, booking);
         if (bookingResponse.affected === 1) {
-            await this.activityLogService.create({ agentId: booking.agentId, status: booking.status, platform: 'Admin',
-                refId: booking.bookingId, module: 'Booking', action_by: verifyAdminId.firstname });
             return { message: "Ticket Issued" };
         }
         else {
@@ -160,8 +156,6 @@ let TicketingService = class TicketingService {
         const bookingResponse = await this.bookingRepository.update(booking.id, booking);
         if (bookingResponse.affected === 1) {
             await this.mailService.IssueRequestRejectMail(booking);
-            await this.activityLogService.create({ agentId: booking.agentId, status: booking.status, platform: 'Admin',
-                refId: booking.bookingId, module: 'Booking', action_by: verifyAdminId.firstname });
             return { message: "Issue Request Rejected" };
         }
         else {
@@ -172,13 +166,12 @@ let TicketingService = class TicketingService {
 exports.TicketingService = TicketingService;
 exports.TicketingService = TicketingService = __decorate([
     (0, common_1.Injectable)(),
-    __param(1, (0, typeorm_1.InjectRepository)(agent_model_1.AgentModel)),
-    __param(2, (0, typeorm_1.InjectRepository)(report_model_1.AgentLedgerModel)),
-    __param(3, (0, typeorm_1.InjectRepository)(booking_model_1.TicketModel)),
-    __param(4, (0, typeorm_1.InjectRepository)(booking_model_1.BookingModel)),
-    __param(5, (0, typeorm_1.InjectRepository)(passenger_model_1.PassengerModel)),
-    __metadata("design:paramtypes", [activitylog_service_1.ActivitylogService,
-        typeorm_2.Repository,
+    __param(0, (0, typeorm_1.InjectRepository)(agent_model_1.AgentModel)),
+    __param(1, (0, typeorm_1.InjectRepository)(report_model_1.AgentLedgerModel)),
+    __param(2, (0, typeorm_1.InjectRepository)(booking_model_1.TicketModel)),
+    __param(3, (0, typeorm_1.InjectRepository)(booking_model_1.BookingModel)),
+    __param(4, (0, typeorm_1.InjectRepository)(passenger_model_1.PassengerModel)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

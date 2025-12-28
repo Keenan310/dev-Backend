@@ -1,4 +1,4 @@
-import * as AWS from 'aws-sdk';
+import { S3Client } from '@aws-sdk/client-s3';
 import { AgentModel } from '../agent/agent.model';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
@@ -24,12 +24,12 @@ export declare class UploadService {
     private readonly authService;
     private readonly mailService;
     private readonly authUtils;
-    constructor(s3: AWS.S3, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, adminRepository: Repository<AdminModel>, bookingRepository: Repository<BookingModel>, staffRepository: Repository<StaffModel>, promotionRepository: Repository<PromotionModel>, reissueRepository: Repository<ReissueModel>, depositRepository: Repository<DepositModel>, authService: AuthService, mailService: MailService, authUtils: AuthUtils);
+    constructor(s3: S3Client, agentRepository: Repository<AgentModel>, passengerRepository: Repository<PassengerModel>, adminRepository: Repository<AdminModel>, bookingRepository: Repository<BookingModel>, staffRepository: Repository<StaffModel>, promotionRepository: Repository<PromotionModel>, reissueRepository: Repository<ReissueModel>, depositRepository: Repository<DepositModel>, authService: AuthService, mailService: MailService, authUtils: AuthUtils);
     signup(agentDto: AgentModel, files: any): Promise<any>;
-    uploadAgentLogo(header: any, file: any, res: any): Promise<void>;
-    updateDocuments(header: any, option: string, file: any, res: any): Promise<void>;
-    uploadPassengerDocs(docs: string, paxUId: string, file: any, res: any): Promise<void>;
-    addDeposit(header: any, amount: number, sender: string, receiver: string, paymentway: string, reference: string, file: any, res: any): Promise<void>;
-    addPromotion(header: any, category: string, file: any, res: any): Promise<void>;
-    uploadReissueTicketCopy(header: any, bookingUId: string, UId: string, file: any, res: any): Promise<void>;
+    uploadAgentLogo(header: any, file: any, res: any): Promise<any>;
+    updateDocuments(header: any, option: string, file: any, res: any): Promise<any>;
+    uploadPassengerDocs(docs: string, paxUId: string, file: any, res: any): Promise<any>;
+    addDeposit(header: any, amount: number, sender: string, receiver: string, paymentway: string, reference: string, file: any, res: any): Promise<any>;
+    addPromotion(header: any, category: string, file: any, res: any): Promise<any>;
+    uploadReissueTicketCopy(header: any, bookingUId: string, UId: string, file: any, res: any): Promise<any>;
 }

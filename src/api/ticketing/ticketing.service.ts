@@ -9,13 +9,11 @@ import { HttpStatusCode } from 'axios';
 import { MakeTicketModel } from './ticketing.model';
 import { PassengerModel } from '../passenger/passenger.model';
 import { MailService } from '../../mail/mail.service';
-import { ActivitylogService } from '../activitylog/activitylog.service';
 
 @Injectable()
 export class TicketingService {
 
   constructor(
-    private readonly activityLogService: ActivitylogService,
     @InjectRepository(AgentModel)
     private readonly agentRepository: Repository<AgentModel>,
     @InjectRepository(AgentLedgerModel)
@@ -141,8 +139,6 @@ export class TicketingService {
 
     const bookingResponse = await this.bookingRepository.update(booking.id, booking);
     if(bookingResponse.affected === 1){
-      await this.activityLogService.create({agentId: booking.agentId, status: booking.status, platform: 'Admin',
-       refId: booking.bookingId, module: 'Booking', action_by: verifyAdminId.firstname  });
       return { message: "Ticket Issued"};
     }else{
       return { message: 'Something error'};
@@ -177,8 +173,6 @@ export class TicketingService {
 
     if(bookingResponse.affected === 1){
       await this.mailService.IssueRequestRejectMail(booking);
-      await this.activityLogService.create({agentId: booking.agentId, status: booking.status, platform: 'Admin',
-       refId: booking.bookingId, module: 'Booking', action_by: verifyAdminId.firstname  });
       return { message: "Issue Request Rejected"};
     }else{
       return { message: 'Something error'};

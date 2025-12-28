@@ -12,7 +12,6 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const database_module_1 = require("./database/database.module");
 const api_module_1 = require("./api/api.module");
-const utils_module_1 = require("./utils/utils.module");
 const config_1 = require("@nestjs/config");
 const mail_module_1 = require("./mail/mail.module");
 const paymentgateway_module_1 = require("./paymentgateway/paymentgateway.module");
@@ -25,7 +24,7 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({
                 envFilePath: '.env'
             }),
-            database_module_1.DatabaseModule, api_module_1.ApiModule, utils_module_1.UtilsModule, mail_module_1.MailModule, paymentgateway_module_1.PaymentgatewayModule
+            database_module_1.DatabaseModule, api_module_1.ApiModule, mail_module_1.MailModule, paymentgateway_module_1.PaymentgatewayModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [

@@ -14,12 +14,10 @@ import { MailService } from 'src/mail/mail.service';
 import { PassengerModel } from '../passenger/passenger.model';
 import { AuthUtils } from '../auth/auth.utils';
 import { OTPModel } from '../auth/auth.model';
-import { ActivitylogService } from '../activitylog/activitylog.service';
-import { ActivityLogModel } from '../activitylog/entities/activitylog.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AgentModel, PassengerModel, TicketModel, AgentLedgerModel, AdminModel, BookingModel, StaffModel, OTPModel, ActivityLogModel])],
+  imports: [TypeOrmModule.forFeature([AgentModel, PassengerModel, TicketModel, AgentLedgerModel, AdminModel, BookingModel, StaffModel, OTPModel])],
   controllers: [TicketingController],
-  providers: [TicketingService, AuthService, JwtService, AuthUtils, MailService, ActivitylogService],
+  providers: [TicketingService, AuthService, JwtService, AuthUtils, MailService],
 })
 export class TicketingModule {}

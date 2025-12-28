@@ -22,7 +22,6 @@ import { NotesModule } from './notes/notes.module';
 import { VoidModule } from './void/void.module';
 import { TicketingModule } from './ticketing/ticketing.module';
 import { TravellerModule } from './traveller/traveller.module';
-import { ActivitylogModule } from './activitylog/activitylog.module';
 import { MarkupModule } from './admin/markup/markup.module';
 import { ControlModule } from './admin/control/control.module';
 import { CurrencyModule } from './currency/currency.module';
@@ -31,6 +30,6 @@ import { CurrencyModule } from './currency/currency.module';
     RefundModule, ReissueModule, TravellerModule, NoticeModule, PromotionModule, AirlinesModule,
     PassengerModule, DepositModule, ReportModule, UploadModule, StaffModule, GroupfareModule,
      NotesModule, BanklistModule, AirportsModule, SearchhistoryModule, MarkupModule,
-    ControlModule, ActivitylogModule, CurrencyModule]
+    ControlModule, CurrencyModule]
 })
 export class ApiModule {}

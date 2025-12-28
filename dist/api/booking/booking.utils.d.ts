@@ -1,11 +1,9 @@
 import { AgentModel } from '../agent/agent.model';
 import { BookingModel } from './booking.model';
 import { Repository } from 'typeorm';
-import { ActivitylogService } from '../activitylog/activitylog.service';
 export declare class BookingUtils {
     private readonly bookingRepository;
-    private readonly activityLogService;
-    constructor(bookingRepository: Repository<BookingModel>, activityLogService: ActivitylogService);
+    constructor(bookingRepository: Repository<BookingModel>);
     bookingParser(agentdata: AgentModel, responseData: any, bookingDto: any, priceCheck: any): Promise<{
         agentId: string;
         bookingId: string;

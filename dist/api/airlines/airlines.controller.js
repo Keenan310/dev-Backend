@@ -23,19 +23,28 @@ let AirlinesController = class AirlinesController {
         this.airlinesService = airlinesService;
     }
     createAirlineDiscount(header, dto) {
-        return this.airlinesService.createAirlineDiscount(header, dto);
+        return this.airlinesService.createAirlineDiscountMain(header, dto);
     }
     viewAirlineDiscount(header, currency) {
-        return this.airlinesService.viewAirlineDiscount(header, currency);
+        return this.airlinesService.viewAirlineDiscountMain(header, currency);
     }
     updateAirlineDiscount(header, id, updateAirlineDiscountDto) {
-        return this.airlinesService.updateAirlineDiscount(header, +id, updateAirlineDiscountDto);
+        return this.airlinesService.updateAirlineDiscountMain(header, +id, updateAirlineDiscountDto);
     }
     deleteAirlineDiscount(header, id) {
-        return this.airlinesService.deleteAirlineDiscount(header, +id);
+        return this.airlinesService.deleteAirlineDiscountMain(header, +id);
     }
-    findAll(header) {
-        return this.airlinesService.findAll(header);
+    createAirlineDiscountForAgent(header, dto) {
+        return this.airlinesService.createAirlineDiscountForAgent(header, dto);
+    }
+    viewAirlineDiscountForAgent(header, agentId) {
+        return this.airlinesService.viewAirlineDiscountForAgent(header, agentId);
+    }
+    updateAirlineDiscountForAgent(header, id, updateAirlineDiscountDto) {
+        return this.airlinesService.updateAirlineDiscountForAgent(header, +id, updateAirlineDiscountDto);
+    }
+    deleteAirlineDiscountForAgent(header, id) {
+        return this.airlinesService.deleteAirlineDiscountForAgent(header, +id);
     }
     updatemarkup(header, id, updateAirlineDto) {
         return this.airlinesService.update(header, +id, updateAirlineDto);
@@ -77,14 +86,41 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AirlinesController.prototype, "deleteAirlineDiscount", null);
 __decorate([
-    (0, common_1.Get)('admin/airlines/all'),
+    (0, common_1.Post)('admin/singleagent/airline/discount'),
     __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, airlines_dto_1.CreateAirlineDiscountDto]),
     __metadata("design:returntype", void 0)
-], AirlinesController.prototype, "findAll", null);
+], AirlinesController.prototype, "createAirlineDiscountForAgent", null);
 __decorate([
-    (0, common_1.Patch)('admin/airlines/markup/:id'),
+    (0, common_1.Get)('admin/singleagent/airline/discount'),
+    (0, swagger_1.ApiQuery)({ name: 'agentId', required: true }),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Query)('agentId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], AirlinesController.prototype, "viewAirlineDiscountForAgent", null);
+__decorate([
+    (0, common_1.Patch)('admin/singleagent/airline/discount/:id'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, airlines_dto_1.UpdateAirlineDiscountDto]),
+    __metadata("design:returntype", void 0)
+], AirlinesController.prototype, "updateAirlineDiscountForAgent", null);
+__decorate([
+    (0, common_1.Delete)('admin/singleagent/airline/discount/:id'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], AirlinesController.prototype, "deleteAirlineDiscountForAgent", null);
+__decorate([
+    (0, common_1.Patch)('agent/airlines/markup/:id'),
     __param(0, (0, common_1.Headers)()),
     __param(1, (0, common_1.Param)('id')),
     __param(2, (0, common_1.Body)()),

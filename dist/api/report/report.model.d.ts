@@ -39,6 +39,7 @@ export declare class AdminLedger {
     netfare: number;
     depositAmount: number;
     status: string;
+    liable: string;
     created_at: Date;
     updated_at: Date;
 }

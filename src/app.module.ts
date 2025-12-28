@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { ApiModule } from './api/api.module';
-import { UtilsModule } from './utils/utils.module';
 import { ConfigModule } from '@nestjs/config';
 import { MailModule } from './mail/mail.module';
 import { PaymentgatewayModule } from './paymentgateway/paymentgateway.module';
@@ -16,7 +15,7 @@ import { PaymentgatewayModule } from './paymentgateway/paymentgateway.module';
         envFilePath: '.env'
       }
     ),
-    DatabaseModule, ApiModule, UtilsModule, MailModule, PaymentgatewayModule],
+    DatabaseModule, ApiModule, MailModule, PaymentgatewayModule],
     controllers: [AppController],
     providers: [
       AppService],
