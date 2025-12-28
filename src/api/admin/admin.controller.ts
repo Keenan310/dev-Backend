@@ -20,6 +20,11 @@ export class AdminController {
     return this.adminService.findAll(header);
   }
 
+  @Get('all')
+  findAllAdmin(@Headers() header: Headers) {
+    return this.adminService.findAllAdmin(header);
+  }
+
   @Get(':uid')
   findOne(@Headers() header: Headers, @Param('uid') uid: string) {
     return this.adminService.findOne(header, uid);

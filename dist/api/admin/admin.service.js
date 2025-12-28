@@ -65,7 +65,22 @@ let AdminService = class AdminService {
             throw new common_1.UnauthorizedException();
         }
         const allAdmins = await this.adminRepository.find();
-        return allAdmins.slice(1);
+        return allAdmins.slice(1).map(admin => {
+            if (admin.role === 'superadmin') {
+                const { password, ...rest } = admin;
+                return rest;
+            }
+            return admin;
+        });
+    }
+    async findAllAdmin(header) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        return await this.adminRepository.find({
+            select: ['id', 'firstname', 'lastname'],
+        });
     }
     async findOne(header, uid) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);

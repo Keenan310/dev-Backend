@@ -10,7 +10,21 @@ export declare class AdminService {
     private authService;
     constructor(adminRepository: Repository<AdminModel>, agentRepository: Repository<AgentModel>, staffRepository: Repository<StaffModel>, authService: AuthService);
     create(header: any, createAdminDto: AdminModel): Promise<AdminModel>;
-    findAll(header: any): Promise<AdminModel[]>;
+    findAll(header: any): Promise<{
+        id: number;
+        adminId: string;
+        firstname: string;
+        lastname: string;
+        email: string;
+        phone: string;
+        status: string;
+        role: string;
+        otp: string;
+        created_at: Date;
+        updated_at: Date;
+        uid: string;
+    }[]>;
+    findAllAdmin(header: any): Promise<AdminModel[]>;
     findOne(header: any, uid: string): Promise<AdminModel>;
     update(header: any, uid: string, updateAdminDto: AdminModelUpdate): Promise<import("typeorm").UpdateResult>;
     delete(header: any, uid: string): Promise<import("typeorm").DeleteResult>;

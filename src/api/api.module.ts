@@ -22,14 +22,12 @@ import { NotesModule } from './notes/notes.module';
 import { VoidModule } from './void/void.module';
 import { TicketingModule } from './ticketing/ticketing.module';
 import { TravellerModule } from './traveller/traveller.module';
-import { MarkupModule } from './admin/markup/markup.module';
-import { ControlModule } from './admin/control/control.module';
 import { CurrencyModule } from './currency/currency.module';
 @Module({
   imports: [AuthModule, AgentModule, AdminModule, FlightModule, BookingModule,TicketingModule,VoidModule,
     RefundModule, ReissueModule, TravellerModule, NoticeModule, PromotionModule, AirlinesModule,
     PassengerModule, DepositModule, ReportModule, UploadModule, StaffModule, GroupfareModule,
-     NotesModule, BanklistModule, AirportsModule, SearchhistoryModule, MarkupModule,
-    ControlModule, CurrencyModule]
+     NotesModule, BanklistModule, AirportsModule, SearchhistoryModule
+    , CurrencyModule]
 })
 export class ApiModule {}

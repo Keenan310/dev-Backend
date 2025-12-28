@@ -31,8 +31,6 @@ const notes_module_1 = require("./notes/notes.module");
 const void_module_1 = require("./void/void.module");
 const ticketing_module_1 = require("./ticketing/ticketing.module");
 const traveller_module_1 = require("./traveller/traveller.module");
-const markup_module_1 = require("./admin/markup/markup.module");
-const control_module_1 = require("./admin/control/control.module");
 const currency_module_1 = require("./currency/currency.module");
 let ApiModule = class ApiModule {
 };
@@ -42,8 +40,8 @@ exports.ApiModule = ApiModule = __decorate([
         imports: [auth_module_1.AuthModule, agent_module_1.AgentModule, admin_module_1.AdminModule, flight_module_1.FlightModule, booking_module_1.BookingModule, ticketing_module_1.TicketingModule, void_module_1.VoidModule,
             refund_module_1.RefundModule, reissue_module_1.ReissueModule, traveller_module_1.TravellerModule, notice_module_1.NoticeModule, promotion_module_1.PromotionModule, airlines_module_1.AirlinesModule,
             passenger_module_1.PassengerModule, deposit_module_1.DepositModule, report_module_1.ReportModule, upload_module_1.UploadModule, staff_module_1.StaffModule, groupfare_module_1.GroupfareModule,
-            notes_module_1.NotesModule, banklist_module_1.BanklistModule, airports_module_1.AirportsModule, searchhistory_module_1.SearchhistoryModule, markup_module_1.MarkupModule,
-            control_module_1.ControlModule, currency_module_1.CurrencyModule]
+            notes_module_1.NotesModule, banklist_module_1.BanklistModule, airports_module_1.AirportsModule, searchhistory_module_1.SearchhistoryModule,
+            currency_module_1.CurrencyModule]
     })
 ], ApiModule);
 //# sourceMappingURL=api.module.js.map

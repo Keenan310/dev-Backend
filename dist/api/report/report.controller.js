@@ -46,8 +46,8 @@ let ReportController = class ReportController {
     deleteAgentLedgerByAdmin(header, uid) {
         return this.reportService.deleteAgentLedgerByAdmin(header, uid);
     }
-    findAllAdminLedger(header, startDate, endDate, agentId) {
-        return this.reportService.findAllAdminLedger(header, startDate, endDate, agentId);
+    findAllAdminLedger(header, startDate, endDate, adminId) {
+        return this.reportService.findAllAdminLedger(header, startDate, endDate, adminId);
     }
     findSingleLedgerAdmin(header, agentId) {
         return this.reportService.findSingleAgentLedgerAdmin(header, agentId);
@@ -57,9 +57,6 @@ let ReportController = class ReportController {
             throw new common_1.NotAcceptableException("Limit Range must be 10-100");
         }
         return this.reportService.findAllAgentSingelAdmin(header, agentId, page, limit);
-    }
-    findAllAdminBalance(header) {
-        return this.reportService.findAllAdminBalanceInquery(header);
     }
     findAllReportAdmin(header, startDate, endDate) {
         return this.reportService.findAllReportAdmin(header, startDate, endDate);
@@ -160,12 +157,12 @@ __decorate([
 ], ReportController.prototype, "deleteAgentLedgerByAdmin", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
-    (0, swagger_1.ApiQuery)({ name: 'agentId', required: false }),
+    (0, swagger_1.ApiQuery)({ name: 'adminId', required: false }),
     (0, common_1.Get)('admin/report/ledger/:startDate/:endDate'),
     __param(0, (0, common_1.Headers)()),
     __param(1, (0, common_1.Param)('startDate')),
     __param(2, (0, common_1.Param)('endDate')),
-    __param(3, (0, common_1.Query)('agentId')),
+    __param(3, (0, common_1.Query)('adminId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Date,
         Date, String]),
@@ -190,14 +187,6 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, Number, Number]),
     __metadata("design:returntype", void 0)
 ], ReportController.prototype, "findAgentSingelAllLedger", null);
-__decorate([
-    (0, swagger_1.ApiBearerAuth)('access_token'),
-    (0, common_1.Get)('admin/report/balance/inquery'),
-    __param(0, (0, common_1.Headers)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], ReportController.prototype, "findAllAdminBalance", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Get)('admin/report/:startDate/:endDate'),

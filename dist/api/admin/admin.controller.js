@@ -27,6 +27,9 @@ let AdminController = class AdminController {
     findAll(header) {
         return this.adminService.findAll(header);
     }
+    findAllAdmin(header) {
+        return this.adminService.findAllAdmin(header);
+    }
     findOne(header, uid) {
         return this.adminService.findOne(header, uid);
     }
@@ -53,6 +56,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('all'),
+    __param(0, (0, common_1.Headers)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "findAllAdmin", null);
 __decorate([
     (0, common_1.Get)(':uid'),
     __param(0, (0, common_1.Headers)()),

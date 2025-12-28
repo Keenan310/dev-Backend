@@ -67,15 +67,32 @@ export class AdminService {
   }
 
   async findAll(header: any) {
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
+  const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
+  if (!verifyAdminId) {
+    throw new UnauthorizedException();
+  }
+
+  const allAdmins = await this.adminRepository.find();
+  return allAdmins.slice(1).map(admin => {
+    if (admin.role === 'superadmin') {
+      const { password, ...rest } = admin;
+      return rest;
     }
+    return admin;
+  });
+  }
 
-    const allAdmins = await this.adminRepository.find();
-    return allAdmins.slice(1);
+  async findAllAdmin(header: any) {
+  const verifyAdminId = await this.authService.verifyAdminToken(header);
 
+  if (!verifyAdminId) {
+    throw new UnauthorizedException();
+  }
+
+    return await this.adminRepository.find({
+      select: ['id', 'firstname', 'lastname'],
+    });
   }
 
   async findOne(header:any , uid: string) {

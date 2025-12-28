@@ -77,16 +77,16 @@ export class ReportController {
   }
 
   @ApiBearerAuth('access_token')
-  @ApiQuery({ name: 'agentId', required: false })
+  @ApiQuery({ name: 'adminId', required: false })
   @Get('admin/report/ledger/:startDate/:endDate')
   findAllAdminLedger(
     @Headers() header: string,
     @Param('startDate') startDate: Date,
     @Param('endDate') endDate: Date,
-    @Query('agentId') agentId: string
+    @Query('adminId') adminId: string
 
   ){
-    return this.reportService.findAllAdminLedger(header, startDate, endDate, agentId);
+    return this.reportService.findAllAdminLedger(header, startDate, endDate, adminId);
   }
 
   @Get('admin/report/single/:agentId')
@@ -107,14 +107,6 @@ export class ReportController {
     throw new NotAcceptableException("Limit Range must be 10-100");
   }
     return this.reportService.findAllAgentSingelAdmin(header, agentId, page, limit);
-  }
-
-  @ApiBearerAuth('access_token')
-  @Get('admin/report/balance/inquery')
-  findAllAdminBalance(
-    @Headers() header: string
-  ) {
-    return this.reportService.findAllAdminBalanceInquery(header);
   }
 
   @ApiBearerAuth('access_token')

@@ -631,7 +631,7 @@ let ReportService = class ReportService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        const ledgerQuery = await this.adminLedgerRepository
+        const ledgerQuery = this.adminLedgerRepository
             .createQueryBuilder('ledger')
             .select([
             'ledger.id',
@@ -642,6 +642,7 @@ let ReportService = class ReportService {
             'ledger.supplier',
             'ledger.netfare',
             'ledger.status',
+            'ledger.liable',
             'ledger.agentId AS agentcode',
             '(ledger.netfare - ledger.ticketprice) AS profit'
         ])
@@ -654,7 +655,7 @@ let ReportService = class ReportService {
             ledgerQuery.andWhere('ledger.agentId = :agentId', { agentId });
         }
         const ledger = await ledgerQuery.orderBy('ledger.id', 'DESC').getRawMany();
-        const depositQuery = await this.adminLedgerRepository
+        const depositQuery = this.adminLedgerRepository
             .createQueryBuilder('ledger')
             .select([
             'ledger.id',
@@ -724,32 +725,6 @@ let ReportService = class ReportService {
             lastBalance: totalbalance || 0,
         };
         return ledgerData;
-    }
-    async findAllAdminBalanceInquery(header) {
-        const verifyAdminId = await this.authService.verifyAdminToken(header);
-        if (!verifyAdminId) {
-            throw new common_1.UnauthorizedException();
-        }
-        const ledger = await this.dataSource.query(`SELECT 
-      a.agentId AS agentId,
-      a.phone,
-      a.company,
-      ag.total_deposit,
-      ag.total_sell,
-      ag.current_balance
-      FROM (
-      SELECT 
-          agentId,
-          SUM(CASE WHEN trxtype = 'deposit' THEN credit ELSE 0 END) AS total_deposit,
-          SUM(debit) AS total_sell,
-          SUM(credit - debit) AS current_balance
-      FROM agent_ledger
-      GROUP BY agentId
-      ) AS ag
-      JOIN agents a ON ag.agentId = a.agentId
-      WHERE ag.current_balance < 0
-      ORDER BY ag.current_balance ASC;`);
-        return ledger;
     }
 };
 exports.ReportService = ReportService;
