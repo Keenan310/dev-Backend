@@ -96,4 +96,5 @@ export declare class ReportController {
         totaldata: number;
         data: AdminExpenseModel[];
     }>;
+    findAllAdminBalance(header: string): Promise<any>;
 }

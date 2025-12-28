@@ -79,6 +79,9 @@ let ReportController = class ReportController {
         }
         return this.reportService.findAdminExpense(header, page, filter, limit);
     }
+    findAllAdminBalance(header) {
+        return this.reportService.findAllAdminBalanceInquery(header);
+    }
 };
 exports.ReportController = ReportController;
 __decorate([
@@ -247,6 +250,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, Number, String, Number]),
     __metadata("design:returntype", void 0)
 ], ReportController.prototype, "findAdminExpense", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, common_1.Get)('admin/report/balance/inquery'),
+    __param(0, (0, common_1.Headers)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ReportController.prototype, "findAllAdminBalance", null);
 exports.ReportController = ReportController = __decorate([
     (0, swagger_1.ApiTags)("Report Module"),
     (0, common_1.Controller)(),

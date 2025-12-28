@@ -163,4 +163,12 @@ export class ReportController {
   }
     return this.reportService.findAdminExpense(header, page, filter, limit);
   }
+
+  @ApiBearerAuth('access_token')
+  @Get('admin/report/balance/inquery')
+  findAllAdminBalance(
+    @Headers() header: string
+  ) {
+    return this.reportService.findAllAdminBalanceInquery(header);
+  }
 }

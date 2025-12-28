@@ -108,4 +108,5 @@ export declare class ReportService {
         totalDeposit: any;
         lastBalance: number;
     }>;
+    findAllAdminBalanceInquery(header: any): Promise<any>;
 }
