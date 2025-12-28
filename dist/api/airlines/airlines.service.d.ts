@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import { AirlineDiscount, AirlineDiscountForAgent, AirlinesModel, AirlinesUpdateModel } from './airlines.model';
 import { AuthService } from '../auth/auth.service';
-import { CreateAirlineDiscountDto, UpdateAirlineDiscountDto, UpdateAirlineDiscountForAgentDto } from './airlines.dto';
+import { CreateAirlineDiscountDto, CreateAirlineDiscountForAgentDto, UpdateAirlineDiscountDto, UpdateAirlineDiscountForAgentDto } from './airlines.dto';
 export declare class AirlinesService {
     private readonly airlinesRepository;
     private readonly airlineDiscountRepository;
@@ -12,7 +12,7 @@ export declare class AirlinesService {
     viewAirlineDiscountMain(header: any, currency: string): Promise<AirlineDiscount[]>;
     updateAirlineDiscountMain(header: any, id: number, updateAirlineDiscountDto: UpdateAirlineDiscountDto): Promise<import("typeorm").UpdateResult>;
     deleteAirlineDiscountMain(header: any, id: number): Promise<import("typeorm").DeleteResult>;
-    createAirlineDiscountForAgent(header: any, createAirlineDiscountDto: CreateAirlineDiscountDto): Promise<AirlineDiscountForAgent>;
+    createAirlineDiscountForAgent(header: any, createAirlineDiscountForAgentDto: CreateAirlineDiscountForAgentDto): Promise<AirlineDiscountForAgent>;
     viewAirlineDiscountForAgent(header: any, agentId: string): Promise<AirlineDiscountForAgent[]>;
     updateAirlineDiscountForAgent(header: any, id: number, updateAirlineDiscountForAgentDto: UpdateAirlineDiscountForAgentDto): Promise<import("typeorm").UpdateResult>;
     deleteAirlineDiscountForAgent(header: any, id: number): Promise<import("typeorm").DeleteResult>;

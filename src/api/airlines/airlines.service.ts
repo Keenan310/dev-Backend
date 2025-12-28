@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AirlineDiscount, AirlineDiscountForAgent, AirlinesModel, AirlinesUpdateModel } from './airlines.model';
 import { AuthService } from '../auth/auth.service';
-import { CreateAirlineDiscountDto, UpdateAirlineDiscountDto, UpdateAirlineDiscountForAgentDto } from './airlines.dto';
+import { CreateAirlineDiscountDto, CreateAirlineDiscountForAgentDto, UpdateAirlineDiscountDto, UpdateAirlineDiscountForAgentDto } from './airlines.dto';
 
 @Injectable()
 export class AirlinesService {
@@ -73,14 +73,14 @@ export class AirlinesService {
     return await this.airlineDiscountRepository.delete(data.id);
   }
 
-  async createAirlineDiscountForAgent(header: any, createAirlineDiscountDto : CreateAirlineDiscountDto){
+  async createAirlineDiscountForAgent(header: any, createAirlineDiscountForAgentDto : CreateAirlineDiscountForAgentDto){
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
     if(!verifyAdminId){
         throw new UnauthorizedException();
     }
 
-    const discount = this.airlineDiscountForAgentRepository.create(createAirlineDiscountDto);
+    const discount = this.airlineDiscountForAgentRepository.create(createAirlineDiscountForAgentDto);
     return this.airlineDiscountForAgentRepository.save(discount);
   }
 

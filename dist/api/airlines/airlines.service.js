@@ -68,12 +68,12 @@ let AirlinesService = class AirlinesService {
         }
         return await this.airlineDiscountRepository.delete(data.id);
     }
-    async createAirlineDiscountForAgent(header, createAirlineDiscountDto) {
+    async createAirlineDiscountForAgent(header, createAirlineDiscountForAgentDto) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        const discount = this.airlineDiscountForAgentRepository.create(createAirlineDiscountDto);
+        const discount = this.airlineDiscountForAgentRepository.create(createAirlineDiscountForAgentDto);
         return this.airlineDiscountForAgentRepository.save(discount);
     }
     async viewAirlineDiscountForAgent(header, agentId) {
