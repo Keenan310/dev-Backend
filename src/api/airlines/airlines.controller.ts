@@ -2,7 +2,7 @@ import { Controller, Get, Body, Patch, Param, Headers, Post, Delete, Query } fro
 import { AirlinesService } from './airlines.service';
 import { ApiBearerAuth, ApiExcludeController, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AirlinesUpdateModel } from './airlines.model';
-import { CreateAirlineDiscountDto, UpdateAirlineDiscountDto } from './airlines.dto';
+import { CreateAirlineDiscountDto, CreateAirlineDiscountForAgentDto, UpdateAirlineDiscountDto } from './airlines.dto';
 
 @ApiTags("Admin Module")
 @Controller()
@@ -44,7 +44,7 @@ export class AirlinesController {
   @Post('admin/singleagent/airline/discount')
   createAirlineDiscountForAgent(
     @Headers() header: Headers,
-    @Body() dto: CreateAirlineDiscountDto) {
+    @Body() dto: CreateAirlineDiscountForAgentDto) {
     return this.airlinesService.createAirlineDiscountForAgent(header, dto);
   }
 
