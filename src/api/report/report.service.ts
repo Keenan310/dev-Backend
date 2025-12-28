@@ -774,7 +774,7 @@ export class ReportService {
     .andWhere('ledger.deposit <= 0')
 
     if (adminId) {
-      ledgerQuery.andWhere('ledger.liable = :agentId', { adminId });
+      ledgerQuery.andWhere('ledger.liable = :adminId', { adminId });
     }
 
     const ledger = await ledgerQuery.orderBy('ledger.id', 'DESC').getRawMany();
@@ -796,7 +796,7 @@ export class ReportService {
     .andWhere('ledger.deposit > 0')
 
     if (adminId) {
-      depositQuery.andWhere('ledger.agentId = :agentId', { adminId });
+      depositQuery.andWhere('ledger.agentId = :adminId', { adminId });
     }
 
     const depositLedger = await depositQuery.orderBy('ledger.id', 'DESC').getRawMany();
