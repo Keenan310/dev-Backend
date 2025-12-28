@@ -123,7 +123,7 @@ let ReportService = class ReportService {
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
         }
-        await this.adminLedgerRepository.delete(+id);
+        return await this.adminLedgerRepository.delete(+id);
     }
     async editAgentLedgerByAdmin(header, id, updateAgentBalanceUpdate) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
@@ -626,7 +626,7 @@ let ReportService = class ReportService {
         };
         return ledgerData;
     }
-    async findAllAdminLedger(header, startDate, endDate, agentId) {
+    async findAllAdminLedger(header, startDate, endDate, adminId) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
@@ -651,8 +651,8 @@ let ReportService = class ReportService {
             endDate,
         })
             .andWhere('ledger.deposit <= 0');
-        if (agentId) {
-            ledgerQuery.andWhere('ledger.agentId = :agentId', { agentId });
+        if (adminId) {
+            ledgerQuery.andWhere('ledger.liable = :agentId', { adminId });
         }
         const ledger = await ledgerQuery.orderBy('ledger.id', 'DESC').getRawMany();
         const depositQuery = this.adminLedgerRepository
@@ -670,8 +670,8 @@ let ReportService = class ReportService {
             endDate,
         })
             .andWhere('ledger.deposit > 0');
-        if (agentId) {
-            depositQuery.andWhere('ledger.agentId = :agentId', { agentId });
+        if (adminId) {
+            depositQuery.andWhere('ledger.agentId = :agentId', { adminId });
         }
         const depositLedger = await depositQuery.orderBy('ledger.id', 'DESC').getRawMany();
         const sell = await this.adminLedgerRepository

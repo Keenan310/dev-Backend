@@ -147,7 +147,7 @@ export class ReportService {
         throw new UnauthorizedException();
     }
 
-    await this.adminLedgerRepository.delete(+id);
+    return await this.adminLedgerRepository.delete(+id);
 
   }
 
@@ -744,7 +744,7 @@ export class ReportService {
     return ledgerData;
   }
 
-  async findAllAdminLedger(header: any, startDate: Date, endDate: Date, agentId: string) {
+  async findAllAdminLedger(header: any, startDate: Date, endDate: Date, adminId: string) {
 
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
@@ -773,8 +773,8 @@ export class ReportService {
     })
     .andWhere('ledger.deposit <= 0')
 
-    if (agentId) {
-      ledgerQuery.andWhere('ledger.agentId = :agentId', { agentId });
+    if (adminId) {
+      ledgerQuery.andWhere('ledger.liable = :agentId', { adminId });
     }
 
     const ledger = await ledgerQuery.orderBy('ledger.id', 'DESC').getRawMany();
@@ -795,8 +795,8 @@ export class ReportService {
     })
     .andWhere('ledger.deposit > 0')
 
-    if (agentId) {
-      depositQuery.andWhere('ledger.agentId = :agentId', { agentId });
+    if (adminId) {
+      depositQuery.andWhere('ledger.agentId = :agentId', { adminId });
     }
 
     const depositLedger = await depositQuery.orderBy('ledger.id', 'DESC').getRawMany();
@@ -869,5 +869,5 @@ export class ReportService {
 
     return ledgerData;
   }
-  
+
 }
