@@ -61,9 +61,6 @@ export class CreateAirlineDiscountForAgentDto {
   @IsString()
   booking_date: string;
 
-  @IsString()
-  currency: string;
-
   @IsOptional()
   @IsArray()
   from_list?: string[];

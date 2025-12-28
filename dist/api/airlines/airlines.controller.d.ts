@@ -8,7 +8,7 @@ export declare class AirlinesController {
     viewAirlineDiscount(header: Headers, currency: string): Promise<import("./airlines.model").AirlineDiscount[]>;
     updateAirlineDiscount(header: Headers, id: string, updateAirlineDiscountDto: UpdateAirlineDiscountDto): Promise<import("typeorm").UpdateResult>;
     deleteAirlineDiscount(header: Headers, id: string): Promise<import("typeorm").DeleteResult>;
-    createAirlineDiscountForAgent(header: Headers, dto: CreateAirlineDiscountForAgentDto): Promise<import("./airlines.model").AirlineDiscountForAgent>;
+    createAirlineDiscountForAgent(header: Headers, createAirlineDiscountForAgentDto: CreateAirlineDiscountForAgentDto): Promise<import("./airlines.model").AirlineDiscountForAgent>;
     viewAirlineDiscountForAgent(header: Headers, agentId: string): Promise<import("./airlines.model").AirlineDiscountForAgent[]>;
     updateAirlineDiscountForAgent(header: Headers, id: string, updateAirlineDiscountDto: UpdateAirlineDiscountDto): Promise<import("typeorm").UpdateResult>;
     deleteAirlineDiscountForAgent(header: Headers, id: string): Promise<import("typeorm").DeleteResult>;

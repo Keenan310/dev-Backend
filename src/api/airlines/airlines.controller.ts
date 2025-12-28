@@ -44,8 +44,8 @@ export class AirlinesController {
   @Post('admin/singleagent/airline/discount')
   createAirlineDiscountForAgent(
     @Headers() header: Headers,
-    @Body() dto: CreateAirlineDiscountForAgentDto) {
-    return this.airlinesService.createAirlineDiscountForAgent(header, dto);
+    @Body() createAirlineDiscountForAgentDto: CreateAirlineDiscountForAgentDto) {
+    return this.airlinesService.createAirlineDiscountForAgent(header, createAirlineDiscountForAgentDto);
   }
 
 

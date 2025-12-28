@@ -16,7 +16,7 @@ export declare class AirlinesService {
     viewAirlineDiscountForAgent(header: any, agentId: string): Promise<AirlineDiscountForAgent[]>;
     updateAirlineDiscountForAgent(header: any, id: number, updateAirlineDiscountForAgentDto: UpdateAirlineDiscountForAgentDto): Promise<import("typeorm").UpdateResult>;
     deleteAirlineDiscountForAgent(header: any, id: number): Promise<import("typeorm").DeleteResult>;
-    getAirlines(code: string): Promise<"" | AirlinesModel>;
+    getAirlines(code: string): Promise<AirlinesModel | "">;
     getAirlinesName(code: string): Promise<string>;
     update(header: any, id: number, updateAirlineDto: AirlinesUpdateModel): Promise<import("typeorm").UpdateResult>;
 }

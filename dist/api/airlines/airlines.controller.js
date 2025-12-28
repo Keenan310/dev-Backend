@@ -34,8 +34,8 @@ let AirlinesController = class AirlinesController {
     deleteAirlineDiscount(header, id) {
         return this.airlinesService.deleteAirlineDiscountMain(header, +id);
     }
-    createAirlineDiscountForAgent(header, dto) {
-        return this.airlinesService.createAirlineDiscountForAgent(header, dto);
+    createAirlineDiscountForAgent(header, createAirlineDiscountForAgentDto) {
+        return this.airlinesService.createAirlineDiscountForAgent(header, createAirlineDiscountForAgentDto);
     }
     viewAirlineDiscountForAgent(header, agentId) {
         return this.airlinesService.viewAirlineDiscountForAgent(header, agentId);
