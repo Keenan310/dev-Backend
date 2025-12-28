@@ -2,20 +2,18 @@ import { AgentLedgerModel, AdminExpenseModel, AdminLedger, UpdateAdminLedgerDto,
 import { Repository, DataSource } from 'typeorm';
 import { AgentBalanceUpdate, AgentModel } from '../agent/agent.model';
 import { BookingModel } from '../booking/booking.model';
-import { DepositModel } from '../deposit/deposit.model';
 import { AuthService } from '../auth/auth.service';
 import { SearchHistoryModel } from '../searchhistory/searchhistory.model';
 export declare class ReportService {
     private readonly ledgerRepository;
     private readonly bookingRepository;
     private readonly agentRepository;
-    private readonly depositRepository;
     private readonly searchHistoryRepository;
     private readonly adminExpenseRepository;
     private readonly adminLedgerRepository;
     private readonly authService;
     private dataSource;
-    constructor(ledgerRepository: Repository<AgentLedgerModel>, bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, depositRepository: Repository<DepositModel>, searchHistoryRepository: Repository<SearchHistoryModel>, adminExpenseRepository: Repository<AdminExpenseModel>, adminLedgerRepository: Repository<AdminLedger>, authService: AuthService, dataSource: DataSource);
+    constructor(ledgerRepository: Repository<AgentLedgerModel>, bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, searchHistoryRepository: Repository<SearchHistoryModel>, adminExpenseRepository: Repository<AdminExpenseModel>, adminLedgerRepository: Repository<AdminLedger>, authService: AuthService, dataSource: DataSource);
     adminGraph(header: any): Promise<{
         month: string;
         bookingCount: number;

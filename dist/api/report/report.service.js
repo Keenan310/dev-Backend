@@ -20,15 +20,13 @@ const typeorm_2 = require("typeorm");
 const dayjs = require("dayjs");
 const agent_model_1 = require("../agent/agent.model");
 const booking_model_1 = require("../booking/booking.model");
-const deposit_model_1 = require("../deposit/deposit.model");
 const auth_service_1 = require("../auth/auth.service");
 const searchhistory_model_1 = require("../searchhistory/searchhistory.model");
 let ReportService = class ReportService {
-    constructor(ledgerRepository, bookingRepository, agentRepository, depositRepository, searchHistoryRepository, adminExpenseRepository, adminLedgerRepository, authService, dataSource) {
+    constructor(ledgerRepository, bookingRepository, agentRepository, searchHistoryRepository, adminExpenseRepository, adminLedgerRepository, authService, dataSource) {
         this.ledgerRepository = ledgerRepository;
         this.bookingRepository = bookingRepository;
         this.agentRepository = agentRepository;
-        this.depositRepository = depositRepository;
         this.searchHistoryRepository = searchHistoryRepository;
         this.adminExpenseRepository = adminExpenseRepository;
         this.adminLedgerRepository = adminLedgerRepository;
@@ -759,12 +757,10 @@ exports.ReportService = ReportService = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(report_model_1.AgentLedgerModel)),
     __param(1, (0, typeorm_1.InjectRepository)(booking_model_1.BookingModel)),
     __param(2, (0, typeorm_1.InjectRepository)(agent_model_1.AgentModel)),
-    __param(3, (0, typeorm_1.InjectRepository)(deposit_model_1.DepositModel)),
-    __param(4, (0, typeorm_1.InjectRepository)(searchhistory_model_1.SearchHistoryModel)),
-    __param(5, (0, typeorm_1.InjectRepository)(report_model_1.AdminExpenseModel)),
-    __param(6, (0, typeorm_1.InjectRepository)(report_model_1.AdminLedger)),
+    __param(3, (0, typeorm_1.InjectRepository)(searchhistory_model_1.SearchHistoryModel)),
+    __param(4, (0, typeorm_1.InjectRepository)(report_model_1.AdminExpenseModel)),
+    __param(5, (0, typeorm_1.InjectRepository)(report_model_1.AdminLedger)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

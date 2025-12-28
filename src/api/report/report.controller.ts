@@ -110,6 +110,12 @@ export class ReportController {
   }
 
   @ApiBearerAuth('access_token')
+  @Get('admin/report/balance/inquery')
+  findAllAdminBalance(@Headers() header: string) {
+    return this.reportService.findAllAdminBalanceInquery(header);
+  }
+
+  @ApiBearerAuth('access_token')
   @Get('admin/report/:startDate/:endDate')
   @ApiQuery({ name: 'filter', required: false })
   findAllReportAdmin(
@@ -164,11 +170,4 @@ export class ReportController {
     return this.reportService.findAdminExpense(header, page, filter, limit);
   }
 
-  @ApiBearerAuth('access_token')
-  @Get('admin/report/balance/inquery')
-  findAllAdminBalance(
-    @Headers() header: string
-  ) {
-    return this.reportService.findAllAdminBalanceInquery(header);
-  }
 }

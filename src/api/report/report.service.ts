@@ -18,8 +18,6 @@ export class ReportService {
     private readonly bookingRepository: Repository<BookingModel>,
     @InjectRepository(AgentModel)
     private readonly agentRepository: Repository<AgentModel>,
-    @InjectRepository(DepositModel)
-    private readonly depositRepository: Repository<DepositModel>,
     @InjectRepository(SearchHistoryModel)
     private readonly searchHistoryRepository: Repository<SearchHistoryModel>,
     @InjectRepository(AdminExpenseModel)
