@@ -22,6 +22,7 @@ const airlines_service_1 = require("../airlines/airlines.service");
 const airports_service_1 = require("../airports/airports.service");
 const typeorm_3 = require("typeorm");
 const currency_entity_1 = require("../currency/entities/currency.entity");
+const airports_data_1 = require("../flight/data/airports.data");
 let GroupfareService = class GroupfareService {
     constructor(groupFareRepository, CurrencyConverterRepository, authService, airlinesService, airportsService) {
         this.groupFareRepository = groupFareRepository;
@@ -29,6 +30,14 @@ let GroupfareService = class GroupfareService {
         this.authService = authService;
         this.airlinesService = airlinesService;
         this.airportsService = airportsService;
+    }
+    formatAirportLabel(code) {
+        if (!code)
+            return '';
+        const airport = airports_data_1.airportsData.find(item => item.code === code);
+        const city = airport?.location?.split(',')[0]?.trim();
+        const cityLabel = city ? city.toUpperCase() : '';
+        return cityLabel ? `${code} (${cityLabel})` : code;
     }
     async create(header, data) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
@@ -98,6 +107,63 @@ let GroupfareService = class GroupfareService {
         }
         else {
             return [];
+        }
+    }
+    async findAllAgentSpecialFare(header, triptype) {
+        const agent = await this.authService.verifyAgentToken(header);
+        if (!agent) {
+            throw new common_1.UnauthorizedException();
+        }
+        const today = new Date().toISOString().split("T")[0];
+        const groupdata = await this.groupFareRepository
+            .createQueryBuilder('gf')
+            .select([
+            'gf.RouteFrom',
+            'gf.RouteTo',
+            'MIN(gf.DepDate) as DepDate',
+        ])
+            .where('gf.DepDate > :today', { today })
+            .andWhere('gf.tripType = :tripType', {
+            tripType: triptype
+        })
+            .groupBy('gf.RouteFrom')
+            .addGroupBy('gf.RouteTo')
+            .orderBy('DepDate', 'ASC')
+            .getRawMany();
+        return groupdata.map(item => {
+            const routeFrom = item.RouteFrom ?? item.gf_RouteFrom;
+            const routeTo = item.RouteTo ?? item.gf_RouteTo;
+            const originLabel = this.formatAirportLabel(routeFrom);
+            const destinationLabel = this.formatAirportLabel(routeTo);
+            return {
+                ...item,
+                Origin: originLabel,
+                Destination: destinationLabel,
+            };
+        });
+    }
+    async findAllAgentSpecialFareAll(header, triptype, origin, destination) {
+        const agent = await this.authService.verifyAgentToken(header);
+        if (!agent) {
+            throw new common_1.UnauthorizedException();
+        }
+        const today = new Date().toISOString().split("T")[0];
+        const groupdata = await this.groupFareRepository
+            .createQueryBuilder('gf')
+            .where('gf.DepDate > :today', { today })
+            .andWhere('gf.tripType = :tripType', {
+            tripType: triptype
+        })
+            .andWhere('gf.RouteFrom = :origin', { origin })
+            .andWhere('gf.RouteTo = :destination', { destination })
+            .orderBy('DepDate', 'ASC')
+            .getRawMany();
+        if (groupdata?.length > 0) {
+            const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
+            return await Promise.all(flightParserPromises);
+        }
+        else {
+            return groupdata;
         }
     }
     async findAllAgent(header) {

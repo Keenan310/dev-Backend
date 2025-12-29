@@ -14,13 +14,6 @@ export declare class ReportService {
     private readonly authService;
     private dataSource;
     constructor(ledgerRepository: Repository<AgentLedgerModel>, bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, searchHistoryRepository: Repository<SearchHistoryModel>, adminExpenseRepository: Repository<AdminExpenseModel>, adminLedgerRepository: Repository<AdminLedger>, authService: AuthService, dataSource: DataSource);
-    adminGraph(header: any): Promise<{
-        month: string;
-        bookingCount: number;
-        agentCount: number;
-        cumulativeBooking: number;
-        cumulativeAgent: number;
-    }[]>;
     addAdminExpense(header: any, adminExpenseModel: AdminExpenseModel): Promise<AdminExpenseModel>;
     editAdminExpense(header: any, id: number, UpdateAdminExpenseDto: UpdateAdminExpenseDto): Promise<import("typeorm").UpdateResult>;
     addAdminLedger(header: any, adminLedgerModel: AdminLedger): Promise<void>;
@@ -28,7 +21,7 @@ export declare class ReportService {
     deleteAdminLedger(header: any, id: number): Promise<import("typeorm").DeleteResult>;
     editAgentLedgerByAdmin(header: any, id: number, updateAgentBalanceUpdate: AgentBalanceUpdate): Promise<import("typeorm").UpdateResult>;
     deleteAgentLedgerByAdmin(header: any, uid: string): Promise<import("typeorm").DeleteResult>;
-    findAllReportAdmin(header: any, startDate: Date, endDate: Date): Promise<{
+    findAllReportAdmin(header: any): Promise<{
         name: string;
         value: any;
     }[]>;
@@ -64,6 +57,7 @@ export declare class ReportService {
         TotalFlightBooking: number;
         TotalHold: number;
         TotalTicketed: number;
+        TotalCancelled: number;
         TotalVoid: number;
         TotalRefund: number;
         TotalReissue: number;

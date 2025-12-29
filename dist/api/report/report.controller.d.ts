@@ -4,13 +4,6 @@ import { AgentBalanceUpdate } from '../agent/agent.model';
 export declare class ReportController {
     private readonly reportService;
     constructor(reportService: ReportService);
-    addGraph(header: Headers): Promise<{
-        month: string;
-        bookingCount: number;
-        agentCount: number;
-        cumulativeBooking: number;
-        cumulativeAgent: number;
-    }[]>;
     addExpense(header: Headers, adminExpenseModel: AdminExpenseModel): Promise<AdminExpenseModel>;
     editExpense(header: Headers, id: string, adminExpenseModel: AdminExpenseModel): Promise<import("typeorm").UpdateResult>;
     addAdminLedger(header: Headers, adminledgerModel: AdminLedger): Promise<void>;
@@ -41,6 +34,10 @@ export declare class ReportController {
         data: import("./report.model").AgentLedgerModel[];
     }>;
     findAllAdminBalance(header: string): Promise<any>;
+    findAllReportAdmin(header: Headers): Promise<{
+        name: string;
+        value: any;
+    }[]>;
     findAllByAgentId(header: string, filter: string): Promise<{
         depositCount: any;
         depositAmount: any;
@@ -64,6 +61,7 @@ export declare class ReportController {
         TotalFlightBooking: number;
         TotalHold: number;
         TotalTicketed: number;
+        TotalCancelled: number;
         TotalVoid: number;
         TotalRefund: number;
         TotalReissue: number;

@@ -33,60 +33,6 @@ let ReportService = class ReportService {
         this.authService = authService;
         this.dataSource = dataSource;
     }
-    async adminGraph(header) {
-        const verifyAdminId = await this.authService.verifyAdminToken(header);
-        if (!verifyAdminId) {
-            throw new common_1.UnauthorizedException();
-        }
-        const now = dayjs();
-        const startOfYear = now.startOf('year').toDate();
-        const endOfYear = now.endOf('year').toDate();
-        const [bookingData, agentData] = await Promise.all([
-            this.bookingRepository.find({
-                where: {
-                    created_at: (0, typeorm_2.Between)(startOfYear, endOfYear),
-                    status: (0, typeorm_2.Not)((0, typeorm_2.In)(['Hold', 'Cancelled', 'Issue Request Rejected'])),
-                },
-                select: ['id', 'created_at'],
-            }),
-            this.agentRepository.find({
-                where: { created_at: (0, typeorm_2.Between)(startOfYear, endOfYear) },
-                select: ['id', 'created_at'],
-            }),
-        ]);
-        const currentMonth = now.month();
-        const months = Array.from({ length: currentMonth + 1 }).map((_, i) => {
-            const date = dayjs().month(i).startOf('month');
-            return {
-                month: date.format('MMM YYYY'),
-                bookingCount: 0,
-                agentCount: 0,
-                cumulativeBooking: 0,
-                cumulativeAgent: 0,
-            };
-        });
-        bookingData.forEach(b => {
-            const month = dayjs(b.created_at).format('MMM YYYY');
-            const bucket = months.find(m => m.month === month);
-            if (bucket)
-                bucket.bookingCount++;
-        });
-        agentData.forEach(a => {
-            const month = dayjs(a.created_at).format('MMM YYYY');
-            const bucket = months.find(m => m.month === month);
-            if (bucket)
-                bucket.agentCount++;
-        });
-        let bookingRunningTotal = 0;
-        let agentRunningTotal = 0;
-        months.forEach(m => {
-            bookingRunningTotal += m.bookingCount;
-            agentRunningTotal += m.agentCount;
-            m.cumulativeBooking = bookingRunningTotal;
-            m.cumulativeAgent = agentRunningTotal;
-        });
-        return months;
-    }
     async addAdminExpense(header, adminExpenseModel) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {
@@ -141,7 +87,7 @@ let ReportService = class ReportService {
         }
         return await this.ledgerRepository.delete(ledgerEntry.id);
     }
-    async findAllReportAdmin(header, startDate, endDate) {
+    async findAllReportAdmin(header) {
         const verifyAdminId = await this.authService.verifyAdminToken(header);
         if (!verifyAdminId) {
             throw new common_1.UnauthorizedException();
@@ -149,30 +95,18 @@ let ReportService = class ReportService {
         const search = await this.searchHistoryRepository
             .createQueryBuilder('search')
             .select('COUNT(search.id)', 'rowCount')
-            .where('search.created_at BETWEEN :startDate AND :endDate', {
-            startDate: startDate,
-            endDate: endDate
-        })
             .getRawOne();
         const agent = await this.agentRepository
             .createQueryBuilder('search')
             .select('COUNT(search.id)', 'rowCount')
-            .where('search.created_at BETWEEN :startDate AND :endDate', {
-            startDate: startDate,
-            endDate: endDate
-        })
             .getRawOne();
         const booking = await this.bookingRepository
             .createQueryBuilder('booking')
-            .select('COUNT(booking.id)', 'rowCount')
-            .andWhere('booking.created_at BETWEEN :startDate AND :endDate', { startDate: startDate, endDate: endDate })
-            .getRawOne();
+            .select('COUNT(booking.id)', 'rowCount').getRawOne();
         const bookingHold = await this.bookingRepository
             .createQueryBuilder('booking')
             .select('COUNT(booking.id)', 'rowCount')
-            .andWhere('booking.status = :status', { status: 'Hold' })
-            .andWhere('booking.created_at BETWEEN :startDate AND :endDate', { startDate: startDate, endDate: endDate })
-            .getRawOne();
+            .andWhere('booking.status = :status', { status: 'Hold' }).getRawOne();
         const bookingTicketed = await this.bookingRepository
             .createQueryBuilder('booking')
             .select('COUNT(booking.id)', 'rowCount')
@@ -180,54 +114,34 @@ let ReportService = class ReportService {
             .addSelect('SUM(booking.netfare)', 'totalSell')
             .addSelect('SUM(booking.sellprice) - SUM(booking.purchaseprice)', 'totalProfit')
             .addSelect('SUM(booking.totalsegment)', 'totalSegment')
-            .where('booking.status = :status', { status: 'Ticketed' })
-            .andWhere('booking.created_at BETWEEN :startDate AND :endDate', { startDate: startDate, endDate: endDate })
-            .getRawOne();
+            .where('booking.status = :status', { status: 'Ticketed' }).getRawOne();
         const bookingCancelled = await this.bookingRepository
             .createQueryBuilder('booking')
             .select('COUNT(booking.id)', 'rowCount')
-            .where('booking.status = :status', { status: 'Cancelled' })
-            .andWhere('booking.created_at BETWEEN :startDate AND :endDate', { startDate: startDate, endDate: endDate })
-            .getRawOne();
+            .where('booking.status = :status', { status: 'Cancelled' }).getRawOne();
         const deposit = await this.ledgerRepository
             .createQueryBuilder('ledger')
             .select('COUNT(ledger.id)', 'rowCount')
             .addSelect('SUM(ledger.credit)', 'totalAmount')
             .where('ledger.trxtype = :trxtype', { trxtype: 'deposit' })
-            .andWhere('ledger.created_at BETWEEN :startDate AND :endDate', {
-            startDate: startDate,
-            endDate: endDate
-        })
             .getRawOne();
         const refund = await this.ledgerRepository
             .createQueryBuilder('ledger')
             .select('COUNT(ledger.id)', 'rowCount')
             .addSelect('SUM(ledger.credit)', 'totalAmount')
             .where('ledger.trxtype = :trxtype', { trxtype: 'refund' })
-            .andWhere('ledger.created_at BETWEEN :startDate AND :endDate', {
-            startDate: startDate,
-            endDate: endDate
-        })
             .getRawOne();
         const reissue = await this.ledgerRepository
             .createQueryBuilder('ledger')
             .select('COUNT(ledger.id)', 'rowCount')
             .addSelect('SUM(ledger.debit)', 'totalAmount')
             .where('ledger.trxtype = :trxtype', { trxtype: 'reissue' })
-            .andWhere('ledger.created_at BETWEEN :startDate AND :endDate', {
-            startDate: startDate,
-            endDate: endDate
-        })
             .getRawOne();
         const voided = await this.ledgerRepository
             .createQueryBuilder('ledger')
             .select('COUNT(ledger.id)', 'rowCount')
             .addSelect('SUM(ledger.credit)', 'totalAmount')
             .where('ledger.trxtype = :trxtype', { trxtype: 'void' })
-            .andWhere('ledger.created_at BETWEEN :startDate AND :endDate', {
-            startDate: startDate,
-            endDate: endDate
-        })
             .getRawOne();
         const ledgerData = [
             {
@@ -556,6 +470,7 @@ let ReportService = class ReportService {
         const totalagent = await this.agentRepository.count();
         const totalbooking = await this.bookingRepository.count({ where: { status: (0, typeorm_2.In)(['Ticketed', 'Voided', 'Refunded']) } });
         const totalHold = await this.bookingRepository.count({ where: { status: 'Hold' } });
+        const totalCancelled = await this.bookingRepository.count({ where: { status: 'Cancelled' } });
         const totalVoid = await this.bookingRepository.count({ where: { status: 'Voided' } });
         const totalticketed = await this.bookingRepository.count({ where: { status: 'Ticketed' } });
         const totalRefund = await this.bookingRepository.count({ where: { status: 'Refunded' } });
@@ -564,6 +479,7 @@ let ReportService = class ReportService {
             "TotalFlightBooking": totalbooking || 0,
             "TotalHold": totalHold || 0,
             "TotalTicketed": totalticketed || 0,
+            "TotalCancelled": totalCancelled || 0,
             "TotalVoid": totalVoid || 0,
             "TotalRefund": totalRefund || 0,
             "TotalReissue": totalReissue || 0,

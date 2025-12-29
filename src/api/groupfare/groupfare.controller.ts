@@ -24,6 +24,24 @@ export class GroupfareController {
   }
 
   @ApiBearerAuth('access_token')
+  @Get('agent/special/:triptype')
+  findAllAdminSpecialFare(
+    @Headers() header: Headers,
+    @Param('triptype') triptype: string) {
+    return this.groupfareService.findAllAgentSpecialFare(header, triptype);
+  }
+
+  @ApiBearerAuth('access_token')
+  @Get('agent/special/fare/:triptype/:origin/:destination')
+  findAllAdminSpecialFareAll(
+    @Headers() header: Headers,
+    @Param('triptype') triptype: string,
+    @Param('origin') origin: string,
+    @Param('destination') destination: string) {
+    return this.groupfareService.findAllAgentSpecialFareAll(header, triptype, origin, destination);
+  }
+
+  @ApiBearerAuth('access_token')
   @Get()
   findAllAgent(@Headers() header: string) {
     return this.groupfareService.findAllAgent(header);

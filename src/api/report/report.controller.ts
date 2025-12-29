@@ -12,12 +12,6 @@ export class ReportController {
   ) {}
 
   @ApiBearerAuth('access_token')
-  @Get('admin/dashboard/graph')
-  addGraph(@Headers() header: Headers) {
-    return this.reportService.adminGraph(header);
-  }
-
-  @ApiBearerAuth('access_token')
   @Post('admin/expense')
   addExpense(
     @Headers() header: Headers,
@@ -115,15 +109,13 @@ export class ReportController {
     return this.reportService.findAllAdminBalanceInquery(header);
   }
 
-  // @ApiBearerAuth('access_token')
-  // @Get('admin/report/:startDate/:endDate')
-  // @ApiQuery({ name: 'filter', required: false })
-  // findAllReportAdmin(
-  //   @Headers() header: Headers,
-  //   @Param('startDate') startDate: Date,
-  //   @Param('endDate') endDate: Date){
-  //   return this.reportService.findAllReportAdmin(header, startDate, endDate);
-  //}
+  @ApiBearerAuth('access_token')
+  @Get('admin/report')
+  @ApiQuery({ name: 'filter', required: false })
+  findAllReportAdmin(
+    @Headers() header: Headers){
+    return this.reportService.findAllReportAdmin(header);
+  }
 
   @ApiBearerAuth('access_token')
   @Get('agent/report/ledger')

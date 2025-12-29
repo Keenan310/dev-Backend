@@ -27,6 +27,12 @@ let GroupfareController = class GroupfareController {
     findAllAdmin(header) {
         return this.groupfareService.findAllAdmin(header);
     }
+    findAllAdminSpecialFare(header, triptype) {
+        return this.groupfareService.findAllAgentSpecialFare(header, triptype);
+    }
+    findAllAdminSpecialFareAll(header, triptype, origin, destination) {
+        return this.groupfareService.findAllAgentSpecialFareAll(header, triptype, origin, destination);
+    }
     findAllAgent(header) {
         return this.groupfareService.findAllAgent(header);
     }
@@ -55,6 +61,26 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], GroupfareController.prototype, "findAllAdmin", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, common_1.Get)('agent/special/:triptype'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Param)('triptype')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], GroupfareController.prototype, "findAllAdminSpecialFare", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access_token'),
+    (0, common_1.Get)('agent/special/fare/:triptype/:origin/:destination'),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Param)('triptype')),
+    __param(2, (0, common_1.Param)('origin')),
+    __param(3, (0, common_1.Param)('destination')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String]),
+    __metadata("design:returntype", void 0)
+], GroupfareController.prototype, "findAllAdminSpecialFareAll", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Get)(),

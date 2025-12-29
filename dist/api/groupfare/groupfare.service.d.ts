@@ -12,6 +12,7 @@ export declare class GroupfareService {
     private readonly airlinesService;
     private readonly airportsService;
     constructor(groupFareRepository: Repository<GroupFareModel>, CurrencyConverterRepository: Repository<CurrencyConverter>, authService: AuthService, airlinesService: AirlinesService, airportsService: AirportsService);
+    private formatAirportLabel;
     create(header: any, data: any): Promise<any>;
     findAllAdmin(header: any): Promise<(any[] | {
         OfferId: any;
@@ -47,6 +48,8 @@ export declare class GroupfareService {
             Segments: any[];
         }[];
     })[]>;
+    findAllAgentSpecialFare(header: any, triptype: string): Promise<any[]>;
+    findAllAgentSpecialFareAll(header: any, triptype: string, origin: string, destination: string): Promise<any[]>;
     findAllAgent(header: any): Promise<GroupFareModel[] | (any[] | {
         OfferId: any;
         System: string;

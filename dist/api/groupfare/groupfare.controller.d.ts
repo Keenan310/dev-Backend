@@ -38,6 +38,8 @@ export declare class GroupfareController {
             Segments: any[];
         }[];
     })[]>;
+    findAllAdminSpecialFare(header: Headers, triptype: string): Promise<any[]>;
+    findAllAdminSpecialFareAll(header: Headers, triptype: string, origin: string, destination: string): Promise<any[]>;
     findAllAgent(header: string): Promise<GroupFareModel[] | (any[] | {
         OfferId: any;
         System: string;
