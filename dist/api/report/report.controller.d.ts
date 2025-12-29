@@ -41,10 +41,6 @@ export declare class ReportController {
         data: import("./report.model").AgentLedgerModel[];
     }>;
     findAllAdminBalance(header: string): Promise<any>;
-    findAllReportAdmin(header: Headers, startDate: Date, endDate: Date): Promise<{
-        name: string;
-        value: any;
-    }[]>;
     findAllByAgentId(header: string, filter: string): Promise<{
         depositCount: any;
         depositAmount: any;

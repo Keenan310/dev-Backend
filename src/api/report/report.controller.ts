@@ -115,15 +115,15 @@ export class ReportController {
     return this.reportService.findAllAdminBalanceInquery(header);
   }
 
-  @ApiBearerAuth('access_token')
-  @Get('admin/report/:startDate/:endDate')
-  @ApiQuery({ name: 'filter', required: false })
-  findAllReportAdmin(
-    @Headers() header: Headers,
-    @Param('startDate') startDate: Date,
-    @Param('endDate') endDate: Date){
-    return this.reportService.findAllReportAdmin(header, startDate, endDate);
-  }
+  // @ApiBearerAuth('access_token')
+  // @Get('admin/report/:startDate/:endDate')
+  // @ApiQuery({ name: 'filter', required: false })
+  // findAllReportAdmin(
+  //   @Headers() header: Headers,
+  //   @Param('startDate') startDate: Date,
+  //   @Param('endDate') endDate: Date){
+  //   return this.reportService.findAllReportAdmin(header, startDate, endDate);
+  //}
 
   @ApiBearerAuth('access_token')
   @Get('agent/report/ledger')

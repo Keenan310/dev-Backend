@@ -61,9 +61,6 @@ let ReportController = class ReportController {
     findAllAdminBalance(header) {
         return this.reportService.findAllAdminBalanceInquery(header);
     }
-    findAllReportAdmin(header, startDate, endDate) {
-        return this.reportService.findAllReportAdmin(header, startDate, endDate);
-    }
     findAllByAgentId(header, filter) {
         return this.reportService.findAllByAgentId(header, filter);
     }
@@ -198,18 +195,6 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ReportController.prototype, "findAllAdminBalance", null);
-__decorate([
-    (0, swagger_1.ApiBearerAuth)('access_token'),
-    (0, common_1.Get)('admin/report/:startDate/:endDate'),
-    (0, swagger_1.ApiQuery)({ name: 'filter', required: false }),
-    __param(0, (0, common_1.Headers)()),
-    __param(1, (0, common_1.Param)('startDate')),
-    __param(2, (0, common_1.Param)('endDate')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Date,
-        Date]),
-    __metadata("design:returntype", void 0)
-], ReportController.prototype, "findAllReportAdmin", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('access_token'),
     (0, common_1.Get)('agent/report/ledger'),
