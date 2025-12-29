@@ -27,66 +27,45 @@ const save_flight_entity_1 = require("./entity/save-flight.entity");
 const airlines_model_1 = require("../airlines/airlines.model");
 dotenv.config();
 let AlhindAPI = class AlhindAPI {
-    constructor(currencyConverterRepository, airlineDiscountRepository, saveFlightsData, airlinesService, airportsService) {
+    constructor(currencyConverterRepository, airlineDiscountRepository, airlineDiscountForAgentRepository, saveFlightsData, airlinesService, airportsService) {
         this.currencyConverterRepository = currencyConverterRepository;
         this.airlineDiscountRepository = airlineDiscountRepository;
+        this.airlineDiscountForAgentRepository = airlineDiscountForAgentRepository;
         this.saveFlightsData = saveFlightsData;
         this.airlinesService = airlinesService;
         this.airportsService = airportsService;
     }
     async flights(agent, flightDto) {
-        const totalSegment = flightDto?.segments;
-        let data;
-        if (totalSegment.length < 2 && totalSegment[0]?.arrto) {
-            data = {
-                "Origin": totalSegment[0].depfrom,
-                "Destination": totalSegment[0].arrto,
-                "OnwardDate": totalSegment[0].depdate,
-                "ReturnDate": totalSegment[0].depdate,
-                "Adult": flightDto.adultcount,
-                "Child": flightDto.childcount,
-                "Infant": flightDto.infantcount,
-                "TripMode": "O",
-                "TravelType": "I",
-                "AirlineClass": null,
-                "UserId": "AEAUH001035200",
-                "Password": "Keenan@12345",
-                "Error": null,
-                "IncludeAirline": null,
-                "ExcludeAirline": null,
-                "Status": null,
-                "DestinationNation": "AE",
-                "OriginNation": "AE",
-                "Classes": "Economy"
-            };
-        }
-        else if (totalSegment.length > 1 && totalSegment[0]?.arrto === totalSegment[1]?.depfrom) {
-            if (totalSegment[0]?.arrto) {
-                data = {
-                    "Origin": totalSegment[0].depfrom,
-                    "Destination": totalSegment[0].arrto,
-                    "OnwardDate": totalSegment[0].depdate,
-                    "ReturnDate": totalSegment[1].depdate,
-                    "Adult": flightDto.adultcount,
-                    "Child": flightDto.childcount,
-                    "Infant": flightDto.infantcount,
-                    "TripMode": "R",
-                    "TravelType": "I",
-                    "AirlineClass": null,
-                    "UserId": "AEAUH001035200",
-                    "Password": "Keenan@12345",
-                    "Error": null,
-                    "IncludeAirline": null,
-                    "ExcludeAirline": null,
-                    "Status": null,
-                    "DestinationNation": "AE",
-                    "OriginNation": "AE",
-                    "Classes": "Economy"
-                };
-            }
-        }
-        else {
+        const segments = flightDto?.segments ?? [];
+        const firstSegment = segments[0];
+        if (!firstSegment?.arrto)
             return [];
+        const data = {
+            "Origin": firstSegment.depfrom,
+            "Destination": firstSegment.arrto,
+            "OnwardDate": firstSegment.depdate,
+            "ReturnDate": firstSegment.depdate,
+            "Adult": flightDto.adultcount,
+            "Child": flightDto.childcount,
+            "Infant": flightDto.infantcount,
+            "TripMode": "O",
+            "TravelType": "I",
+            "AirlineClass": null,
+            "UserId": "AEAUH001035200",
+            "Password": "Keenan@12345",
+            "Error": null,
+            "IncludeAirline": null,
+            "ExcludeAirline": null,
+            "Status": null,
+            "DestinationNation": "AE",
+            "OriginNation": "AE",
+            "Classes": "Economy"
+        };
+        if (segments.length > 1) {
+            if (firstSegment.arrto !== segments[1]?.depfrom)
+                return [];
+            data.TripMode = "R";
+            data.ReturnDate = segments[1].depdate;
         }
         const headers = {
             Accept: '/',
@@ -144,20 +123,6 @@ let AlhindAPI = class AlhindAPI {
             }
             return airlineCache.get(code);
         };
-        const airlineMarkUpCache = new Map();
-        const currencyCache = new Map();
-        const getAirlineMarkUp = async (code) => {
-            if (!airlineMarkUpCache.has(code)) {
-                airlineMarkUpCache.set(code, await this.airlineDiscountRepository.findOne({ where: { airline: code } }));
-            }
-            return airlineMarkUpCache.get(code);
-        };
-        const getCurrencyConverter = async (code) => {
-            if (!currencyCache.has(code)) {
-                currencyCache.set(code, await this.currencyConverterRepository.findOne({ where: { airline: code } }));
-            }
-            return currencyCache.get(code);
-        };
         const FlightItenary = await Promise.all(AllFareWithPrice.map(async (flights) => {
             const Token = result?.Token || '';
             const Key = flights?.Key;
@@ -188,7 +153,7 @@ let AlhindAPI = class AlhindAPI {
             const firstLegBagAllowance = firstLegBaggage.find(b => b.FID === FID);
             const lastLegBaggage = legs.length > 1 ? legs[legs.length - 1]?.FreeBaggages ?? [] : [];
             const lastLegBagAllowance = lastLegBaggage.find(b => b.FID === FID);
-            const PriceBreakDown = Fares.map(pax => {
+            const PriceBreakDown = Fares.map((pax) => {
                 const PaxType = pax?.PTC === 'CHD' ? 'CNN' : pax?.PTC;
                 const paxCount = PaxType === 'ADT'
                     ? flighDto.adultcount
@@ -225,19 +190,20 @@ let AlhindAPI = class AlhindAPI {
                     FareComponent: {}
                 };
             });
-            const onwardSegments = flights?.FlightLegs?.filter(seg => seg.Type === '0') ?? [];
-            const returnSegments = flights?.FlightLegs?.filter(seg => seg.Type === '1') ?? [];
+            const onwardSegments = legs.filter(seg => seg.Type === '0');
+            const returnSegments = legs.filter(seg => seg.Type === '1');
             const mapSegments = async (segments) => {
                 return Promise.all(segments.map(async (segment) => {
                     const depAirport = await getAirport(segment?.Origin);
                     const arrAirport = await getAirport(segment?.Destination);
+                    const airlineInfo = await getAirline(segment?.AirlineCode);
                     return {
                         MarketingCarrier: segment?.AirlineCode,
-                        MarketingCarrierName: (await getAirline(segment?.AirlineCode))?.marketing_name,
+                        MarketingCarrierName: airlineInfo?.marketing_name,
                         MarketingFlightNumber: segment?.FlightNo,
                         OperatingCarrier: segment?.AirlineCode,
                         OperatingFlightNumber: segment?.FlightNo,
-                        OperatingCarrierName: (await getAirline(segment?.AirlineCode))?.marketing_name,
+                        OperatingCarrierName: airlineInfo?.marketing_name,
                         DepFrom: segment?.Origin,
                         DepAirPort: depAirport?.name,
                         DepLocation: depAirport?.location,
@@ -309,9 +275,13 @@ let AlhindAPI = class AlhindAPI {
         return FlightItenary;
     }
     async flightsUtilsUpdate(result, agentdata, flightDto) {
+        const today = new Date();
         if (!(result?.Journy?.FlightOptions?.length > 0))
             return [];
-        const TripType = flightDto?.segments?.length === 1 ? 'Oneway' : 'Return';
+        const segments = flightDto?.segments ?? [];
+        const firstSegment = segments[0];
+        const lastSegment = segments[segments.length - 1];
+        const TripType = segments.length === 1 ? 'Oneway' : 'Return';
         const AllFlights = result?.Journy?.FlightOptions || [];
         const AllFareWithPrice = AllFlights.flatMap(mflights => (mflights?.FlightFares ?? []).map(flight => {
             const copy = { ...mflights, PriceBreakDown: flight };
@@ -325,8 +295,6 @@ let AlhindAPI = class AlhindAPI {
         });
         const airportCache = new Map();
         const airlineCache = new Map();
-        const airlineMarkUpCache = new Map();
-        const currencyCache = new Map();
         const getAirport = async (code) => {
             if (!airportCache.has(code))
                 airportCache.set(code, await this.getAirports(code));
@@ -345,6 +313,78 @@ let AlhindAPI = class AlhindAPI {
                 rateMap.set(key, rate);
             }
         }
+        const baseFilter = {
+            travel_date: firstSegment?.depdate,
+            from_list: firstSegment?.depfrom,
+            to_list: firstSegment?.arrto,
+        };
+        const discountCache = new Map();
+        const discountCurrencyCache = new Map();
+        const agentDiscountCache = new Map();
+        const getDiscounts = async (airline, providerCode, currency) => {
+            const cache = currency ? discountCurrencyCache : discountCache;
+            const cacheKey = currency ? `${airline}-${providerCode}-${currency}` : `${airline}-${providerCode}`;
+            if (!cache.has(cacheKey)) {
+                const where = {
+                    airline,
+                    source: (0, typeorm_2.Like)(`%${providerCode}%`),
+                };
+                if (currency)
+                    where.currency = currency;
+                cache.set(cacheKey, await this.airlineDiscountRepository.find({ where }));
+            }
+            return cache.get(cacheKey) || [];
+        };
+        const getAgentDiscounts = async (agentId, airline, providerCode) => {
+            if (!agentId)
+                return [];
+            const cacheKey = `${agentId}-${airline}-${providerCode}`;
+            if (!agentDiscountCache.has(cacheKey)) {
+                agentDiscountCache.set(cacheKey, await this.airlineDiscountForAgentRepository.find({
+                    where: {
+                        agentId,
+                        airline,
+                        source: (0, typeorm_2.Like)(`%${providerCode}%`),
+                    },
+                }));
+            }
+            return agentDiscountCache.get(cacheKey) || [];
+        };
+        const isDateMatch = (value, compareValue) => {
+            const parsed = value ? new Date(value) : null;
+            if (parsed && parsed <= compareValue)
+                return true;
+            return value === '' || value === 'ALL';
+        };
+        const matchesList = (list, value) => list.includes(value) || list.includes('[-]') || list.includes('ALL');
+        const pickDiscount = (items, filter, today) => {
+            if (!items?.length)
+                return { percent: 0, amount: 0 };
+            const match = items.find(item => isDateMatch(item.booking_date, today) &&
+                isDateMatch(item.travel_date, filter.travel_date) &&
+                matchesList(item.from_list, filter.from_list) &&
+                matchesList(item.to_list, filter.from_list) &&
+                matchesList(item.rbd, filter.rbd));
+            if (!match)
+                return { percent: 0, amount: 0 };
+            return {
+                percent: Number(match?.discount_percent) || 0,
+                amount: Number(match?.fix_discount) || 0,
+            };
+        };
+        const resolveDiscountPolicy = async (airline, providerCode, filter) => {
+            const agentDiscounts = await getAgentDiscounts(agentdata?.agentId, airline, providerCode);
+            const agentPolicy = pickDiscount(agentDiscounts, filter, today);
+            if (agentPolicy.percent !== 0 || agentPolicy.amount !== 0)
+                return agentPolicy;
+            const baseDiscounts = await getDiscounts(airline, providerCode);
+            const basePolicy = pickDiscount(baseDiscounts, filter, today);
+            if (basePolicy.percent === 0 && basePolicy.amount === 0)
+                return basePolicy;
+            const currencyDiscounts = await getDiscounts(airline, providerCode, agentdata?.currency);
+            const currencyPolicy = pickDiscount(currencyDiscounts, filter, today);
+            return (currencyPolicy.percent !== 0 || currencyPolicy.amount !== 0) ? currencyPolicy : basePolicy;
+        };
         const FlightItenary = await Promise.all(AllFareWithPrice.map(async (flights) => {
             const Token = result?.Token || '';
             const Key = flights?.Key;
@@ -370,152 +410,57 @@ let AlhindAPI = class AlhindAPI {
                 ? equivalentAmount * (agentdata.clientmarkup / 100)
                 : agentdata?.clientmarkuptype === 'amount' ? agentdata.clientmarkup : 0;
             const TotalFareWithMarkUp = equivalentAmount + adminMarkUpAmount + agentMarkUpAmount + Taxes;
+            const legs = flights?.FlightLegs ?? [];
             const filter = {
-                travel_date: flightDto?.segments[0]?.depdate,
-                from_list: flightDto?.segments[0]?.depfrom,
-                to_list: flightDto?.segments[0]?.arrto,
-                rbd: flights?.FlightLegs[0]?.RBD,
+                ...baseFilter,
+                rbd: legs[0]?.RBD,
             };
-            const allAirlines = await this.airlineDiscountRepository.find({
-                where: {
-                    currency: agentdata?.currency,
-                    airline: flights?.TicketingCarrier,
-                    source: (0, typeorm_2.Like)(`%${flights?.ProviderCode}%`),
-                },
-            });
-            const today = new Date();
-            let airlinesDiscountPercent = 0;
-            let airlinesDiscountAmount = 0;
-            if (allAirlines.length > 0) {
-                const selectedBookingDate = [];
-                const bookingDateFilter = allAirlines.filter(item => {
-                    const bookingDate = item.booking_date ? new Date(item.booking_date) : null;
-                    if (bookingDate && bookingDate <= today) {
-                        selectedBookingDate.push(item);
-                        return true;
-                    }
-                    else if (item.booking_date === '') {
-                        selectedBookingDate.push(item);
-                        return true;
-                    }
-                    else if (item.booking_date === 'ALL') {
-                        selectedBookingDate.push(item);
-                        return true;
-                    }
-                    return false;
-                });
-                const selectedTravelDate = [];
-                const travelDateFilter = selectedBookingDate.filter(item => {
-                    const travelDate = item.travel_date ? new Date(item.travel_date) : null;
-                    if (travelDate && travelDate <= filter.travel_date) {
-                        selectedTravelDate.push(item);
-                        return true;
-                    }
-                    else if (item.travel_date === '') {
-                        selectedTravelDate.push(item);
-                        return true;
-                    }
-                    else if (item.travel_date === 'ALL') {
-                        selectedTravelDate.push(item);
-                        return true;
-                    }
-                    return false;
-                });
-                const selectedFromList = [];
-                const fromList = selectedTravelDate.filter(item => {
-                    const from_list = item.from_list;
-                    if (from_list.includes(filter.from_list)) {
-                        selectedFromList.push(item);
-                        return true;
-                    }
-                    else if (from_list.includes('[-]')) {
-                        selectedFromList.push(item);
-                        return true;
-                    }
-                    else if (from_list.includes('ALL')) {
-                        selectedFromList.push(item);
-                        return true;
-                    }
-                    return false;
-                });
-                const selectedToList = [];
-                const toList = selectedFromList.filter(item => {
-                    const to_list = item.to_list;
-                    if (to_list.includes(filter.from_list)) {
-                        selectedToList.push(item);
-                        return true;
-                    }
-                    else if (to_list.includes('[-]')) {
-                        selectedToList.push(item);
-                        return true;
-                    }
-                    else if (to_list.includes('ALL')) {
-                        selectedToList.push(item);
-                        return true;
-                    }
-                    return false;
-                });
-                const selectedRBDList = [];
-                const RBDList = selectedToList.filter(item => {
-                    const rbd_list = item.rbd;
-                    if (rbd_list.includes(filter.rbd)) {
-                        selectedRBDList.push(item);
-                        return true;
-                    }
-                    else if (rbd_list.includes('[-]')) {
-                        selectedRBDList.push(item);
-                        return true;
-                    }
-                    else if (rbd_list.includes('ALL')) {
-                        selectedRBDList.push(item);
-                        return true;
-                    }
-                    return false;
-                });
-                if (selectedRBDList.length > 0) {
-                    airlinesDiscountPercent = selectedRBDList[0]?.discount_percent || 0;
-                    airlinesDiscountAmount = selectedRBDList[0]?.fix_discount || 0;
-                }
-                else {
-                    airlinesDiscountPercent = 0;
-                    airlinesDiscountAmount = 0;
-                }
-            }
+            const { percent: airlinesDiscountPercent, amount: airlinesDiscountAmount } = await resolveDiscountPolicy(flights?.TicketingCarrier, flights?.ProviderCode, filter);
             const discountPercentValue = (TotalFareWithMarkUp * (airlinesDiscountPercent / 100)) || 0;
             const FareAfterDiscount = TotalFareWithMarkUp - discountPercentValue - airlinesDiscountAmount;
             const DiscountAmount = Number(discountPercentValue + airlinesDiscountAmount);
             const NetFare = Number(FareAfterDiscount.toFixed(2));
             const Fees = agentMarkUpAmount;
-            const legs = flights?.FlightLegs ?? [];
             if (NetFare > TotalFare)
                 TotalFare = NetFare;
-            const PriceBreakDown = Fares.map(pax => {
+            const firstLegBaggage = legs[0]?.FreeBaggages ?? [];
+            const lastLegBaggage = legs.length > 1 ? legs[legs.length - 1]?.FreeBaggages ?? [] : [];
+            const firstLegBagAllowance = firstLegBaggage.find(b => b.FID === FID);
+            const lastLegBagAllowance = lastLegBaggage.find(b => b.FID === FID);
+            const paxCounts = {
+                ADT: flightDto.adultcount,
+                CHD: flightDto.childcount,
+                CNN: flightDto.childcount,
+                INF: flightDto.infantcount || 0,
+            };
+            const addValue = DiscountAmount < 0 ? DiscountAmount : 0;
+            const anotherFees = adminMarkUpAmount + agentMarkUpAmount;
+            const buildBaggageInfo = (bagType) => {
+                const baggageInfo = [
+                    { Airline: flights?.TicketingCarrier, Allowance: firstLegBagAllowance?.[bagType] || '' },
+                ];
+                if (legs.length > 1) {
+                    baggageInfo.push({
+                        Airline: flights?.TicketingCarrier,
+                        Allowance: lastLegBagAllowance?.[bagType] || '',
+                    });
+                }
+                return baggageInfo;
+            };
+            const PriceBreakDown = Fares.map((pax) => {
                 const PaxType = pax?.PTC === 'CHD' ? 'CNN' : pax?.PTC;
-                const paxCount = PaxType === 'ADT' ? flightDto.adultcount
-                    : PaxType === 'CHD' || PaxType === 'CNN' ? flightDto.childcount
-                        : flightDto.infantcount || 0;
+                const paxCount = paxCounts[PaxType] ?? 0;
                 const bagType = PaxType === 'ADT' ? 'Adt_Baggage'
                     : PaxType === 'CHD' || PaxType === 'CNN' ? 'Chd_Baggage'
                         : 'Inf_Baggage';
-                const firstLegBaggage = legs[0]?.FreeBaggages ?? [];
-                const firstLegBagAllowance = firstLegBaggage.find(b => b.FID === FID);
-                const lastLegBaggage = legs.length > 1 ? legs[legs.length - 1]?.FreeBaggages ?? [] : [];
-                const lastLegBagAllowance = lastLegBaggage.find(b => b.FID === FID);
-                const baggageInfo = [{ Airline: flights?.TicketingCarrier, Allowance: firstLegBagAllowance?.[bagType] || '' }];
-                if (legs.length > 1)
-                    baggageInfo.push({ Airline: flights?.TicketingCarrier, Allowance: lastLegBagAllowance?.[bagType] || '' });
-                let addValue = 0;
-                if (DiscountAmount < 0) {
-                    addValue = DiscountAmount;
-                }
-                const anotherFees = (adminMarkUpAmount + agentMarkUpAmount);
+                const baggageInfo = buildBaggageInfo(bagType);
                 const PaxequivalentAmount = (pax?.BaseFare + addValue + anotherFees) * conversionRate;
-                const totalTaxAmount = Number(pax?.Tax * conversionRate);
+                const totalTaxAmount = pax?.Tax * conversionRate;
                 const PaxtotalFare = Number((PaxequivalentAmount + totalTaxAmount).toFixed(2));
                 return {
                     PaxType,
                     BaseFare: PaxequivalentAmount,
-                    Taxes: Number(totalTaxAmount).toFixed(2),
+                    Taxes: totalTaxAmount.toFixed(2),
                     TotalFare: PaxtotalFare,
                     PaxCount: paxCount,
                     Bag: baggageInfo,
@@ -567,7 +512,7 @@ let AlhindAPI = class AlhindAPI {
             const AllLegsInfo = [];
             if (onwardSegments.length > 0) {
                 AllLegsInfo.push({
-                    DepDate: flightDto?.segments[0].depdate,
+                    DepDate: firstSegment?.depdate,
                     DepFrom: onwardSegments[0]?.Origin,
                     ArrTo: onwardSegments[onwardSegments.length - 1]?.Destination,
                     Duration: '',
@@ -576,7 +521,7 @@ let AlhindAPI = class AlhindAPI {
             }
             if (returnSegments.length > 0) {
                 AllLegsInfo.push({
-                    DepDate: flightDto.segments[flightDto.segments.length - 1]?.depdate,
+                    DepDate: lastSegment?.depdate,
                     DepFrom: returnSegments[0]?.Origin,
                     ArrTo: returnSegments[returnSegments.length - 1]?.Destination,
                     Duration: '',
@@ -635,8 +580,10 @@ exports.AlhindAPI = AlhindAPI = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(currency_entity_1.CurrencyConverter)),
     __param(1, (0, typeorm_1.InjectRepository)(airlines_model_1.AirlineDiscount)),
-    __param(2, (0, typeorm_1.InjectRepository)(save_flight_entity_1.SaveFlightsData)),
+    __param(2, (0, typeorm_1.InjectRepository)(airlines_model_1.AirlineDiscountForAgent)),
+    __param(3, (0, typeorm_1.InjectRepository)(save_flight_entity_1.SaveFlightsData)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         airlines_service_1.AirlinesService,

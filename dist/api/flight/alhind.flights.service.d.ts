@@ -6,14 +6,15 @@ import { AirportsService } from '../airports/airports.service';
 import { Revalidation } from './dto/revalidation-flight.dto';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
 import { SaveFlightsData } from './entity/save-flight.entity';
-import { AirlineDiscount } from '../airlines/airlines.model';
+import { AirlineDiscount, AirlineDiscountForAgent } from '../airlines/airlines.model';
 export declare class AlhindAPI {
     private readonly currencyConverterRepository;
     private readonly airlineDiscountRepository;
+    private readonly airlineDiscountForAgentRepository;
     private readonly saveFlightsData;
     private readonly airlinesService;
     private readonly airportsService;
-    constructor(currencyConverterRepository: Repository<CurrencyConverter>, airlineDiscountRepository: Repository<AirlineDiscount>, saveFlightsData: Repository<SaveFlightsData>, airlinesService: AirlinesService, airportsService: AirportsService);
+    constructor(currencyConverterRepository: Repository<CurrencyConverter>, airlineDiscountRepository: Repository<AirlineDiscount>, airlineDiscountForAgentRepository: Repository<AirlineDiscountForAgent>, saveFlightsData: Repository<SaveFlightsData>, airlinesService: AirlinesService, airportsService: AirportsService);
     flights(agent: AgentModel, flightDto: FlightSearchModel): Promise<{
         Token: any;
         Key: any;
