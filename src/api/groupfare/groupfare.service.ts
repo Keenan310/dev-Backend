@@ -159,18 +159,19 @@ export class GroupfareService {
         throw new UnauthorizedException();
     }
 
-    const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+    const today = new Date().toISOString().split("T")[0];
 
-    const groupdata = await this.groupFareRepository
-    .createQueryBuilder('gf')
-    .where('gf.DepDate > :today', { today })
-    .andWhere('gf.tripType = :tripType', {
-      tripType: triptype
-    })
-    .andWhere('gf.RouteFrom = :origin', { origin })
-    .andWhere('gf.RouteTo = :destination', { destination })
-    .orderBy('DepDate', 'ASC')
-    .getRawMany();
+    const groupdata = await this.groupFareRepository.find({
+      where: {
+        DepDate: MoreThan(today),
+        TripType: triptype,
+        RouteFrom: origin,
+        RouteTo: destination,
+      },
+      order: {
+        DepDate: 'ASC',
+      },
+    });
 
     if(groupdata?.length > 0){
       const flightParserPromises = groupdata.map(group => this.flightParser(agent, group));
