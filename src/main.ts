@@ -29,6 +29,6 @@ async function bootstrap() {
     .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('jakuma', app, document);
-    await app.listen(8080, '0.0.0.0');
+    await app.listen(8000, '0.0.0.0');
   }
 bootstrap();

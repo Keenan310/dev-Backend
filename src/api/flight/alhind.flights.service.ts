@@ -422,7 +422,7 @@ export class AlhindAPI {
         return cache.get(cacheKey) || [];
     };
 
-    const getAgentDiscounts = async (agentId: string | undefined, airline: string, providerCode: string) => {
+    const getAgentDiscounts = async (agentId: string, airline: string, providerCode: string) => {
         if (!agentId) return [];
         const cacheKey = `${agentId}-${airline}-${providerCode}`;
         if (!agentDiscountCache.has(cacheKey)) {
@@ -440,22 +440,53 @@ export class AlhindAPI {
     const isDateMatch = (value: string, compareValue: any) => {
         const parsed = value ? new Date(value) : null;
         if (parsed && parsed <= compareValue) return true;
-        return value === '' || value === 'ALL';
+        return value === 'ALL' || value === '';
     };
 
-    const matchesList = (list: string, value: string) =>
-        list.includes(value) || list.includes('[-]') || list.includes('ALL');
+    const normalizeListEntries = (list: string | string[] = []) => {
+        if (!list) return [];
+        const rawEntries = Array.isArray(list) ? list : list.toString().split(',');
+        return rawEntries.map(entry => (entry ?? '').trim().toUpperCase());
+    };
 
-    const pickDiscount = (items: any[], filter: any, today: Date) => {
+    const getListMatchPriority = (list: string | string[] = [], value: string) => {
+        const entries = normalizeListEntries(list);
+        const normalizedValue = (value ?? '').trim().toUpperCase();
+        if (normalizedValue && entries.includes(normalizedValue)) return 3;
+        if (entries.includes('ALL')) return 2;
+        if (entries.includes('-') || entries.includes('[-]') || entries.includes('')) return 1;
+        if (!entries.length) return 1;
+        return 0;
+    };
+
+    const pickDiscount = (items: any[], filter: any) => {
         if (!items?.length) return { percent: 0, amount: 0 };
-        const match = items.find(item =>
-            isDateMatch(item.booking_date, today) &&
-            isDateMatch(item.travel_date, filter.travel_date) &&
-            matchesList(item.from_list, filter.from_list) &&
-            matchesList(item.to_list, filter.from_list) &&
-            matchesList(item.rbd, filter.rbd)
-        );
-        if (!match) return { percent: 0, amount: 0 };
+        let bestMatch: { item: any; score: number } | null = null;
+
+        for (const item of items) {
+            if (
+                !isDateMatch(item.booking_date, today) ||
+                !isDateMatch(item.travel_date, filter.travel_date)
+            ) {
+                continue;
+            }
+
+            const fromPriority = getListMatchPriority(item.from_list, filter.from_list);
+            const toPriority = getListMatchPriority(item.to_list, filter.to_list);
+            const rbdPriority = getListMatchPriority(item.rbd, filter.rbd);
+
+            if (!fromPriority || !toPriority || !rbdPriority) {
+                continue;
+            }
+
+            const score = fromPriority * 100 + toPriority * 10 + rbdPriority;
+            if (!bestMatch || score > bestMatch.score) {
+                bestMatch = { item, score };
+            }
+        }
+
+        if (!bestMatch) return { percent: 0, amount: 0 };
+        const match = bestMatch.item;
         return {
             percent: Number(match?.discount_percent) || 0,
             amount: Number(match?.fix_discount) || 0,
@@ -464,15 +495,14 @@ export class AlhindAPI {
 
     const resolveDiscountPolicy = async (airline: string, providerCode: string, filter: any) => {
         const agentDiscounts = await getAgentDiscounts(agentdata?.agentId, airline, providerCode);
-        const agentPolicy = pickDiscount(agentDiscounts, filter, today);
+        const agentPolicy = pickDiscount(agentDiscounts, filter);
         if (agentPolicy.percent !== 0 || agentPolicy.amount !== 0) return agentPolicy;
 
-        const baseDiscounts = await getDiscounts(airline, providerCode);
-        const basePolicy = pickDiscount(baseDiscounts, filter, today);
+        const basePolicy = {"percent": 0, "amount": 0};
         if (basePolicy.percent === 0 && basePolicy.amount === 0) return basePolicy;
 
         const currencyDiscounts = await getDiscounts(airline, providerCode, agentdata?.currency);
-        const currencyPolicy = pickDiscount(currencyDiscounts, filter, today);
+        const currencyPolicy = pickDiscount(currencyDiscounts, filter);
         return (currencyPolicy.percent !== 0 || currencyPolicy.amount !== 0) ? currencyPolicy : basePolicy;
     };
 
@@ -519,6 +549,13 @@ export class AlhindAPI {
             ...baseFilter,
             rbd: legs[0]?.RBD,
         };
+
+        const currencyDiscounts = await getDiscounts(flights?.TicketingCarrier, flights?.ProviderCode, agentdata?.currency);
+        const currencyPolicy = pickDiscount(currencyDiscounts, filter);
+        // if(flights?.TicketingCarrier === "PK"){
+        //     console.log("Currency Discounts List for "+flights?.TicketingCarrier+" : ", currencyDiscounts);
+        //     console.log("Currency Discount for "+flights?.TicketingCarrier+" : ", currencyPolicy);
+        // }
 
         const { percent: airlinesDiscountPercent, amount: airlinesDiscountAmount } = await resolveDiscountPolicy(
             flights?.TicketingCarrier,

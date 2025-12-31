@@ -5,8 +5,13 @@ const client_s3_1 = require("@aws-sdk/client-s3");
 exports.DoSpacesServiceLib = 'lib:do-spaces-service';
 const spacesEndpoint = process.env.SPACES_ENDPOINT;
 const spacesRegion = process.env.SPACES_REGION || 'us-east-1';
+const normalizeEndpoint = (value) => {
+    if (!value)
+        return value;
+    return value.startsWith('http://') || value.startsWith('https://') ? value : `https://${value}`;
+};
 const S3 = new client_s3_1.S3Client({
-    endpoint: spacesEndpoint,
+    endpoint: normalizeEndpoint(spacesEndpoint),
     region: spacesRegion,
     credentials: {
         accessKeyId: process.env.SPACES_ACCESS_KEY || '',
