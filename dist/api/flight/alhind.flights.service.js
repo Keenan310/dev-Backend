@@ -405,15 +405,17 @@ let AlhindAPI = class AlhindAPI {
         };
         const resolveDiscountPolicy = async (airline, providerCode, filter) => {
             const agentDiscounts = await getAgentDiscounts(agentdata?.agentId, airline, providerCode);
-            const agentPolicy = pickDiscount(agentDiscounts, filter);
-            if (agentPolicy.percent !== 0 || agentPolicy.amount !== 0)
-                return agentPolicy;
+            const agentDiscountPolicy = pickDiscount(agentDiscounts, filter);
+            if (agentDiscountPolicy.percent !== 0 || agentDiscountPolicy.amount !== 0)
+                return agentDiscountPolicy;
+            const adminDiscounts = await getDiscounts(airline, providerCode, agentdata?.currency);
+            const adminDiscountPolicy = pickDiscount(adminDiscounts, filter);
+            if (adminDiscountPolicy.percent !== 0 || adminDiscountPolicy.amount !== 0)
+                return adminDiscountPolicy;
             const basePolicy = { "percent": 0, "amount": 0 };
-            if (basePolicy.percent === 0 && basePolicy.amount === 0)
+            if (agentDiscountPolicy.percent === 0 && agentDiscountPolicy.amount === 0 &&
+                adminDiscountPolicy.percent === 0 && adminDiscountPolicy.amount === 0)
                 return basePolicy;
-            const currencyDiscounts = await getDiscounts(airline, providerCode, agentdata?.currency);
-            const currencyPolicy = pickDiscount(currencyDiscounts, filter);
-            return (currencyPolicy.percent !== 0 || currencyPolicy.amount !== 0) ? currencyPolicy : basePolicy;
         };
         const FlightItenary = await Promise.all(AllFareWithPrice.map(async (flights) => {
             const Token = result?.Token || '';
@@ -445,8 +447,6 @@ let AlhindAPI = class AlhindAPI {
                 ...baseFilter,
                 rbd: legs[0]?.RBD,
             };
-            const currencyDiscounts = await getDiscounts(flights?.TicketingCarrier, flights?.ProviderCode, agentdata?.currency);
-            const currencyPolicy = pickDiscount(currencyDiscounts, filter);
             const { percent: airlinesDiscountPercent, amount: airlinesDiscountAmount } = await resolveDiscountPolicy(flights?.TicketingCarrier, flights?.ProviderCode, filter);
             const discountPercentValue = (TotalFareWithMarkUp * (airlinesDiscountPercent / 100)) || 0;
             const FareAfterDiscount = TotalFareWithMarkUp - discountPercentValue - airlinesDiscountAmount;
@@ -491,7 +491,7 @@ let AlhindAPI = class AlhindAPI {
                 const PaxtotalFare = Number((PaxequivalentAmount + totalTaxAmount).toFixed(2));
                 return {
                     PaxType,
-                    BaseFare: PaxequivalentAmount,
+                    BaseFare: Number(PaxequivalentAmount).toFixed(2),
                     Taxes: totalTaxAmount.toFixed(2),
                     TotalFare: PaxtotalFare,
                     PaxCount: paxCount,
@@ -570,12 +570,12 @@ let AlhindAPI = class AlhindAPI {
                 CarrierName,
                 Cabinclass: FareName,
                 Currency: agentdata?.currency,
-                BaseFare: equivalentAmount,
+                BaseFare: Number(equivalentAmount).toFixed(2),
                 Taxes: Number(Taxes).toFixed(2),
                 NetFare,
-                GrossFare: TotalFare,
+                GrossFare: Number(TotalFare).toFixed(2),
                 Fees,
-                MarkUp: DiscountAmount,
+                MarkUp: Number(DiscountAmount).toFixed(2),
                 ConversionRate: conversionRate,
                 TimeLimit: '',
                 Refundable: isRefundable,

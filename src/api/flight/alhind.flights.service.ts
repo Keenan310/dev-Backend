@@ -495,15 +495,16 @@ export class AlhindAPI {
 
     const resolveDiscountPolicy = async (airline: string, providerCode: string, filter: any) => {
         const agentDiscounts = await getAgentDiscounts(agentdata?.agentId, airline, providerCode);
-        const agentPolicy = pickDiscount(agentDiscounts, filter);
-        if (agentPolicy.percent !== 0 || agentPolicy.amount !== 0) return agentPolicy;
+        const agentDiscountPolicy = pickDiscount(agentDiscounts, filter);
+        if (agentDiscountPolicy.percent !== 0 || agentDiscountPolicy.amount !== 0) return agentDiscountPolicy;
+
+        const adminDiscounts = await getDiscounts(airline, providerCode, agentdata?.currency);
+        const adminDiscountPolicy = pickDiscount(adminDiscounts, filter);     
+        if (adminDiscountPolicy.percent !== 0 || adminDiscountPolicy.amount !== 0) return adminDiscountPolicy;
 
         const basePolicy = {"percent": 0, "amount": 0};
-        if (basePolicy.percent === 0 && basePolicy.amount === 0) return basePolicy;
-
-        const currencyDiscounts = await getDiscounts(airline, providerCode, agentdata?.currency);
-        const currencyPolicy = pickDiscount(currencyDiscounts, filter);
-        return (currencyPolicy.percent !== 0 || currencyPolicy.amount !== 0) ? currencyPolicy : basePolicy;
+        if (agentDiscountPolicy.percent === 0 && agentDiscountPolicy.amount === 0 &&
+            adminDiscountPolicy.percent === 0 && adminDiscountPolicy.amount === 0) return basePolicy;
     };
 
     // ---- Process all flights ----
@@ -550,8 +551,8 @@ export class AlhindAPI {
             rbd: legs[0]?.RBD,
         };
 
-        const currencyDiscounts = await getDiscounts(flights?.TicketingCarrier, flights?.ProviderCode, agentdata?.currency);
-        const currencyPolicy = pickDiscount(currencyDiscounts, filter);
+        //const currencyDiscounts = await getDiscounts(flights?.TicketingCarrier, flights?.ProviderCode, agentdata?.currency);
+        //const currencyPolicy = pickDiscount(currencyDiscounts, filter);
         // if(flights?.TicketingCarrier === "PK"){
         //     console.log("Currency Discounts List for "+flights?.TicketingCarrier+" : ", currencyDiscounts);
         //     console.log("Currency Discount for "+flights?.TicketingCarrier+" : ", currencyPolicy);
@@ -612,7 +613,7 @@ export class AlhindAPI {
 
             return {
                 PaxType,
-                BaseFare: PaxequivalentAmount,
+                BaseFare: Number(PaxequivalentAmount).toFixed(2),
                 Taxes: totalTaxAmount.toFixed(2),
                 TotalFare: PaxtotalFare,
                 PaxCount: paxCount,
@@ -697,12 +698,12 @@ export class AlhindAPI {
             CarrierName,
             Cabinclass: FareName,
             Currency: agentdata?.currency,
-            BaseFare: equivalentAmount,
+            BaseFare: Number(equivalentAmount).toFixed(2),
             Taxes : Number(Taxes).toFixed(2),
             NetFare,
-            GrossFare: TotalFare,
+            GrossFare: Number(TotalFare).toFixed(2),
             Fees,
-            MarkUp: DiscountAmount,
+            MarkUp: Number(DiscountAmount).toFixed(2),
             ConversionRate : conversionRate,
             TimeLimit: '',
             Refundable: isRefundable,
