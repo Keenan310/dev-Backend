@@ -408,20 +408,6 @@ export class AlhindAPI {
     const discountCurrencyCache = new Map<string, any[]>();
     const agentDiscountCache = new Map<string, any[]>();
 
-    const getDiscounts = async (airline: string, providerCode: string, currency?: string) => {
-        const cache = currency ? discountCurrencyCache : discountCache;
-        const cacheKey = currency ? `${airline}-${providerCode}-${currency}` : `${airline}-${providerCode}`;
-        if (!cache.has(cacheKey)) {
-            const where: any = {
-                airline,
-                source: Like(`%${providerCode}%`),
-            };
-            if (currency) where.currency = currency;
-            cache.set(cacheKey, await this.airlineDiscountRepository.find({ where }));
-        }
-        return cache.get(cacheKey) || [];
-    };
-
     const getAgentDiscounts = async (agentId: string, airline: string, providerCode: string) => {
         if (!agentId) return [];
         const cacheKey = `${agentId}-${airline}-${providerCode}`;
@@ -436,6 +422,21 @@ export class AlhindAPI {
         }
         return agentDiscountCache.get(cacheKey) || [];
     };
+
+    const getDiscounts = async (airline: string, providerCode: string, currency?: string) => {
+        const cache = currency ? discountCurrencyCache : discountCache;
+        const cacheKey = currency ? `${airline}-${providerCode}-${currency}` : `${airline}-${providerCode}`;
+        if (!cache.has(cacheKey)) {
+            const where: any = {
+                airline,
+                source: Like(`%${providerCode}%`),
+            };
+            if (currency) where.currency = currency;
+            cache.set(cacheKey, await this.airlineDiscountRepository.find({ where }));
+        }
+        return cache.get(cacheKey) || [];
+    };
+
 
     const isDateMatch = (value: string, compareValue: any) => {
         const parsed = value ? new Date(value) : null;
@@ -496,15 +497,16 @@ export class AlhindAPI {
     const resolveDiscountPolicy = async (airline: string, providerCode: string, filter: any) => {
         const agentDiscounts = await getAgentDiscounts(agentdata?.agentId, airline, providerCode);
         const agentDiscountPolicy = pickDiscount(agentDiscounts, filter);
-        if (agentDiscountPolicy.percent !== 0 || agentDiscountPolicy.amount !== 0) return agentDiscountPolicy;
 
-        const adminDiscounts = await getDiscounts(airline, providerCode, agentdata?.currency);
-        const adminDiscountPolicy = pickDiscount(adminDiscounts, filter);     
-        if (adminDiscountPolicy.percent !== 0 || adminDiscountPolicy.amount !== 0) return adminDiscountPolicy;
-
-        const basePolicy = {"percent": 0, "amount": 0};
-        if (agentDiscountPolicy.percent === 0 && agentDiscountPolicy.amount === 0 &&
-            adminDiscountPolicy.percent === 0 && adminDiscountPolicy.amount === 0) return basePolicy;
+        if (agentDiscountPolicy.percent !== 0 || agentDiscountPolicy.amount !== 0){
+            return agentDiscountPolicy;
+        }else if(agentDiscountPolicy.percent === 0 || agentDiscountPolicy.amount === 0){
+            const adminDiscounts = await getDiscounts(airline, providerCode, agentdata?.currency);
+            const adminDiscountPolicy = pickDiscount(adminDiscounts, filter);     
+            return adminDiscountPolicy;
+        }else{
+            return {"percent": 0, "amount": 0};
+        }
     };
 
     // ---- Process all flights ----
@@ -550,13 +552,6 @@ export class AlhindAPI {
             ...baseFilter,
             rbd: legs[0]?.RBD,
         };
-
-        //const currencyDiscounts = await getDiscounts(flights?.TicketingCarrier, flights?.ProviderCode, agentdata?.currency);
-        //const currencyPolicy = pickDiscount(currencyDiscounts, filter);
-        // if(flights?.TicketingCarrier === "PK"){
-        //     console.log("Currency Discounts List for "+flights?.TicketingCarrier+" : ", currencyDiscounts);
-        //     console.log("Currency Discount for "+flights?.TicketingCarrier+" : ", currencyPolicy);
-        // }
 
         const { percent: airlinesDiscountPercent, amount: airlinesDiscountAmount } = await resolveDiscountPolicy(
             flights?.TicketingCarrier,

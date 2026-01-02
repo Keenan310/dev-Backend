@@ -321,20 +321,6 @@ let AlhindAPI = class AlhindAPI {
         const discountCache = new Map();
         const discountCurrencyCache = new Map();
         const agentDiscountCache = new Map();
-        const getDiscounts = async (airline, providerCode, currency) => {
-            const cache = currency ? discountCurrencyCache : discountCache;
-            const cacheKey = currency ? `${airline}-${providerCode}-${currency}` : `${airline}-${providerCode}`;
-            if (!cache.has(cacheKey)) {
-                const where = {
-                    airline,
-                    source: (0, typeorm_2.Like)(`%${providerCode}%`),
-                };
-                if (currency)
-                    where.currency = currency;
-                cache.set(cacheKey, await this.airlineDiscountRepository.find({ where }));
-            }
-            return cache.get(cacheKey) || [];
-        };
         const getAgentDiscounts = async (agentId, airline, providerCode) => {
             if (!agentId)
                 return [];
@@ -349,6 +335,20 @@ let AlhindAPI = class AlhindAPI {
                 }));
             }
             return agentDiscountCache.get(cacheKey) || [];
+        };
+        const getDiscounts = async (airline, providerCode, currency) => {
+            const cache = currency ? discountCurrencyCache : discountCache;
+            const cacheKey = currency ? `${airline}-${providerCode}-${currency}` : `${airline}-${providerCode}`;
+            if (!cache.has(cacheKey)) {
+                const where = {
+                    airline,
+                    source: (0, typeorm_2.Like)(`%${providerCode}%`),
+                };
+                if (currency)
+                    where.currency = currency;
+                cache.set(cacheKey, await this.airlineDiscountRepository.find({ where }));
+            }
+            return cache.get(cacheKey) || [];
         };
         const isDateMatch = (value, compareValue) => {
             const parsed = value ? new Date(value) : null;
@@ -406,16 +406,17 @@ let AlhindAPI = class AlhindAPI {
         const resolveDiscountPolicy = async (airline, providerCode, filter) => {
             const agentDiscounts = await getAgentDiscounts(agentdata?.agentId, airline, providerCode);
             const agentDiscountPolicy = pickDiscount(agentDiscounts, filter);
-            if (agentDiscountPolicy.percent !== 0 || agentDiscountPolicy.amount !== 0)
+            if (agentDiscountPolicy.percent !== 0 || agentDiscountPolicy.amount !== 0) {
                 return agentDiscountPolicy;
-            const adminDiscounts = await getDiscounts(airline, providerCode, agentdata?.currency);
-            const adminDiscountPolicy = pickDiscount(adminDiscounts, filter);
-            if (adminDiscountPolicy.percent !== 0 || adminDiscountPolicy.amount !== 0)
+            }
+            else if (agentDiscountPolicy.percent === 0 || agentDiscountPolicy.amount === 0) {
+                const adminDiscounts = await getDiscounts(airline, providerCode, agentdata?.currency);
+                const adminDiscountPolicy = pickDiscount(adminDiscounts, filter);
                 return adminDiscountPolicy;
-            const basePolicy = { "percent": 0, "amount": 0 };
-            if (agentDiscountPolicy.percent === 0 && agentDiscountPolicy.amount === 0 &&
-                adminDiscountPolicy.percent === 0 && adminDiscountPolicy.amount === 0)
-                return basePolicy;
+            }
+            else {
+                return { "percent": 0, "amount": 0 };
+            }
         };
         const FlightItenary = await Promise.all(AllFareWithPrice.map(async (flights) => {
             const Token = result?.Token || '';
