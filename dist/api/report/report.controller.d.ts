@@ -15,11 +15,12 @@ export declare class ReportController {
         lossProfit: number;
         ledger: any[];
         depsoit: any[];
+        totalSell: any;
         totalExpense: any;
         totalIncome: number;
-        totalSell: any;
-        totalTicketCost: any;
-        totalDeposit: any;
+        totalSellLiable: any;
+        totalDepositLiable: any;
+        totalLossProfitLiable: any;
     }>;
     findSingleLedgerAdmin(header: string, agentId: string): Promise<{
         totalSell: any;

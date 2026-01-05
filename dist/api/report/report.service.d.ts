@@ -89,11 +89,12 @@ export declare class ReportService {
         lossProfit: number;
         ledger: any[];
         depsoit: any[];
+        totalSell: any;
         totalExpense: any;
         totalIncome: number;
-        totalSell: any;
-        totalTicketCost: any;
-        totalDeposit: any;
+        totalSellLiable: any;
+        totalDepositLiable: any;
+        totalLossProfitLiable: any;
     }>;
     findSingleAgentLedgerAdmin(header: any, agentId: string): Promise<{
         totalSell: any;

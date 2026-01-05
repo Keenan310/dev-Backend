@@ -705,22 +705,33 @@ export class ReportService {
     .createQueryBuilder('ledger')
     .select('SUM(ledger.netfare)', 'totalAmount').getRawOne();
 
+     const expense = await this.adminExpenseRepository 
+    .createQueryBuilder('expense')
+    .select('SUM(expense.amount)', 'totalAmount').getRawOne();
+
     const lossProfit = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
     .select('SUM(ledger.netfare) - SUM(ledger.ticketprice)', 'totalAmount').getRawOne();
 
-    const deposit = await this.adminLedgerRepository
+
+    //Admin
+    const totalLiableSell = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
-    .select('SUM(ledger.deposit)', 'totalAmount')
+    .select('SUM(ledger.ticketprice)', 'totalAmount')
+    .where('ledger.liable =: adminId', {adminId})
     .getRawOne();
 
-    const expense = await this.adminExpenseRepository
-    .createQueryBuilder('expense')
-    .select('SUM(expense.amount)', 'totalAmount').getRawOne();
 
-    const totalTicket = await this.adminLedgerRepository
+    const totalLiableDeposit = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
-    .select('SUM(ledger.ticketprice)', 'totalAmount').getRawOne();
+    .select('SUM(ledger.deposit)', 'totalAmount')
+    .where('ledger.liable =: adminId', {adminId})
+    .getRawOne();
+
+    const lossProfitLiable = await this.adminLedgerRepository
+    .createQueryBuilder('ledger')
+    .select('SUM(ledger.netfare) - SUM(ledger.ticketprice)', 'totalAmount').getRawOne();
+
 
     const totalIncome = lossProfit?.totalAmount - expense?.totalAmount;
 
@@ -728,11 +739,12 @@ export class ReportService {
       lossProfit: totalIncome || 0,
       ledger: ledger,
       depsoit: depositLedger,
+      totalSell: sell?.totalAmount || 0,
       totalExpense: expense.totalAmount || 0,
       totalIncome: totalIncome || 0,
-      totalSell: sell?.totalAmount || 0,
-      totalTicketCost: totalTicket?.totalAmount || 0,
-      totalDeposit: deposit?.totalAmount || 0,
+      totalSellLiable: totalLiableSell?.totalAmount || 0,
+      totalDepositLiable: totalLiableDeposit?.totalAmount || 0,
+      totalLossProfitLiable: lossProfitLiable?.totalAmount || 0,
     }
 
     return ledgerData;
