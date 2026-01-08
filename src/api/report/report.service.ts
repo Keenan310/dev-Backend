@@ -645,11 +645,11 @@ export class ReportService {
 
   async findAllAdminLedger(header: any, startDate: Date, endDate: Date, adminId: string) {
 
-    const verifyAdminId = await this.authService.verifyAdminToken(header);
+    // const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
+    // if(!verifyAdminId){
+    //     throw new UnauthorizedException();
+    // }
 
     const ledgerQuery = this.adminLedgerRepository
     .createQueryBuilder('ledger')
@@ -686,7 +686,8 @@ export class ReportService {
       'ledger.description',
       'ledger.deposit',
       'ledger.agentId as agentcode',
-      'ledger.status'
+      'ledger.status',
+      'ledger.liable'
     ])
     .where('ledger.created_at BETWEEN :startDate AND :endDate', {
       startDate,
@@ -695,7 +696,7 @@ export class ReportService {
     .andWhere('ledger.deposit > 0')
 
     if (adminId) {
-      depositQuery.andWhere('ledger.agentId = :adminId', { adminId });
+      depositQuery.andWhere('ledger.liable = :adminId', { adminId });
     }
 
     const depositLedger = await depositQuery.orderBy('ledger.id', 'DESC').getRawMany();
@@ -718,14 +719,14 @@ export class ReportService {
     const totalLiableSell = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
     .select('SUM(ledger.ticketprice)', 'totalAmount')
-    .where('ledger.liable =: adminId', {adminId})
+    .where('ledger.liable =:adminId', {adminId})
     .getRawOne();
 
 
     const totalLiableDeposit = await this.adminLedgerRepository
     .createQueryBuilder('ledger')
     .select('SUM(ledger.deposit)', 'totalAmount')
-    .where('ledger.liable =: adminId', {adminId})
+    .where('ledger.liable = :adminId', { adminId })
     .getRawOne();
 
     const lossProfitLiable = await this.adminLedgerRepository
