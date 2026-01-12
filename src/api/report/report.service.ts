@@ -645,11 +645,11 @@ export class ReportService {
 
   async findAllAdminLedger(header: any, startDate: Date, endDate: Date, adminId: string) {
 
-    // const verifyAdminId = await this.authService.verifyAdminToken(header);
+    const verifyAdminId = await this.authService.verifyAdminToken(header);
 
-    // if(!verifyAdminId){
-    //     throw new UnauthorizedException();
-    // }
+    if(!verifyAdminId){
+        throw new UnauthorizedException();
+    }
 
     const ledgerQuery = this.adminLedgerRepository
     .createQueryBuilder('ledger')

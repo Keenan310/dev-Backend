@@ -487,7 +487,7 @@ let AlhindAPI = class AlhindAPI {
                     : PaxType === 'CHD' || PaxType === 'CNN' ? 'Chd_Baggage'
                         : 'Inf_Baggage';
                 const baggageInfo = buildBaggageInfo(bagType);
-                const PaxequivalentAmount = (pax?.BaseFare + addValue + anotherFees) * conversionRate;
+                const PaxequivalentAmount = (pax?.BaseFare + (-addValue) + anotherFees) * conversionRate;
                 const totalTaxAmount = pax?.Tax * conversionRate;
                 const PaxtotalFare = Number((PaxequivalentAmount + totalTaxAmount).toFixed(2));
                 return {
