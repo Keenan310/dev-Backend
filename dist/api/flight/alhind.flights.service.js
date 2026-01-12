@@ -365,13 +365,13 @@ let AlhindAPI = class AlhindAPI {
         const getListMatchPriority = (list = [], value) => {
             const entries = normalizeListEntries(list);
             const normalizedValue = (value ?? '').trim().toUpperCase();
+            if (!entries.length)
+                return 1;
             if (normalizedValue && entries.includes(normalizedValue))
                 return 3;
             if (entries.includes('ALL'))
                 return 2;
-            if (entries.includes('-') || entries.includes('[-]') || entries.includes(''))
-                return 1;
-            if (!entries.length)
+            if (entries.includes('-') || entries.includes('[-]'))
                 return 1;
             return 0;
         };
@@ -576,7 +576,7 @@ let AlhindAPI = class AlhindAPI {
                 NetFare,
                 GrossFare: Number(TotalFare).toFixed(2),
                 Fees,
-                MarkUp: Number(DiscountAmount).toFixed(2),
+                MarkUp: Number(-DiscountAmount).toFixed(2),
                 ConversionRate: conversionRate,
                 TimeLimit: '',
                 Refundable: isRefundable,

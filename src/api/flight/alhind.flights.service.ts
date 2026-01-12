@@ -446,17 +446,20 @@ export class AlhindAPI {
 
     const normalizeListEntries = (list: string | string[] = []) => {
         if (!list) return [];
-        const rawEntries = Array.isArray(list) ? list : list.toString().split(',');
-        return rawEntries.map(entry => (entry ?? '').trim().toUpperCase());
-    };
+            const rawEntries = Array.isArray(list) ? list : list.toString().split(',');
+            return rawEntries.map(entry => (entry ?? '').trim().toUpperCase());
+        };
 
-    const getListMatchPriority = (list: string | string[] = [], value: string) => {
+        const getListMatchPriority = (list: string | string[] = [], value: string) => {
         const entries = normalizeListEntries(list);
         const normalizedValue = (value ?? '').trim().toUpperCase();
+
+        if (!entries.length) return 1;
+
         if (normalizedValue && entries.includes(normalizedValue)) return 3;
         if (entries.includes('ALL')) return 2;
-        if (entries.includes('-') || entries.includes('[-]') || entries.includes('')) return 1;
-        if (!entries.length) return 1;
+        if (entries.includes('-') || entries.includes('[-]')) return 1;
+
         return 0;
     };
 
@@ -698,7 +701,7 @@ export class AlhindAPI {
             NetFare,
             GrossFare: Number(TotalFare).toFixed(2),
             Fees,
-            MarkUp: Number(DiscountAmount).toFixed(2),
+            MarkUp: Number(-DiscountAmount).toFixed(2),
             ConversionRate : conversionRate,
             TimeLimit: '',
             Refundable: isRefundable,
