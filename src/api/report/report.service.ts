@@ -729,10 +729,7 @@ export class ReportService {
     .where('ledger.liable = :adminId', { adminId })
     .getRawOne();
 
-    const lossProfitLiable = await this.adminLedgerRepository
-    .createQueryBuilder('ledger')
-    .select('SUM(ledger.netfare) - SUM(ledger.ticketprice)', 'totalAmount').getRawOne();
-
+    const balanceLiable = totalLiableSell - totalLiableDeposit;
 
     const totalIncome = lossProfit?.totalAmount - expense?.totalAmount;
 
@@ -745,7 +742,7 @@ export class ReportService {
       totalIncome: totalIncome || 0,
       totalSellLiable: totalLiableSell?.totalAmount || 0,
       totalDepositLiable: totalLiableDeposit?.totalAmount || 0,
-      totalLossProfitLiable: lossProfitLiable?.totalAmount || 0,
+      totalLossProfitLiable: balanceLiable || 0,
     }
 
     return ledgerData;
