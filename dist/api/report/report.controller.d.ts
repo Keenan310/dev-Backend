@@ -20,7 +20,7 @@ export declare class ReportController {
         totalIncome: number;
         totalSellLiable: any;
         totalDepositLiable: any;
-        totalLossProfitLiable: any;
+        totalLossProfitLiable: number;
     }>;
     findSingleLedgerAdmin(header: string, agentId: string): Promise<{
         totalSell: any;

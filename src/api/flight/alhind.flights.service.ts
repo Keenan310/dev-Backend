@@ -530,7 +530,7 @@ export class AlhindAPI {
         if(agentdata.currency === 'PKR'){
             const key = `${flights?.TicketingCarrier}-${ProviderCode}-${agentdata.currency}`;
             const data = rateMap.get(key);
-            conversionRate = data?.exchange_rate || rateMap?.get('DF-PKR').exchange_rate;
+            conversionRate = data?.exchange_rate || rateMap?.get('DF-DF-PKR')?.exchange_rate;
         }
 
         // ---- Base fare & taxes ----

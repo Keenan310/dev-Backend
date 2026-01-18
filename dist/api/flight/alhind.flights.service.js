@@ -309,7 +309,7 @@ let AlhindAPI = class AlhindAPI {
         if (agentdata.currency === 'PKR') {
             const allRates = await this.currencyConverterRepository.find();
             for (const rate of allRates) {
-                const key = `${rate.source}-${rate.alternate}`;
+                const key = `${rate.airline}-${rate.source}-${rate.alternate}`;
                 rateMap.set(key, rate);
             }
         }
@@ -429,9 +429,9 @@ let AlhindAPI = class AlhindAPI {
             const isRefundable = RefundableInfo === "Refundable";
             let conversionRate = 1;
             if (agentdata.currency === 'PKR') {
-                const key = `${ProviderCode}-${agentdata.currency}`;
+                const key = `${flights?.TicketingCarrier}-${ProviderCode}-${agentdata.currency}`;
                 const data = rateMap.get(key);
-                conversionRate = data?.exchange_rate || rateMap?.get('DF-PKR').exchange_rate;
+                conversionRate = data?.exchange_rate || rateMap?.get('DF-DF-PKR')?.exchange_rate;
             }
             const equivalentAmount = AprxTotalBaseFare * conversionRate;
             const Taxes = AprxTotalTax * conversionRate;

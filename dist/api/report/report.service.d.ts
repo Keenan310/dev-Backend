@@ -94,7 +94,7 @@ export declare class ReportService {
         totalIncome: number;
         totalSellLiable: any;
         totalDepositLiable: any;
-        totalLossProfitLiable: any;
+        totalLossProfitLiable: number;
     }>;
     findSingleAgentLedgerAdmin(header: any, agentId: string): Promise<{
         totalSell: any;
