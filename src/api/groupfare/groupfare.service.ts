@@ -241,17 +241,17 @@ export class GroupfareService {
 
     let Leg = resultData;
     const conversionData = await this.CurrencyConverterRepository.findOne({where: {source: 'Group'}});
-    let converstionrate = 1;
+    let converstionrate=1;
     if(agent?.currency === 'AED' && conversionData){
-        converstionrate = conversionData.exchange_rate;
+      converstionrate = conversionData.exchange_rate;
     }
-    const NetFareConv = Leg.NetFare / converstionrate;
+    const NetFareConv = (Leg.NetFare / converstionrate).toFixed(2);
     const PriceBreakdown = [
         {
           "PaxType": "ADT",
-          "BaseFare": Leg.NetFare * converstionrate,
+          "BaseFare": (Leg.NetFare / converstionrate).toFixed(2),
           "Taxes": 0,
-          "TotalFare": Leg.NetFare * converstionrate,
+          "TotalFare": (Leg.NetFare / converstionrate).toFixed(2),
           "PaxCount": 1,
           "Bag": [
             {
