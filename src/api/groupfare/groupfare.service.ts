@@ -261,7 +261,9 @@ export class GroupfareService {
           ]
         }
       ];
+    let TT;
     if(resultData?.TripType === 'O'){
+      TT= 'OneWay';
       let Segments = [];
 
       if(Leg?.segment === 1 || Leg?.segment === 0){
@@ -383,6 +385,7 @@ export class GroupfareService {
       };
       return Basic;
     }else if(resultData?.TripType === 'R'){
+      TT= 'Roundway';
       let Segments = [];
       let Segments1 = [];
 
