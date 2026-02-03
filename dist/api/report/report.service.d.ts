@@ -10,10 +10,11 @@ export declare class ReportService {
     private readonly agentRepository;
     private readonly searchHistoryRepository;
     private readonly adminExpenseRepository;
+    private readonly agentLedgerRepository;
     private readonly adminLedgerRepository;
     private readonly authService;
     private dataSource;
-    constructor(ledgerRepository: Repository<AgentLedgerModel>, bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, searchHistoryRepository: Repository<SearchHistoryModel>, adminExpenseRepository: Repository<AdminExpenseModel>, adminLedgerRepository: Repository<AdminLedger>, authService: AuthService, dataSource: DataSource);
+    constructor(ledgerRepository: Repository<AgentLedgerModel>, bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, searchHistoryRepository: Repository<SearchHistoryModel>, adminExpenseRepository: Repository<AdminExpenseModel>, agentLedgerRepository: Repository<AgentLedgerModel>, adminLedgerRepository: Repository<AdminLedger>, authService: AuthService, dataSource: DataSource);
     addAdminExpense(header: any, adminExpenseModel: AdminExpenseModel): Promise<AdminExpenseModel>;
     editAdminExpense(header: any, id: number, UpdateAdminExpenseDto: UpdateAdminExpenseDto): Promise<import("typeorm").UpdateResult>;
     addAdminLedger(header: any, adminLedgerModel: AdminLedger): Promise<void>;
@@ -102,4 +103,10 @@ export declare class ReportService {
         lastBalance: number;
     }>;
     findAllAdminBalanceInquery(header: any): Promise<any>;
+    findAdminSalesReport(header: any, startDate: Date, endDate: Date): Promise<{
+        filter: string;
+        startDate: string;
+        endDate: string;
+        data: any;
+    }>;
 }

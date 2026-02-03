@@ -11,6 +11,12 @@ export declare class ReportController {
     deleteAdminLedger(header: Headers, id: string): Promise<import("typeorm").DeleteResult>;
     editAgentLedgerByAdmin(header: Headers, id: string, updateAgentLedgerDto: AgentBalanceUpdate): Promise<import("typeorm").UpdateResult>;
     deleteAgentLedgerByAdmin(header: Headers, uid: string): Promise<import("typeorm").DeleteResult>;
+    findAdminSalesReport(header: string, startDate: Date, endDate: Date): Promise<{
+        filter: string;
+        startDate: string;
+        endDate: string;
+        data: any;
+    }>;
     findAllAdminLedger(header: string, startDate: Date, endDate: Date, adminId: string): Promise<{
         lossProfit: number;
         ledger: any[];

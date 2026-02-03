@@ -23,12 +23,13 @@ const booking_model_1 = require("../booking/booking.model");
 const auth_service_1 = require("../auth/auth.service");
 const searchhistory_model_1 = require("../searchhistory/searchhistory.model");
 let ReportService = class ReportService {
-    constructor(ledgerRepository, bookingRepository, agentRepository, searchHistoryRepository, adminExpenseRepository, adminLedgerRepository, authService, dataSource) {
+    constructor(ledgerRepository, bookingRepository, agentRepository, searchHistoryRepository, adminExpenseRepository, agentLedgerRepository, adminLedgerRepository, authService, dataSource) {
         this.ledgerRepository = ledgerRepository;
         this.bookingRepository = bookingRepository;
         this.agentRepository = agentRepository;
         this.searchHistoryRepository = searchHistoryRepository;
         this.adminExpenseRepository = adminExpenseRepository;
+        this.agentLedgerRepository = agentLedgerRepository;
         this.adminLedgerRepository = adminLedgerRepository;
         this.authService = authService;
         this.dataSource = dataSource;
@@ -672,6 +673,142 @@ let ReportService = class ReportService {
       ORDER BY ag.current_balance ASC;`);
         return ledger;
     }
+    async findAdminSalesReport(header, startDate, endDate) {
+        const verifyAdminId = await this.authService.verifyAdminToken(header);
+        if (!verifyAdminId) {
+            throw new common_1.UnauthorizedException();
+        }
+        const now = dayjs();
+        const normalizeDateFilter = (inputStart, inputEnd) => {
+            const token = typeof inputStart === 'string' ? inputStart.trim().toLowerCase() : '';
+            if (token) {
+                if (['daily', 'day', 'today'].includes(token)) {
+                    const date = now.format('YYYY-MM-DD');
+                    return {
+                        filter: 'daily',
+                        whereSql: 'DATE(l.created_at) = CURDATE()',
+                        params: [],
+                        startDate: date,
+                        endDate: date,
+                    };
+                }
+                if (['weekly', 'week'].includes(token)) {
+                    const dayOfWeek = now.day();
+                    const daysSinceMonday = (dayOfWeek + 6) % 7;
+                    const start = now.subtract(daysSinceMonday, 'day').format('YYYY-MM-DD');
+                    const end = now.add(6 - daysSinceMonday, 'day').format('YYYY-MM-DD');
+                    return {
+                        filter: 'weekly',
+                        whereSql: 'YEARWEEK(l.created_at, 1) = YEARWEEK(CURDATE(), 1)',
+                        params: [],
+                        startDate: start,
+                        endDate: end,
+                    };
+                }
+                if (['monthly', 'month'].includes(token)) {
+                    return {
+                        filter: 'monthly',
+                        whereSql: 'YEAR(l.created_at) = YEAR(CURDATE()) AND MONTH(l.created_at) = MONTH(CURDATE())',
+                        params: [],
+                        startDate: now.startOf('month').format('YYYY-MM-DD'),
+                        endDate: now.endOf('month').format('YYYY-MM-DD'),
+                    };
+                }
+                if (['yearly', 'year'].includes(token)) {
+                    return {
+                        filter: 'yearly',
+                        whereSql: 'YEAR(l.created_at) = YEAR(CURDATE())',
+                        params: [],
+                        startDate: now.startOf('year').format('YYYY-MM-DD'),
+                        endDate: now.endOf('year').format('YYYY-MM-DD'),
+                    };
+                }
+                if (['all', '*'].includes(token)) {
+                    return {
+                        filter: 'all',
+                        whereSql: '',
+                        params: [],
+                        startDate: null,
+                        endDate: null,
+                    };
+                }
+            }
+            const parsedStart = dayjs(inputStart);
+            const parsedEnd = dayjs(inputEnd);
+            let start = (parsedStart.isValid() ? parsedStart : now).format('YYYY-MM-DD');
+            let end = (parsedEnd.isValid() ? parsedEnd : parsedStart.isValid() ? parsedStart : now).format('YYYY-MM-DD');
+            if (dayjs(end).isBefore(dayjs(start))) {
+                [start, end] = [end, start];
+            }
+            return {
+                filter: 'custom',
+                whereSql: 'DATE(l.created_at) BETWEEN ? AND ?',
+                params: [start, end],
+                startDate: start,
+                endDate: end,
+            };
+        };
+        const range = normalizeDateFilter(startDate, endDate);
+        const dateFilterSql = range.whereSql ? `AND (${range.whereSql})` : '';
+        const dateParams = range.params ?? [];
+        const rows = await this.dataSource.query(`
+        SELECT
+          a.agentId AS agentId,
+          a.name AS agentName,
+          a.company AS agencyName,
+          a.phone AS phone,
+          a.address AS address,
+          COALESCE(s.total_sell_count, 0) AS totalSellCount,
+          COALESCE(s.total_sell_amount, 0) AS totalSellAmount,
+          COALESCE(d.total_deposit, 0) AS totalDeposit,
+          DATEDIFF(CURDATE(), DATE(a.created_at)) AS agentAgeDays
+        FROM agents a
+        LEFT JOIN (
+          SELECT
+            l.agentId AS agentId,
+            COUNT(l.id) AS total_sell_count,
+            SUM(ABS(l.debit)) AS total_sell_amount
+          FROM agent_ledger l
+          WHERE l.trxtype = 'ticket'
+            ${dateFilterSql}
+          GROUP BY l.agentId
+        ) s ON s.agentId = a.agentId
+        LEFT JOIN (
+          SELECT
+            l.agentId AS agentId,
+            SUM(l.credit) AS total_deposit
+          FROM agent_ledger l
+          WHERE l.trxtype = 'deposit'
+            ${dateFilterSql}
+          GROUP BY l.agentId
+        ) d ON d.agentId = a.agentId
+        ORDER BY totalSellAmount DESC, totalSellCount DESC, a.agentId ASC
+      `, [...dateParams, ...dateParams]);
+        const data = rows.map((row) => {
+            const rawPhone = row?.phone ?? '';
+            const phoneDigits = String(rawPhone).replace(/\D/g, '');
+            return {
+                agentId: row?.agentId ?? null,
+                agentName: row?.agentName ?? null,
+                agencyName: row?.agencyName ?? null,
+                phone: rawPhone,
+                phoneDigits: phoneDigits || null,
+                whatsappUrl: phoneDigits ? `https://wa.me/${phoneDigits}` : null,
+                telUrl: phoneDigits ? `tel:${phoneDigits}` : null,
+                address: row?.address ?? null,
+                totalSellCount: Number(row?.totalSellCount || 0),
+                totalSellAmount: Number(row?.totalSellAmount || 0),
+                totalDeposit: Number(row?.totalDeposit || 0),
+                agentAgeDays: Number(row?.agentAgeDays || 0),
+            };
+        });
+        return {
+            filter: range.filter,
+            startDate: range.startDate,
+            endDate: range.endDate,
+            data,
+        };
+    }
 };
 exports.ReportService = ReportService;
 exports.ReportService = ReportService = __decorate([
@@ -681,8 +818,10 @@ exports.ReportService = ReportService = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(agent_model_1.AgentModel)),
     __param(3, (0, typeorm_1.InjectRepository)(searchhistory_model_1.SearchHistoryModel)),
     __param(4, (0, typeorm_1.InjectRepository)(report_model_1.AdminExpenseModel)),
-    __param(5, (0, typeorm_1.InjectRepository)(report_model_1.AdminLedger)),
+    __param(5, (0, typeorm_1.InjectRepository)(report_model_1.AgentLedgerModel)),
+    __param(6, (0, typeorm_1.InjectRepository)(report_model_1.AdminLedger)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
