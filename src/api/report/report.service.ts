@@ -916,6 +916,7 @@ export class ReportService {
           a.company AS agencyName,
           a.phone AS phone,
           a.address AS address,
+          a.currency AS currency,
           COALESCE(s.total_sell_count, 0) AS totalSellCount,
           COALESCE(s.total_sell_amount, 0) AS totalSellAmount,
           COALESCE(d.total_deposit, 0) AS totalDeposit,
@@ -940,7 +941,12 @@ export class ReportService {
             ${dateFilterSql}
           GROUP BY l.agentId
         ) d ON d.agentId = a.agentId
-        ORDER BY totalSellAmount DESC, totalSellCount DESC, a.agentId ASC
+        WHERE (
+          COALESCE(s.total_sell_count, 0) <> 0
+          OR COALESCE(s.total_sell_amount, 0) <> 0
+          OR COALESCE(d.total_deposit, 0) <> 0
+        )
+        ORDER BY totalSellCount DESC, totalSellAmount DESC, totalDeposit DESC, a.agentId ASC
       `,
       [...dateParams, ...dateParams]
     );
@@ -957,6 +963,7 @@ export class ReportService {
         whatsappUrl: phoneDigits ? `https://wa.me/${phoneDigits}` : null,
         telUrl: phoneDigits ? `tel:${phoneDigits}` : null,
         address: row?.address ?? null,
+        currency: row?.currency ?? null,
         totalSellCount: Number(row?.totalSellCount || 0),
         totalSellAmount: Number(row?.totalSellAmount || 0),
         totalDeposit: Number(row?.totalDeposit || 0),
