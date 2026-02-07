@@ -14,6 +14,7 @@ import { AgentLedgerModel } from '../report/report.model';
 import { AirBookingModel } from '../flight/dto/booking-flight.dto';
 import { TravellerService } from '../traveller/traveller.service';
 import { BookingUtils } from './booking.utils';
+import { CurrencyConverter } from '../currency/entities/currency.entity';
 
 @Injectable()
 export class BookingService {
@@ -27,6 +28,8 @@ export class BookingService {
     private readonly groupFareRepository: Repository<GroupFareModel>,
     @InjectRepository(AgentLedgerModel)
     private readonly agentLedgerRepository: Repository<AgentLedgerModel>,
+    @InjectRepository(CurrencyConverter)
+    private readonly  CurrencyConverterRepository: Repository<CurrencyConverter>,
     private readonly travellerService: TravellerService,
     private readonly passengerService: PassengerService,
     private readonly authService: AuthService,
@@ -75,14 +78,21 @@ export class BookingService {
     }
 
     const groupData = await this.groupFareRepository.findOneBy({uid: bookingDto?.FlightInfo?.OfferId});
+    const conversionData = await this.CurrencyConverterRepository.findOne({where: {source: 'Group'}});
+    let converstionrate = 1;
+    if(agentdata?.currency === 'AED' && conversionData){
+      converstionrate = conversionData.exchange_rate;
+    }
 
-      const details = groupData.Carrier+' ' + groupData.RouteFrom+'-'+groupData.RouteTo+' Ticket Purchase '+ groupData.NetFare + '. PNR : '+ groupData.PNR+' .';
+    let convertaedNetFare = (groupData.NetFare / converstionrate).toFixed(2);
+
+      const details = groupData.Carrier+' ' + groupData.RouteFrom+'-'+groupData.RouteTo+' Ticket Purchase '+ convertaedNetFare + '. PNR : '+ groupData.PNR+' .';
 
        const generatedUUID: string = uuidv4();
         const AgentLedgerData = {
           agentId: agentdata.agentId,
           trxtype: 'ticket',
-          debit: -groupData.NetFare,
+          debit: -convertaedNetFare,
           refId: bookingId,
           details: details,
           compnayname: agentdata.company,
@@ -103,8 +113,8 @@ export class BookingService {
       refundable: bookingDto.FlightInfo.Refundable,
       arrto: bookingDto.FlightInfo.AllLegsInfo[0].ArrTo,
       triptype: bookingDto.FlightInfo.TripType,
-      netfare: groupData.NetFare,
-      grossfare: groupData.NetFare,
+      netfare: convertaedNetFare,
+      grossfare: convertaedNetFare,
       status: "Issue In Process",
       name: name,
       email: email,
