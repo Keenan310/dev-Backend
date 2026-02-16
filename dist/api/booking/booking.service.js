@@ -80,7 +80,7 @@ let BookingService = class BookingService {
             converstionrate = conversionData.exchange_rate;
         }
         let convertaedNetFare = parseFloat((groupData.NetFare / converstionrate).toFixed(2));
-        const details = groupData.Carrier + ' ' + groupData.RouteFrom + '-' + groupData.RouteTo + ' Ticket Purchase ' + convertaedNetFare + '. PNR : ' + groupData.PNR + ' .';
+        const details = groupData.Carrier + ' ' + groupData.RouteFrom + '-' + groupData.RouteTo + ' Ticket Purchase ' + convertaedNetFare.toFixed(2) + '. PNR : ' + groupData.PNR + ' .';
         const generatedUUID = (0, uuid_1.v4)();
         const AgentLedgerData = {
             agentId: agentdata.agentId,

@@ -18,10 +18,11 @@ import { TravellerModel } from '../traveller/traveller.model';
 import { BookingUtils } from './booking.utils';
 import { AuthUtils } from '../auth/auth.utils';
 import { OTPModel } from '../auth/auth.model';
+import { CurrencyConverter } from '../currency/entities/currency.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([BookingModel, TravellerModel, AgentModel, StaffModel,
-     AdminModel, PassengerModel, AgentLedgerModel, GroupFareModel, OTPModel])],
+     AdminModel, PassengerModel, AgentLedgerModel, GroupFareModel, OTPModel, CurrencyConverter])],
   controllers: [BookingController],
   providers: [BookingService, BookingUtils, AuthService, JwtService, MailService, PassengerService, TravellerService, AuthUtils],
 })

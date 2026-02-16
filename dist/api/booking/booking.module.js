@@ -27,13 +27,14 @@ const traveller_model_1 = require("../traveller/traveller.model");
 const booking_utils_1 = require("./booking.utils");
 const auth_utils_1 = require("../auth/auth.utils");
 const auth_model_1 = require("../auth/auth.model");
+const currency_entity_1 = require("../currency/entities/currency.entity");
 let BookingModule = class BookingModule {
 };
 exports.BookingModule = BookingModule;
 exports.BookingModule = BookingModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([booking_model_1.BookingModel, traveller_model_1.TravellerModel, agent_model_1.AgentModel, staff_model_1.StaffModel,
-                admin_model_1.AdminModel, passenger_model_1.PassengerModel, report_model_1.AgentLedgerModel, groupfare_model_1.GroupFareModel, auth_model_1.OTPModel])],
+                admin_model_1.AdminModel, passenger_model_1.PassengerModel, report_model_1.AgentLedgerModel, groupfare_model_1.GroupFareModel, auth_model_1.OTPModel, currency_entity_1.CurrencyConverter])],
         controllers: [booking_controller_1.BookingController],
         providers: [booking_service_1.BookingService, booking_utils_1.BookingUtils, auth_service_1.AuthService, jwt_1.JwtService, mail_service_1.MailService, passenger_service_1.PassengerService, traveller_service_1.TravellerService, auth_utils_1.AuthUtils],
     })

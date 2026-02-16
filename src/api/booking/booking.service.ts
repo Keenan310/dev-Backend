@@ -86,7 +86,7 @@ export class BookingService {
 
     let convertaedNetFare = parseFloat((groupData.NetFare / converstionrate).toFixed(2));
 
-      const details = groupData.Carrier+' ' + groupData.RouteFrom+'-'+groupData.RouteTo+' Ticket Purchase '+ convertaedNetFare + '. PNR : '+ groupData.PNR+' .';
+      const details = groupData.Carrier+' ' + groupData.RouteFrom+'-'+groupData.RouteTo+' Ticket Purchase '+ convertaedNetFare.toFixed(2) + '. PNR : '+ groupData.PNR+' .';
 
        const generatedUUID: string = uuidv4();
         const AgentLedgerData = {
