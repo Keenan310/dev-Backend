@@ -28,12 +28,14 @@ const groupfare_model_1 = require("../groupfare/groupfare.model");
 const report_model_1 = require("../report/report.model");
 const traveller_service_1 = require("../traveller/traveller.service");
 const booking_utils_1 = require("./booking.utils");
+const currency_entity_1 = require("../currency/entities/currency.entity");
 let BookingService = class BookingService {
-    constructor(bookingRepository, agentRepository, groupFareRepository, agentLedgerRepository, travellerService, passengerService, authService, mailService, bookingUtils) {
+    constructor(bookingRepository, agentRepository, groupFareRepository, agentLedgerRepository, CurrencyConverterRepository, travellerService, passengerService, authService, mailService, bookingUtils) {
         this.bookingRepository = bookingRepository;
         this.agentRepository = agentRepository;
         this.groupFareRepository = groupFareRepository;
         this.agentLedgerRepository = agentLedgerRepository;
+        this.CurrencyConverterRepository = CurrencyConverterRepository;
         this.travellerService = travellerService;
         this.passengerService = passengerService;
         this.authService = authService;
@@ -72,12 +74,18 @@ let BookingService = class BookingService {
             bookingId = "KTB" + (parseInt(old_booking_id) + 1);
         }
         const groupData = await this.groupFareRepository.findOneBy({ uid: bookingDto?.FlightInfo?.OfferId });
-        const details = groupData.Carrier + ' ' + groupData.RouteFrom + '-' + groupData.RouteTo + ' Ticket Purchase ' + groupData.NetFare + '. PNR : ' + groupData.PNR + ' .';
+        const conversionData = await this.CurrencyConverterRepository.findOne({ where: { source: 'Group' } });
+        let converstionrate = 1;
+        if (agentdata?.currency === 'AED' && conversionData) {
+            converstionrate = conversionData.exchange_rate;
+        }
+        let convertaedNetFare = parseFloat((groupData.NetFare / converstionrate).toFixed(2));
+        const details = groupData.Carrier + ' ' + groupData.RouteFrom + '-' + groupData.RouteTo + ' Ticket Purchase ' + convertaedNetFare + '. PNR : ' + groupData.PNR + ' .';
         const generatedUUID = (0, uuid_1.v4)();
         const AgentLedgerData = {
             agentId: agentdata.agentId,
             trxtype: 'ticket',
-            debit: -groupData.NetFare,
+            debit: -convertaedNetFare,
             refId: bookingId,
             details: details,
             compnayname: agentdata.company,
@@ -96,8 +104,8 @@ let BookingService = class BookingService {
             refundable: bookingDto.FlightInfo.Refundable,
             arrto: bookingDto.FlightInfo.AllLegsInfo[0].ArrTo,
             triptype: bookingDto.FlightInfo.TripType,
-            netfare: groupData.NetFare,
-            grossfare: groupData.NetFare,
+            netfare: convertaedNetFare,
+            grossfare: convertaedNetFare,
             status: "Issue In Process",
             name: name,
             email: email,
@@ -432,7 +440,9 @@ exports.BookingService = BookingService = __decorate([
     __param(1, (0, typeorm_1.InjectRepository)(agent_model_1.AgentModel)),
     __param(2, (0, typeorm_1.InjectRepository)(groupfare_model_1.GroupFareModel)),
     __param(3, (0, typeorm_1.InjectRepository)(report_model_1.AgentLedgerModel)),
+    __param(4, (0, typeorm_1.InjectRepository)(currency_entity_1.CurrencyConverter)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

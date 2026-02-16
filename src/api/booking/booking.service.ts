@@ -84,7 +84,7 @@ export class BookingService {
       converstionrate = conversionData.exchange_rate;
     }
 
-    let convertaedNetFare = (groupData.NetFare / converstionrate).toFixed(2);
+    let convertaedNetFare = parseFloat((groupData.NetFare / converstionrate).toFixed(2));
 
       const details = groupData.Carrier+' ' + groupData.RouteFrom+'-'+groupData.RouteTo+' Ticket Purchase '+ convertaedNetFare + '. PNR : '+ groupData.PNR+' .';
 

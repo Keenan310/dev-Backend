@@ -21,19 +21,19 @@ export declare class GroupfareService {
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
-        BaseFare: number;
+        BaseFare: string;
         Taxes: number;
-        NetFare: number;
-        GrossFare: number;
+        NetFare: string;
+        GrossFare: string;
         Comission: number;
         Currency: string;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: {
             PaxType: string;
-            BaseFare: number;
+            BaseFare: string;
             Taxes: number;
-            TotalFare: number;
+            TotalFare: string;
             PaxCount: number;
             Bag: {
                 Airline: any;
@@ -56,19 +56,19 @@ export declare class GroupfareService {
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
-        BaseFare: number;
+        BaseFare: string;
         Taxes: number;
-        NetFare: number;
-        GrossFare: number;
+        NetFare: string;
+        GrossFare: string;
         Comission: number;
         Currency: string;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: {
             PaxType: string;
-            BaseFare: number;
+            BaseFare: string;
             Taxes: number;
-            TotalFare: number;
+            TotalFare: string;
             PaxCount: number;
             Bag: {
                 Airline: any;
@@ -90,19 +90,19 @@ export declare class GroupfareService {
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
-        BaseFare: number;
+        BaseFare: string;
         Taxes: number;
-        NetFare: number;
-        GrossFare: number;
+        NetFare: string;
+        GrossFare: string;
         Comission: number;
         Currency: string;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: {
             PaxType: string;
-            BaseFare: number;
+            BaseFare: string;
             Taxes: number;
-            TotalFare: number;
+            TotalFare: string;
             PaxCount: number;
             Bag: {
                 Airline: any;
@@ -124,19 +124,19 @@ export declare class GroupfareService {
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
-        BaseFare: number;
+        BaseFare: string;
         Taxes: number;
-        NetFare: number;
-        GrossFare: number;
+        NetFare: string;
+        GrossFare: string;
         Comission: number;
         Currency: string;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: {
             PaxType: string;
-            BaseFare: number;
+            BaseFare: string;
             Taxes: number;
-            TotalFare: number;
+            TotalFare: string;
             PaxCount: number;
             Bag: {
                 Airline: any;
@@ -160,19 +160,19 @@ export declare class GroupfareService {
         Carrier: any;
         CarrierName: string;
         Cabinclass: string;
-        BaseFare: number;
+        BaseFare: string;
         Taxes: number;
-        NetFare: number;
-        GrossFare: number;
+        NetFare: string;
+        GrossFare: string;
         Comission: number;
         Currency: string;
         TimeLimit: string;
         Refundable: boolean;
         PriceBreakDown: {
             PaxType: string;
-            BaseFare: number;
+            BaseFare: string;
             Taxes: number;
-            TotalFare: number;
+            TotalFare: string;
             PaxCount: number;
             Bag: {
                 Airline: any;

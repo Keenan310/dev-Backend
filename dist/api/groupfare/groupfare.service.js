@@ -218,13 +218,13 @@ let GroupfareService = class GroupfareService {
         if (agent?.currency === 'AED' && conversionData) {
             converstionrate = conversionData.exchange_rate;
         }
-        const NetFareConv = Leg.NetFare / converstionrate;
+        const NetFareConv = (Leg.NetFare / converstionrate).toFixed(2);
         const PriceBreakdown = [
             {
                 "PaxType": "ADT",
-                "BaseFare": Leg.NetFare * converstionrate,
+                "BaseFare": (Leg.NetFare / converstionrate).toFixed(2),
                 "Taxes": 0,
-                "TotalFare": Leg.NetFare * converstionrate,
+                "TotalFare": (Leg.NetFare / converstionrate).toFixed(2),
                 "PaxCount": 1,
                 "Bag": [
                     {
@@ -234,7 +234,9 @@ let GroupfareService = class GroupfareService {
                 ]
             }
         ];
+        let TT;
         if (resultData?.TripType === 'O') {
+            TT = 'OneWay';
             let Segments = [];
             if (Leg?.segment === 1 || Leg?.segment === 0) {
                 Segments = [
@@ -355,6 +357,7 @@ let GroupfareService = class GroupfareService {
             return Basic;
         }
         else if (resultData?.TripType === 'R') {
+            TT = 'Roundway';
             let Segments = [];
             let Segments1 = [];
             if (Leg?.segment === 1 || Leg?.segment === 0) {

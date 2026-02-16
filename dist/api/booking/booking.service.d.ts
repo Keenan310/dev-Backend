@@ -9,17 +9,19 @@ import { AgentLedgerModel } from '../report/report.model';
 import { AirBookingModel } from '../flight/dto/booking-flight.dto';
 import { TravellerService } from '../traveller/traveller.service';
 import { BookingUtils } from './booking.utils';
+import { CurrencyConverter } from '../currency/entities/currency.entity';
 export declare class BookingService {
     private readonly bookingRepository;
     private readonly agentRepository;
     private readonly groupFareRepository;
     private readonly agentLedgerRepository;
+    private readonly CurrencyConverterRepository;
     private readonly travellerService;
     private readonly passengerService;
     private readonly authService;
     private readonly mailService;
     private readonly bookingUtils;
-    constructor(bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, groupFareRepository: Repository<GroupFareModel>, agentLedgerRepository: Repository<AgentLedgerModel>, travellerService: TravellerService, passengerService: PassengerService, authService: AuthService, mailService: MailService, bookingUtils: BookingUtils);
+    constructor(bookingRepository: Repository<BookingModel>, agentRepository: Repository<AgentModel>, groupFareRepository: Repository<GroupFareModel>, agentLedgerRepository: Repository<AgentLedgerModel>, CurrencyConverterRepository: Repository<CurrencyConverter>, travellerService: TravellerService, passengerService: PassengerService, authService: AuthService, mailService: MailService, bookingUtils: BookingUtils);
     createBooking(agentdata: AgentModel, responseData: any, bookingDto: any, priceCheck: any): Promise<({
         agentId: string;
         bookingId: string;
