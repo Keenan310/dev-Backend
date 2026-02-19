@@ -1,3 +1,4 @@
+
 import { Module } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { UploadController } from './upload.controller';
@@ -18,8 +19,20 @@ import { AuthUtils } from '../auth/auth.utils';
 import { OTPModel } from '../auth/auth.model';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AgentModel,PassengerModel, DepositModel, AdminModel,
-     StaffModel, AgentModel, BookingModel, ReissueModel, PromotionModel, OTPModel])],
+  imports: [
+    TypeOrmModule.forFeature([
+      AgentModel,
+      PassengerModel,
+      DepositModel,
+      AdminModel,
+      StaffModel,
+      AgentModel,
+      BookingModel,
+      ReissueModel,
+      PromotionModel,
+      OTPModel,
+    ]),
+  ],
   controllers: [UploadController],
   providers: [UploadService, DoSpacesServicerovider, AuthService, JwtService, AuthUtils, MailService],
 })

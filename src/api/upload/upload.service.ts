@@ -1,31 +1,46 @@
-import { HttpException, HttpStatus, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+// src/api/upload/upload.service.ts
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { extname } from 'path';
-import { ObjectCannedACL, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import * as bcrypt from 'bcrypt';
-import {DoSpacesServiceLib} from './upload.provider.service';
 import { v4 as uuidv4 } from 'uuid';
-import { AgentModel } from '../agent/agent.model';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository} from 'typeorm';
+import { Repository } from 'typeorm';
+
+import { AgentModel } from '../agent/agent.model';
 import { AuthService } from '../auth/auth.service';
 import { BookingModel } from '../booking/booking.model';
 import { ReissueModel } from '../reissue/reissue.model';
 import { PromotionModel } from '../promotion/promotion.model';
 import { DepositModel } from '../deposit/deposit.model';
-import * as dotenv from "dotenv"
 import { PassengerModel } from '../passenger/passenger.model';
 import { MailService } from 'src/mail/mail.service';
 import { StaffModel } from '../staff/staff.model';
 import { AdminModel } from '../admin/admin.model';
 import { AuthUtils } from '../auth/auth.utils';
-dotenv.config();
-const publicReadAcl: ObjectCannedACL = 'public-read';
+
+import * as fs from 'fs';
+import * as path from 'path';
+
+function saveBufferToStorage(key: string, buffer: Buffer) {
+  const baseDir = process.env.STORAGE_DIR || '/opt/storage/keenan-b2b';
+  const fullPath = path.join(baseDir, key);
+
+  fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+  fs.writeFileSync(fullPath, buffer);
+
+  const baseUrl = process.env.STORAGE_BASE_URL || 'https://storage.keenantravel.com';
+  return `${baseUrl}/${key}`;
+}
 
 @Injectable()
 export class UploadService {
   constructor(
-    @Inject(DoSpacesServiceLib)
-    private readonly s3: S3Client,
     @InjectRepository(AgentModel)
     private readonly agentRepository: Repository<AgentModel>,
     @InjectRepository(PassengerModel)
@@ -44,372 +59,283 @@ export class UploadService {
     private readonly depositRepository: Repository<DepositModel>,
     private readonly authService: AuthService,
     private readonly mailService: MailService,
-    private readonly authUtils: AuthUtils
+    private readonly authUtils: AuthUtils,
   ) {}
 
-  async signup(agentDto : AgentModel, files): Promise<any> {
-    
-      const existAdmin = await this.adminRepository.findOne({where: { email: agentDto.email }});
-      if (existAdmin) {
-        throw new HttpException('Email already exist as Admin', HttpStatus.CONFLICT);
-      }
-      const existStaff = await this.staffRepository.findOne({where: { email: agentDto.email }});
-      if (existStaff) {
-        throw new HttpException('Email already exist as Staff', HttpStatus.CONFLICT);
-      }
-  
-      const existingAgent = await this.agentRepository.findOne({where: [{ email: agentDto.email }, { phone: agentDto.phone }]});
-  
-      if (existingAgent?.email === agentDto.email) {
-        throw new HttpException('Email already exist', HttpStatus.CONFLICT);
-      }else if(existingAgent?.phone === agentDto.phone){
-        throw new HttpException('Phone already exist', HttpStatus.CONFLICT);
-      }
-      
-      const agent = await this.agentRepository.find({order: { id: 'DESC' }, take : 1});
-  
-      let agentId: string;
-      if(agent.length === 1){
-        let old_agent_id = (agent[0].agentId).replace("KTA",'');
-        agentId = "KTA" + (parseInt(old_agent_id) + 1);
-      }else{
-        agentId = 'KTAA1000';
-      }
+  async signup(agentDto: AgentModel, files): Promise<any> {
+    const existAdmin = await this.adminRepository.findOne({ where: { email: agentDto.email } });
+    if (existAdmin) throw new HttpException('Email already exist as Admin', HttpStatus.CONFLICT);
 
-      const hashedPassword = await bcrypt.hash(agentDto.password, 9);
-      agentDto.password = hashedPassword;
-      agentDto.agentId = agentId;
-      agentDto.status = 'pending';
-      agentDto.currency = 'AED';
+    const existStaff = await this.staffRepository.findOne({ where: { email: agentDto.email } });
+    if (existStaff) throw new HttpException('Email already exist as Staff', HttpStatus.CONFLICT);
 
-      agentDto.ip = await this.authUtils.getPublicIp() || 'N/F';
-      agentDto.searchlimit = 100;
+    const existingAgent = await this.agentRepository.findOne({
+      where: [{ email: agentDto.email }, { phone: agentDto.phone }],
+    });
 
-      try {
-        const uploads = [];
-      
-        if (files?.nid && files?.nid[0]) {
-          const nidFileType = files.nid[0].originalname.split('.').pop();
-          const nidKey = `B2B/${agentId}/Docs/nid.${nidFileType}`;
-          const nidParams = {
-            Bucket: process.env.BUCKET_NAME,
-            Key: nidKey,
-            Body: files.nid[0].buffer,
-            ACL: publicReadAcl,
-            ContentType: files.nid[0].mimetype
-          };
-          uploads.push(this.s3.send(new PutObjectCommand(nidParams)).then(() => `${process.env.CDN_SPACES}/${nidKey}`));
-        }
-      
-        if (files?.tl && files?.tl[0]) {
-          const tlFileType = files.tl[0].originalname.split('.').pop();
-          const tlKey = `B2B/${agentId}/Docs/tl.${tlFileType}`;
-          const tlParams = {
-            Bucket: process.env.BUCKET_NAME,
-            Key: tlKey,
-            Body: files.tl[0].buffer,
-            ACL: publicReadAcl,
-            ContentType: files.tl[0].mimetype
-          };
-          uploads.push(this.s3.send(new PutObjectCommand(tlParams)).then(() => `${process.env.CDN_SPACES}/${tlKey}`));
-        }
-      
-        const [nidUrl, tlUrl] = await Promise.all(uploads);
-      
-        if (nidUrl) agentDto.nid = nidUrl;
-        if (tlUrl) agentDto.tradelicense = tlUrl;
-      
-        const responseData = await this.agentRepository.save(agentDto);
-        await this.mailService.signUpMail(agentDto);
-        return responseData;
-      } catch (err) {
-        console.log(err);
-        throw new Error('An error occurred during the operation.');
-      }
-      
-   
-  }
-
-  async uploadAgentLogo(header: any, file, res){
-
-    const agent = await this.authService.verifyAgentToken(header);
-
-    if(!agent){
-        throw new UnauthorizedException();
+    if (existingAgent?.email === agentDto.email) {
+      throw new HttpException('Email already exist', HttpStatus.CONFLICT);
+    } else if (existingAgent?.phone === agentDto.phone) {
+      throw new HttpException('Phone already exist', HttpStatus.CONFLICT);
     }
 
-    if(!file){
-      throw new NotFoundException('Please select a file to upload');
+    const agent = await this.agentRepository.find({ order: { id: 'DESC' }, take: 1 });
+
+    let agentId: string;
+    if (agent.length === 1) {
+      const old_agent_id = (agent[0].agentId).replace('KTA', '');
+      agentId = 'KTA' + (parseInt(old_agent_id) + 1);
+    } else {
+      agentId = 'KTAA1000';
     }
 
-    const agentId = agent.agentId;
-    const filetype = (file.originalname).split('.')[1];
-    const keyvalue = agentId + '/companylogo' + '.' + filetype;
+    const hashedPassword = await bcrypt.hash(agentDto.password, 9);
+    agentDto.password = hashedPassword;
+    agentDto.agentId = agentId;
+    agentDto.status = 'pending';
+    agentDto.currency = 'AED';
 
-    const params = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: 'B2B/' + keyvalue,
-      Body: file.buffer,
-      ACL: publicReadAcl,
-      ContentType: file.mimetype
-    };
+    agentDto.ip = (await this.authUtils.getPublicIp()) || 'N/F';
+    agentDto.searchlimit = 100;
 
     try {
-      await this.s3.send(new PutObjectCommand(params));
+      if (files?.nid?.[0]) {
+        const nidFileType = files.nid[0].originalname.split('.').pop();
+        const nidKey = `B2B/${agentId}/Docs/nid.${nidFileType}`;
+        agentDto.nid = saveBufferToStorage(nidKey, files.nid[0].buffer);
+      }
+
+      if (files?.tl?.[0]) {
+        const tlFileType = files.tl[0].originalname.split('.').pop();
+        const tlKey = `B2B/${agentId}/Docs/tl.${tlFileType}`;
+        agentDto.tradelicense = saveBufferToStorage(tlKey, files.tl[0].buffer);
+      }
+
+      const responseData = await this.agentRepository.save(agentDto);
+      await this.mailService.signUpMail(agentDto);
+      return responseData;
     } catch (err) {
-      return res.status(500).json({ status: 'error', message: 'Something Error In Code'});
+      // eslint-disable-next-line no-console
+      console.log(err);
+      throw new Error('An error occurred during the operation.');
     }
-
-    const url = process.env.CDN_SPACES+'/B2B/' + keyvalue;
-
-    agent['logo']= url;
-    this.agentRepository.update(agent.id, agent);
-    return res.status(201).json({ status: 'success', message: 'Logo uploaded successfully', fileurl: url });
-
   }
 
-  async updateDocuments(header : any, option : string, file, res){
-
+  async uploadAgentLogo(header: any, file, res) {
     const agent = await this.authService.verifyAgentToken(header);
+    if (!agent) throw new UnauthorizedException();
 
-    if(!agent){
-        throw new UnauthorizedException();
-    }
-
-    if(!file){
-      throw new NotFoundException('Please select a file to upload');
-    }
+    if (!file) throw new NotFoundException('Please select a file to upload');
 
     const agentId = agent.agentId;
-    const filetype = (file.originalname).split('.')[1];
-    let folder : string;
-    if(option === 'tl'){
-      folder = 'tradelicense'
-    }else if(option=== 'nid'){
-      folder = 'nid'
-    }
-    const keyvalue = agentId +'/'+ folder + '.' + filetype;
-
-    const params = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: 'B2B/' + keyvalue,
-      Body: file.buffer,
-      ACL: publicReadAcl,
-      ContentType: file.mimetype
-    };
+    const filetype = file.originalname.split('.')[1];
+    const keyvalue = `${agentId}/companylogo.${filetype}`;
+    const key = `B2B/${keyvalue}`;
 
     try {
-      await this.s3.send(new PutObjectCommand(params));
+      const url = saveBufferToStorage(key, file.buffer);
+
+      agent['logo'] = url;
+      await this.agentRepository.update(agent.id, agent);
+
+      return res.status(201).json({
+        status: 'success',
+        message: 'Logo uploaded successfully',
+        fileurl: url,
+      });
     } catch (err) {
-      return res.status(500).json({ status: 'error', message: 'Something Error In Code'});
+      return res.status(500).json({ status: 'error', message: 'Something Error In Code' });
     }
-
-    const url = process.env.CDN_SPACES+'/B2B/' + keyvalue;
-
-    agent[folder]= url;
-    this.agentRepository.update(agent.id, agent);
-    return res.status(201).json({ status: 'success', message: folder+' uploaded successfully', fileurl: url });
   }
 
-  async uploadPassengerDocs(docs: string, paxUId: string, file, res){
-
-    if(!file){
-      throw new NotFoundException('Please select a file to upload');
-    }
-
-    const passenger =  await this.passengerRepository.findOne(
-      {where : {uid: paxUId}});
-
-    if(!passenger){
-      throw new NotFoundException('Passenger not found');
-    }
-    
-    const filetype = (file.originalname).split('.')[1];
-
-    let keyvalue : string;
-    if(docs === 'passport'){
-      keyvalue = 'PassengerDocs/'+paxUId + '/passportcopy' + '.' + filetype;
-    }else if(docs === 'visa') {
-       keyvalue = 'PassengerDocs/'+paxUId + '/visacopy' + '.' + filetype;
-    }
-
-    const params = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: 'B2B/' + keyvalue,
-      Body: file.buffer,
-      ACL: publicReadAcl,
-      ContentType: file.mimetype
-    };
-
-    try {
-      await this.s3.send(new PutObjectCommand(params));
-    } catch (err) {
-      return res.status(500).json({ status: 'error', message: 'Something Error In Code'});
-    }
-
-    const url = process.env.CDN_SPACES+'/B2B/' + keyvalue;
-
-    if(docs === 'visa') {
-      passenger['visa'] = url;
-    }else if(docs === 'passport'){
-      passenger['passport'] = url;
-    }
-    await this.passengerRepository.update(passenger.id, passenger);
-    return res.status(201).json({ status: 'success', message: docs.toLocaleUpperCase()+' Copy uploaded successfully', fileurl: url });
-
-
-  }
-
-  async addDeposit(header: any, amount: number, sender : string, receiver: string, paymentway:string, reference: string, file : any, res){
-
+  async updateDocuments(header: any, option: string, file, res) {
     const agent = await this.authService.verifyAgentToken(header);
+    if (!agent) throw new UnauthorizedException();
 
-    if(!agent){
-        throw new UnauthorizedException();
-    }
+    if (!file) throw new NotFoundException('Please select a file to upload');
 
     const agentId = agent.agentId;
-    const existingTrxId = await this.depositRepository.findOne({where: {ref: reference, agentId: agentId}});
+    const filetype = file.originalname.split('.')[1];
 
-    if (existingTrxId) {
-      throw new HttpException('Duplicate Transaction Id', HttpStatus.CONFLICT);
+    let folder: string;
+    if (option === 'tl') folder = 'tradelicense';
+    else if (option === 'nid') folder = 'nid';
+
+    const keyvalue = `${agentId}/${folder}.${filetype}`;
+    const key = `B2B/${keyvalue}`;
+
+    try {
+      const url = saveBufferToStorage(key, file.buffer);
+
+      agent[folder] = url;
+      await this.agentRepository.update(agent.id, agent);
+
+      return res.status(201).json({
+        status: 'success',
+        message: `${folder} uploaded successfully`,
+        fileurl: url,
+      });
+    } catch (err) {
+      return res.status(500).json({ status: 'error', message: 'Something Error In Code' });
     }
+  }
+
+  async uploadPassengerDocs(docs: string, paxUId: string, file, res) {
+    if (!file) throw new NotFoundException('Please select a file to upload');
+
+    const passenger = await this.passengerRepository.findOne({ where: { uid: paxUId } });
+    if (!passenger) throw new NotFoundException('Passenger not found');
+
+    const filetype = file.originalname.split('.')[1];
+
+    let keyvalue: string;
+    if (docs === 'passport') keyvalue = `PassengerDocs/${paxUId}/passportcopy.${filetype}`;
+    else if (docs === 'visa') keyvalue = `PassengerDocs/${paxUId}/visacopy.${filetype}`;
+
+    const key = `B2B/${keyvalue}`;
+
+    try {
+      const url = saveBufferToStorage(key, file.buffer);
+
+      if (docs === 'visa') passenger['visa'] = url;
+      else if (docs === 'passport') passenger['passport'] = url;
+
+      await this.passengerRepository.update(passenger.id, passenger);
+
+      return res.status(201).json({
+        status: 'success',
+        message: `${docs.toLocaleUpperCase()} Copy uploaded successfully`,
+        fileurl: url,
+      });
+    } catch (err) {
+      return res.status(500).json({ status: 'error', message: 'Something Error In Code' });
+    }
+  }
+
+  async addDeposit(
+    header: any,
+    amount: number,
+    sender: string,
+    receiver: string,
+    paymentway: string,
+    reference: string,
+    file: any,
+    res,
+  ) {
+    const agent = await this.authService.verifyAgentToken(header);
+    if (!agent) throw new UnauthorizedException();
+
+    const agentId = agent.agentId;
+    const existingTrxId = await this.depositRepository.findOne({ where: { ref: reference, agentId } });
+    if (existingTrxId) throw new HttpException('Duplicate Transaction Id', HttpStatus.CONFLICT);
 
     const allowedFileTypes = ['png', 'jpg', 'jpeg', 'pdf', 'PNG', 'JPG', 'JPEG'];
     const fileType = extname(file.originalname).toLowerCase().slice(1);
+
     if (!allowedFileTypes.includes(fileType)) {
       throw new HttpException('Invalid file formate', HttpStatus.FORBIDDEN);
-    }else if (file.size > process.env.ALLOW_IMAGE_SIZE){
+    } else if (file.size > Number(process.env.ALLOW_IMAGE_SIZE || 3000000)) {
       throw new HttpException('File size exceeds the limit max 2MB', HttpStatus.FORBIDDEN);
     }
-    
+
     const fileName = uuidv4();
-    let keyvalue = agentId + '/deposit/' + fileName + '.' + fileType;
+    const keyvalue = `${agentId}/deposit/${fileName}.${fileType}`;
+    const key = `B2B/${keyvalue}`;
 
-    const params = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: 'B2B/' + keyvalue,
-      Body: file.buffer,
-      ACL: publicReadAcl,
-      ContentType: file.mimetype
-    };
-
+    let url: string;
     try {
-      await this.s3.send(new PutObjectCommand(params));
+      url = saveBufferToStorage(key, file.buffer);
     } catch (err) {
       throw new HttpException('Something Error', HttpStatus.BAD_REQUEST);
     }
 
-    const url = process.env.CDN_SPACES +'/B2B/' + keyvalue;
-    const deposit = await this.depositRepository.find({
-      order: { id: 'DESC' }, take : 1,
-    });
+    const deposit = await this.depositRepository.find({ order: { id: 'DESC' }, take: 1 });
 
     let depositId: string;
-    if(deposit.length === 1){
-      let old_deposit_id = (deposit[0].depositId).replace("KTD",'');
-      depositId = "KTD" + (parseInt(old_deposit_id) + 1);
-    }else{
+    if (deposit.length === 1) {
+      const old_deposit_id = (deposit[0].depositId).replace('KTD', '');
+      depositId = 'KTD' + (parseInt(old_deposit_id) + 1);
+    } else {
       depositId = 'KTD1000';
     }
 
-    const depositModel =  new DepositModel;
-      depositModel.depositId= depositId;
-      depositModel.agentId= agent.agentId;
-      depositModel.sender = sender;
-      depositModel.receiver = receiver;
-      depositModel.paymentway = paymentway;
-      depositModel.ref= reference;
-      depositModel.status= "pending";
-      depositModel.amount = amount;
-      depositModel.attachment= url ;
-      depositModel.companyname= agent.company;
-  
+    const depositModel = new DepositModel();
+    depositModel.depositId = depositId;
+    depositModel.agentId = agent.agentId;
+    depositModel.sender = sender;
+    depositModel.receiver = receiver;
+    depositModel.paymentway = paymentway;
+    depositModel.ref = reference;
+    depositModel.status = 'pending';
+    depositModel.amount = amount;
+    depositModel.attachment = url;
+    depositModel.companyname = agent.company;
+
     const depostResult = await this.depositRepository.save(depositModel);
     await this.mailService.depositRequest(depositModel, file);
     return res.status(201).json(depostResult);
   }
 
-  async addPromotion(header: any, category: string,  file, res){
-
+  async addPromotion(header: any, category: string, file, res) {
     const verifyAdminId = await this.authService.verifyAdminToken(header);
+    if (!verifyAdminId) throw new UnauthorizedException();
 
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
+    if (!file) throw new NotFoundException('Please select a file to upload');
 
-    if(!file){
-      throw new NotFoundException('Please select a file to upload');
-    }
-
-    const filetype = (file.originalname).split('.')[1];
+    const filetype = file.originalname.split('.')[1];
     const fileName = uuidv4();
-    const keyvalue = 'Promotion/'+fileName+'.' + filetype;
-
-    const params = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: 'B2B/' + keyvalue,
-      Body: file.buffer,
-      ACL: publicReadAcl,
-      ContentType: file.mimetype
-    };
+    const keyvalue = `Promotion/${fileName}.${filetype}`;
+    const key = `B2B/${keyvalue}`;
 
     try {
-      await this.s3.send(new PutObjectCommand(params));
+      const url = saveBufferToStorage(key, file.buffer);
+
+      const data = new PromotionModel();
+      data.image = url;
+      data.category = category;
+      data.caption = category;
+
+      await this.promotionRepository.save(data);
+
+      return res.status(201).json({
+        status: 'success',
+        message: 'Promotion uploaded successfully',
+        fileurl: url,
+      });
     } catch (err) {
-      return res.status(500).json({ status: 'error', message: 'Something Error In Code'});
+      return res.status(500).json({ status: 'error', message: 'Something Error In Code' });
     }
-
-    const url = process.env.CDN_SPACES+'/B2B/' + keyvalue;
-
-    const data = new PromotionModel();
-    data.image = url;
-    data.category = category;
-    data.caption = category;
-
-    this.promotionRepository.save(data);
-    return res.status(201).json({ status: 'success', message: 'Promotion uploaded successfully', fileurl: url });
   }
 
-  async uploadReissueTicketCopy(header: any, bookingUId: string, UId: string, file, res){
-
+  async uploadReissueTicketCopy(header: any, bookingUId: string, UId: string, file, res) {
     const verifyAdminId = await this.authService.verifyAdminToken(header);
+    if (!verifyAdminId) throw new UnauthorizedException();
 
-    if(!verifyAdminId){
-        throw new UnauthorizedException();
-    }
+    if (!file) throw new NotFoundException('Please select a file to upload');
 
-    if(!file){
-      throw new NotFoundException('Please select a file to upload');
-    }
-
-    const booking =  await this.bookingRepository.findOne({where : {uid: bookingUId}});
+    const booking = await this.bookingRepository.findOne({ where: { uid: bookingUId } });
     const agentId = booking.agentId;
 
-    const filetype = (file.originalname).split('.')[1];
+    const filetype = file.originalname.split('.')[1];
     const fileName = booking.bookingId;
-    const keyvalue = agentId +'/'+ fileName+'/'+'ReissueCopy-'+uuidv4()+'.' + filetype;
+    const keyvalue = `${agentId}/${fileName}/ReissueCopy-${uuidv4()}.${filetype}`;
+    const key = `B2B/${keyvalue}`;
 
-    const params = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: 'B2B/' + keyvalue,
-      Body: file.buffer,
-      ACL: publicReadAcl,
-      ContentType: file.mimetype
-    };
+    const reissue = await this.reissueRepository.findOne({ where: { uid: UId } });
 
-    const reissue =  await this.reissueRepository.findOne({where : {uid: UId}});
     try {
-      await this.s3.send(new PutObjectCommand(params));
+      const url = saveBufferToStorage(key, file.buffer);
+
+      reissue.reissuecopy = url;
+      await this.reissueRepository.update(reissue.id, reissue);
+
+      return res.status(201).json({
+        status: 'success',
+        message: 'File uploaded successfully',
+        fileurl: url,
+      });
     } catch (err) {
-      return res.status(500).json({ status: 'error', message: 'Something Error In Code'});
+      return res.status(500).json({ status: 'error', message: 'Something Error In Code' });
     }
-
-    const url = process.env.CDN_SPACES+'/B2B/' + keyvalue;
-
-    reissue.reissuecopy = url;
-    this.reissueRepository.update(reissue.id, reissue);
-    return res.status(201).json({ status: 'success', message: 'File uploaded successfully', fileurl: url });
-
   }
 }
