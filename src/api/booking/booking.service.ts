@@ -76,17 +76,33 @@ export class BookingService {
       let old_booking_id = (booking[0]?.bookingId).replace("KTB",'');
       bookingId = "KTB" + (parseInt(old_booking_id) + 1);
     }
+    // grup fare details change according to offer id which is same as group fare uid in group fare table
+    
+    const groupData = await this.groupFareRepository.findOneBy({
+  uid: bookingDto?.FlightInfo?.OfferId,
+});
 
-    const groupData = await this.groupFareRepository.findOneBy({uid: bookingDto?.FlightInfo?.OfferId});
-    const conversionData = await this.CurrencyConverterRepository.findOne({where: {source: 'Group'}});
-    let converstionrate = 1;
-    if(agentdata?.currency === 'AED' && conversionData){
-      converstionrate = conversionData.exchange_rate;
-    }
+const conversionData = await this.CurrencyConverterRepository.findOne({
+  where: { source: 'Group' },
+});
 
-    let convertaedNetFare = parseFloat((groupData.NetFare / converstionrate).toFixed(2));
+let converstionrate = 1;
 
-      const details = groupData.Carrier+' ' + groupData.RouteFrom+'-'+groupData.RouteTo+' Ticket Purchase '+ convertaedNetFare.toFixed(2) + '. PNR : '+ groupData.PNR+' .';
+if (agentdata?.currency === 'AED' && conversionData) {
+  converstionrate = Number(conversionData.exchange_rate) || 1;
+}
+
+/* SAFE: make sure NetFare and rate are numbers */
+const netFareNum = Number(groupData?.NetFare) || 0;
+const rateNum = Number(converstionrate) || 1;
+
+let convertaedNetFare = parseFloat((netFareNum / rateNum).toFixed(2));
+
+/* SAFE: no crash if any field is missing */
+const details =
+  `${groupData?.Carrier || ''} ${groupData?.RouteFrom || ''}-${groupData?.RouteTo || ''} ` +
+  `Ticket Purchase ${Number(convertaedNetFare || 0).toFixed(2)}. ` +
+  `PNR : ${groupData?.PNR || ''} .`;
 
        const generatedUUID: string = uuidv4();
         const AgentLedgerData = {
