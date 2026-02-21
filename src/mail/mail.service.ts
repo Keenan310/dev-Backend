@@ -606,8 +606,11 @@ export class MailService {
     `;
     const mailOptions = {
       from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
-      to: agentData.email,
-      cc: 'keenantraval@gmail.com',
+      // ✅ Send to Admin (main receiver)
+      to: process.env.ADMIN_NOTIFY_EMAIL || "admin@keenantravel.com",
+      // ✅ Optional: keep agent in CC so they also know request is sent
+      cc: agentData.email,
+
       subject: "Ticket Issue Request",
       html: bodyEmail,
     };
