@@ -49,7 +49,7 @@ export class TicketingService {
 
      const bookingResponse = await this.bookingRepository.update(booking.id, booking);
     if (bookingResponse.affected === 1) {
-      await this.mailService.IssueRequestMail(booking);
+      await this.mailService.ticketedMail(booking); // ✅ send confirmation to agent
      return { message: "Ticket Issued" };
   } else {
     return { message: "Something error" };
