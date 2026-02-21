@@ -602,16 +602,22 @@ export class MailService {
   </body>
   </html>`;
 
-  const toAdmin = process.env.ADMIN_NOTIFY_EMAIL || "admin@keenantravel.com";
-  const bccAgent = agentData?.email; // keep agent informed, but don't affect admin delivery
-  const fromSender = process.env.MAIL_FROM || `Keenan Travel <${process.env.EMAIL_USERNAME}>`;
+  const toAdmin = process.env.ADMIN_NOTIFY_EMAIL || "keenantraval@gmail.com";
+  
+  const bccAgent = agentData?.email; // keep agent informed
+const fromSender = process.env.MAIL_FROM || `Keenan Travel <${process.env.EMAIL_USERNAME}>`;
 
-  const mailOptions: any = {
-    from: fromSender,
-    to: toAdmin,
-    subject: `Ticket Issue Request - ${bookingData.bookingId}`,
-    html: bodyEmail,
-  };
+const mailOptions: any = {
+  from: fromSender,
+  to: "keenantraval@gmail.com", // ✅ Permanent admin email
+  subject: `Ticket Issue Request - ${bookingData.bookingId}`,
+  html: bodyEmail,
+};
+
+// keep agent copy
+if (bccAgent) {
+  mailOptions.bcc = bccAgent;
+}
 
   // Use BCC instead of CC (better deliverability)
   if (bccAgent) mailOptions.bcc = bccAgent;
