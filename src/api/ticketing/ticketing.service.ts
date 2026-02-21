@@ -46,14 +46,14 @@ export class TicketingService {
     }
       booking.status = 'Issue In Process';
       booking.updated_at = new Date();
-      const bookingResponse = await this.bookingRepository.update(booking.id, booking);
 
-      if(bookingResponse.affected === 1){
-        await this.mailService.IssueRequestMail(booking);
-        return { message: "Issue Request Send"};
-      }else{
-        return { message: 'Something error'};
-      }
+     const bookingResponse = await this.bookingRepository.update(booking.id, booking);
+    if (bookingResponse.affected === 1) {
+      await this.mailService.ticketedMail(booking);
+     return { message: "Ticket Issued" };
+  } else {
+    return { message: "Something error" };
+  }
   }
 
   async createTicket(header: any, bookingUId: string, makeTicketModel: MakeTicketModel) {

@@ -660,10 +660,49 @@ export class MailService {
       }
     });
   }
+ // This mail is sent after the ticket is issued successfully to send the ticket details to the agent
+  async ticketedMail(bookingData: BookingModel) {
+  const agentData = await this.agentRepository.findOne({
+    where: { agentId: bookingData.agentId },
+  });
 
-  ticketedMail() {
-    return 'This action adds a new mail';
-  }
+  // safety fallback (so it never crashes)
+  const toEmail = agentData?.email || bookingData?.email;
+
+  const bodyEmail = `<!DOCTYPE html>
+  <html lang="en">
+  <head></head>
+  <body style="font-family: Arial, sans-serif;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
+      <tr>
+        <td bgcolor="#ffffff" style="padding: 20px; text-align: center;">
+          <h3 style="color: #333333;">✅ Ticket Issued Successfully</h3>
+          <p style="color: #666666;">Booking Reference: ${bookingData.bookingId}</p>
+          <p style="color: #666666;">PNR: ${bookingData.airlinespnr || bookingData.pnr || '-'}</p>
+          <p style="color: #666666;">Route: ${bookingData.depfrom}-${bookingData.arrto}</p>
+          <p style="color: #666666;">Flight Date: ${bookingData.flightdate || '-'}</p>
+          <p style="color: #666666;">Thank you,<br/>${bookingData.companyname || agentData?.company || 'Keenan Travel'}</p>
+        </td>
+      </tr>
+    </table>
+  </body>
+  </html>`;
+
+  const mailOptions = {
+    from: "Keenan Travel " + `${process.env.EMAIL_USERNAME}`,
+    to: toEmail,
+    subject: "Ticket Issued Confirmation",
+    html: bodyEmail,
+  };
+
+  await this.transporter.sendMail(mailOptions, (error: any, info: any) => {
+    if (error) {
+      console.log("Error sending email: ", error);
+    } else {
+      console.log("Email sent: ", info.response);
+    }
+  });
+}
 
   async voidRequestMail(bookingData: BookingModel) {
     const agentData = await this.agentRepository.findOne({where: {agentId: bookingData.agentId}});
