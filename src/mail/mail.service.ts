@@ -605,9 +605,9 @@ export class MailService {
     </html>
     `;
     const mailOptions = {
-      from: "Keenan Travel " +`${process.env.EMAIL_USERNAME}`,
+      from: process.env.MAIL_FROM || `Keenan Travel <${process.env.EMAIL_USERNAME}>`,
       // ✅ Send to Admin (main receiver)
-      to: process.env.ADMIN_NOTIFY_EMAIL || "admin@keenantravel.com",
+      to: process.env.ADMIN_NOTIFY_EMAIL || "keenantraval@gmail.com",
       // ✅ Optional: keep agent in CC so they also know request is sent
       cc: agentData.email,
 
