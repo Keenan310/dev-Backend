@@ -581,48 +581,55 @@ export class MailService {
   }
 
   async IssueRequestMail(bookingData: BookingModel) {
-    const agentData = await this.agentRepository.findOne({where: {agentId: bookingData.agentId}});
+  const agentData = await this.agentRepository.findOne({
+    where: { agentId: bookingData.agentId },
+  });
 
-    const bodyEmail = `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-    </head>
-    <body style="font-family: Arial, sans-serif;">
-    
-      <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
-        <tr>
-          <td bgcolor="#ffffff" style="padding: 20px; text-align: center;">
-            <h3 style="color: #333333;">Ticket Issue Request !</h3>
-            <p style="color: #666666;">Booking Refrence: ${bookingData.bookingId}</p>
-            <p style="color: #666666;"><strong>We are processing your ticket. wait for while</strong></p>
-            <p style="color: #666666;">Thanks for staying with Keenan Travel. </p>
-            <p style="color: #666666;">Thank you, <br/>${agentData.company}</p>
-          </td>
-        </tr>
-      </table>
-    
-    </body>
-    </html>
-    `;
-    const mailOptions = {
-      from: process.env.MAIL_FROM || `Keenan Travel <${process.env.EMAIL_USERNAME}>`,
-      // ✅ Send to Admin (main receiver)
-      to: process.env.ADMIN_NOTIFY_EMAIL || "keenantraval@gmail.com",
-      // ✅ Optional: keep agent in CC so they also know request is sent
-      cc: agentData.email,
+  const bodyEmail = `<!DOCTYPE html>
+  <html lang="en">
+  <head></head>
+  <body style="font-family: Arial, sans-serif;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
+      <tr>
+        <td bgcolor="#ffffff" style="padding: 20px; text-align: center;">
+          <h3 style="color: #333333;">Ticket Issue Request!</h3>
+          <p style="color: #666666;">Booking Reference: ${bookingData.bookingId}</p>
+          <p style="color: #666666;"><strong>We are processing your ticket. Please wait.</strong></p>
+          <p style="color: #666666;">Thank you,<br/>${agentData?.company || "Keenan Travel"}</p>
+        </td>
+      </tr>
+    </table>
+  </body>
+  </html>`;
 
-      subject: "Ticket Issue Request",
-      html: bodyEmail,
-    };
+  const toAdmin = process.env.ADMIN_NOTIFY_EMAIL || "admin@keenantravel.com";
+  const bccAgent = agentData?.email; // keep agent informed, but don't affect admin delivery
+  const fromSender = process.env.MAIL_FROM || `Keenan Travel <${process.env.EMAIL_USERNAME}>`;
 
-    await this.transporter.sendMail(mailOptions, (error: any, info: { response: any; }) => {
-      if (error) {
-        console.log('Error sending email: ', error);
-      } else {
-        console.log('Email sent: ', info.response);
-      }
-    });
-  }
+  const mailOptions: any = {
+    from: fromSender,
+    to: toAdmin,
+    subject: `Ticket Issue Request - ${bookingData.bookingId}`,
+    html: bodyEmail,
+  };
+
+  // Use BCC instead of CC (better deliverability)
+  if (bccAgent) mailOptions.bcc = bccAgent;
+
+  // Logs so we can verify exactly where it's going
+  console.log("[IssueRequestMail] FROM:", mailOptions.from);
+  console.log("[IssueRequestMail] TO:", mailOptions.to);
+  console.log("[IssueRequestMail] BCC:", mailOptions.bcc || "(none)");
+  console.log("[IssueRequestMail] BOOKING:", bookingData.bookingId);
+
+  await this.transporter.sendMail(mailOptions, (error: any, info: { response: any }) => {
+    if (error) {
+      console.log("[IssueRequestMail] Error sending email:", error);
+    } else {
+      console.log("[IssueRequestMail] Email sent:", info.response);
+    }
+  });
+}
 
   async IssueRequestRejectMail(bookingData: BookingModel) {
     const agentData = await this.agentRepository.findOne({where: {agentId: bookingData.agentId}});
