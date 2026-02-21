@@ -61,25 +61,24 @@ export class TicketingService {
   }
 
   async createTicket(header: any, bookingUId: string, makeTicketModel: MakeTicketModel) {
-    console.log('🔥 createTicket() CALLED', { bookingUId });
+    
 
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
     if (!verifyAdminId) {
-      console.log('⛔ createTicket() UNAUTHORIZED', { bookingUId });
+      
       throw new UnauthorizedException();
     }
 
     const booking = await this.bookingRepository.findOne({ where: { uid: bookingUId } });
     if (!booking) {
-      console.log('❌ createTicket() BOOKING_NOT_FOUND', { bookingUId });
+      
       throw new HttpException(`Booking not Found`, HttpStatusCode.NotFound);
     }
 
-    console.log('✅ createTicket() BOOKING_FOUND', { id: booking.id, status: booking.status });
+  
 
     if (booking.status != 'Issue In Process') {
-      console.log('⚠️ createTicket() WRONG_STATUS', { bookingUId, status: booking.status });
       throw new HttpException(`Booking already ${booking.status}`, HttpStatusCode.AlreadyReported);
     }
 
