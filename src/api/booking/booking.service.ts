@@ -1,4 +1,4 @@
-import { HttpException, Injectable, NotAcceptableException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, Injectable, NotAcceptableException, NotFoundException, UnauthorizedException, Provider } from '@nestjs/common';
 import { BookingModel, BookingModelUpdateAdmin, TicketModel } from './booking.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { format } from 'date-fns';
@@ -76,48 +76,29 @@ export class BookingService {
       let old_booking_id = (booking[0]?.bookingId).replace("KTB",'');
       bookingId = "KTB" + (parseInt(old_booking_id) + 1);
     }
-    // grup fare details change according to offer id which is same as group fare uid in group fare table
-    
-    const groupData = await this.groupFareRepository.findOneBy({
-  uid: bookingDto?.FlightInfo?.OfferId,
-});
 
-const conversionData = await this.CurrencyConverterRepository.findOne({
-  where: { source: 'Group' },
-});
+    let NetFare = Number(bookingDto.FlightInfo.NetFare) || 0;
 
-let converstionrate = 1;
+    const Booking_PNR: string = bookingDto?.FlightInfo?.PNR;
+    const origin = bookingDto.FlightInfo.AllLegsInfo[0].DepFrom;
+    const destination = bookingDto.FlightInfo.AllLegsInfo[0].ArrTo;
+    const routeFilter = bookingDto.FlightInfo.TripType === 'Oneway' ? `${origin}-${destination} ` : `${origin}-${destination}-${origin}`;
+    const details = `${bookingDto.FlightInfo?.Carrier || ''} ${routeFilter} ` + `Ticket Purchase ${Number(NetFare || 0).toFixed(2)}. ` +
+    `PNR : ${Booking_PNR || ''} .`;
 
-if (agentdata?.currency === 'AED' && conversionData) {
-  converstionrate = Number(conversionData.exchange_rate) || 1;
-}
+    const generatedUUID: string = uuidv4();
+    const AgentLedgerData = {
+      agentId: agentdata.agentId,
+      trxtype: 'ticket',
+      debit: -NetFare,
+      refId: bookingId,
+      details: details,
+      compnayname: agentdata.company,
+      uid: generatedUUID
+    }
 
-/* SAFE: make sure NetFare and rate are numbers */
-const netFareNum = Number(groupData?.NetFare) || 0;
-const rateNum = Number(converstionrate) || 1;
+    await this.agentLedgerRepository.save(AgentLedgerData);
 
-let convertaedNetFare = parseFloat((netFareNum / rateNum).toFixed(2));
-
-/* SAFE: no crash if any field is missing */
-const details =
-  `${groupData?.Carrier || ''} ${groupData?.RouteFrom || ''}-${groupData?.RouteTo || ''} ` +
-  `Ticket Purchase ${Number(convertaedNetFare || 0).toFixed(2)}. ` +
-  `PNR : ${groupData?.PNR || ''} .`;
-
-       const generatedUUID: string = uuidv4();
-        const AgentLedgerData = {
-          agentId: agentdata.agentId,
-          trxtype: 'ticket',
-          debit: -convertaedNetFare,
-          refId: bookingId,
-          details: details,
-          compnayname: agentdata.company,
-          uid: generatedUUID
-        }
-
-      await this.agentLedgerRepository.save(AgentLedgerData);
-
-    let Booking_PNR: string = groupData.PNR;
     const bookingData = {
       agentId: agentId,
       bookingId: bookingId,
@@ -129,8 +110,8 @@ const details =
       refundable: bookingDto.FlightInfo.Refundable,
       arrto: bookingDto.FlightInfo.AllLegsInfo[0].ArrTo,
       triptype: bookingDto.FlightInfo.TripType,
-      netfare: convertaedNetFare,
-      grossfare: convertaedNetFare,
+      netfare: NetFare,
+      grossfare: NetFare,
       status: "Issue In Process",
       name: name,
       email: email,
@@ -141,7 +122,7 @@ const details =
       totalpax: paxCount,
       flightdata: null,
       itenary: bookingDto,
-      totalsegment: groupData.segment,
+      totalsegment: 0,
       timelimit: bookingDto.FlightInfo.TimeLimit || 'N/F',
       flightdate: bookingDto.FlightInfo.AllLegsInfo[0].DepDate,
       companyname:agentdata.company

@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Headers, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Headers } from '@nestjs/common';
 import { GroupfareService } from './groupfare.service';
-import { GroupFareDto, GroupFareModel, GroupFareModelUpdate, GroupFareSearch } from './groupfare.model';
+import { GroupFareDto } from './groupfare.model';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('GroupFare Modules')
@@ -17,6 +17,14 @@ export class GroupfareController {
   }
 
   @ApiBearerAuth('access_token')
+  @Patch()
+  update(
+    @Headers() header: Headers,
+    @Body() groupFare: GroupFareDto) {
+    return this.groupfareService.update(header, groupFare);
+  }
+
+  @ApiBearerAuth('access_token')
   @Get('admin')
   findAllAdmin(
     @Headers() header: Headers) {
@@ -24,11 +32,10 @@ export class GroupfareController {
   }
 
   @ApiBearerAuth('access_token')
-  @Get('agent/special/:triptype')
+  @Get('agent/special')
   findAllAdminSpecialFare(
-    @Headers() header: Headers,
-    @Param('triptype') triptype: string) {
-    return this.groupfareService.findAllAgentSpecialFare(header, triptype);
+    @Headers() header: Headers) {
+    return this.groupfareService.findAllAgentSpecialFare(header);
   }
 
   @ApiBearerAuth('access_token')
