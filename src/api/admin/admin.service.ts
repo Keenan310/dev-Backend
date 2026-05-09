@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable, NotAcceptableException, NotFound
 import { AdminModel, AdminModelUpdate } from './admin.model';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
 import * as dotenv from "dotenv"
 import { StaffModel } from '../staff/staff.model';
 import { AgentModel } from '../agent/agent.model';

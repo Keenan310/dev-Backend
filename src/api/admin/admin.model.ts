@@ -55,6 +55,16 @@ export class AdminModel {
   @Column()
   otp: string;
 
+  @ApiProperty({default: "no"})
+  @IsNotEmpty()
+  @Column()
+  canEdit: string;
+
+  @ApiProperty({default: "no"})
+  @IsNotEmpty()
+  @Column()
+  canDelete: string;
+
   @Column()
   created_at: Date;
 
