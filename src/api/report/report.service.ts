@@ -68,6 +68,10 @@ export class ReportService {
         throw new UnauthorizedException();
     }
 
+    if(verifyAdminId.canEdit === 'no'){
+      throw new UnauthorizedException('You do not have permission to edit this ledger entry');
+    }
+
     await this.adminLedgerRepository.update(+id, updateAdminLedgerDto);
 
   }
@@ -77,6 +81,10 @@ export class ReportService {
 
     if(!verifyAdminId){
         throw new UnauthorizedException();
+    }
+
+    if(verifyAdminId.canDelete === 'no'){
+      throw new UnauthorizedException('You do not have permission to delete this ledger entry');
     }
 
     return await this.adminLedgerRepository.delete(+id);
