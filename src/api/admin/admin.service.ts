@@ -94,14 +94,14 @@ export class AdminService {
     });
   }
 
-  async findOne(header:any , uid: string) {
+  async findOne(header:any) {
     const verifyAdminId = await this.authService.verifyAdminToken(header);
 
     if(!verifyAdminId){
         throw new UnauthorizedException();
     }
     
-    const admin = await this.adminRepository.findOneBy({uid: uid });
+    const admin = await this.adminRepository.findOneBy({email: verifyAdminId.email });
 
     if (!admin) {
       throw new NotFoundException();
