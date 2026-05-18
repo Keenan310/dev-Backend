@@ -233,12 +233,13 @@ export class SabreService {
       });
     }
 
-    let SeatReq = AdultCount + ChildCount
-    const RequestArray = [];
-    const AllSegments = revalidationDto.AllLegsInfo;
-    for (const segments of AllSegments) {
-      for (let i = 0; i < segments.Segments.length; i++) {
-        const segment = segments.Segments[i];
+    let seatsReq = AdultCount + ChildCount;
+    const RPHRequestArray = [];
+    const AllSegments = revalidationDto?.AllLegsInfo;
+    for (let i = 0; i < AllSegments.length; i++) {
+      const segmentList = AllSegments[i];
+      const MultiFlights = [];
+      for (const segment of segmentList?.Segments || []) {
         const MarketingCarrier = segment.MarketingCarrier;
         const MarketingFlightNumber = segment.MarketingFlightNumber;
         const OperatingCarrier = segment.OperatingCarrier;
@@ -248,21 +249,8 @@ export class SabreService {
         const ArrTime = segment.ArrTime.slice(0, 19);
         const BookingCode = segment.SegmentCode.bookingCode;
 
-        const MultiRequest = {
-          RPH: String(i + 1),
-          DepartureDateTime: DepTime,
-          OriginLocation: {
-            LocationCode: DepFrom,
-          },
-          DestinationLocation: {
-            LocationCode: ArrTo,
-          },
-          TPA_Extensions: {
-            SegmentType: {
-              Code: "O",
-            },
-            Flight: [
-              {
+        const Flights =
+          {
                 Number: MarketingFlightNumber,
                 DepartureDateTime: DepTime,
                 ArrivalDateTime: ArrTime,
@@ -278,13 +266,26 @@ export class SabreService {
                   Operating: OperatingCarrier,
                   Marketing: MarketingCarrier,
                 },
-              },
-            ],
-          },
-        };
-
-        RequestArray.push(MultiRequest);
+          };
+          MultiFlights.push(Flights);
       }
+      const MultiRequest = {
+          RPH: String(i + 1),
+          DepartureDateTime: segmentList?.Segments[0]?.DepTime.slice(0, 19),
+          OriginLocation: {
+            LocationCode: segmentList.DepFrom,
+          },
+          DestinationLocation: {
+            LocationCode: segmentList.ArrTo,
+          },
+          TPA_Extensions: {
+            SegmentType: {
+              Code: "O",
+            },
+            Flight: MultiFlights,
+          },
+      };
+      RPHRequestArray.push(MultiRequest);
     }
 
     const sabre_revalidation_request_data = {
@@ -298,7 +299,7 @@ export class SabreService {
           },
         },
         TravelerInfoSummary: {
-          SeatsRequested: [SeatReq],  // Replace with the actual SeatReq value
+          SeatsRequested: [seatsReq],
           AirTravelerAvail: [
             {
               PassengerTypeQuantity: SabreRequestPax,
@@ -319,11 +320,11 @@ export class SabreService {
             },
           ],
         },
-        OriginDestinationInformation: RequestArray,
+        OriginDestinationInformation: RPHRequestArray,
         TPA_Extensions: {
           IntelliSellTransaction: {
             RequestType: {
-              Name: "100ITINS",
+              Name: "50ITINS",
             },
           },
         },
@@ -348,7 +349,7 @@ export class SabreService {
       try {
         const revalidation_response = await axios.request(sabreflightrequest);
         const RevalidationResponse = revalidation_response.data;
-        return RevalidationResponse;
+        return this.sabreUtils.restRevalidationParser(agentdata, revalidationDto, RevalidationResponse);
       }catch (error) {
         console.error(error);
         throw error;
@@ -1336,7 +1337,17 @@ export class SabreService {
     
     try {
       const response = await axios.request(sabrebookingrequest);
-      return this.bookingService.createBooking(agentdata, response?.data, bookingDto);
+      const responseDatas = response?.data;
+      if(responseDatas?.CreatePassengerNameRecordRS?.ItineraryRef?.ID){
+        const responseData = await this.airretrieve(responseDatas?.CreatePassengerNameRecordRS?.ItineraryRef?.ID);
+        return this.bookingService.createBooking(agentdata, responseData, bookingDto);
+      }else if(responseDatas?.ApplicationResults){
+        return{
+          "status": "error",
+          "error": responseDatas.ApplicationResults,
+          "message": "Booking Failed",
+        };
+      }
     }catch (error) {
       console.error(error);
       throw error;

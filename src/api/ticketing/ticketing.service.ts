@@ -47,7 +47,10 @@ export class TicketingService {
       throw new HttpException(`Booking already ${booking.status}`, HttpStatusCode.AlreadyReported);
     }
 
-    if(booking.system === 'AlHind'){
+    if(booking.system === 'Sabre'){
+      booking.status = 'Issue In Process';
+      booking.updated_at = new Date();
+    }else if(booking.system === 'AlHind'){
       booking.status = 'Issue In Process';
       booking.updated_at = new Date();
     }else if(booking.system === 'GroupFare' 

@@ -47,39 +47,55 @@ export class FlightService {
       private readonly alhindAPI: AlhindAPI,
     ) {}
 
-   async airsearch(header: any, flightDto :FlightSearchModel){
-    const agent = await this.authService.verifyAgentToken(header);
+    private isMulticitySearch(flightDto: FlightSearchModel): boolean {
+      const segments = flightDto?.segments ?? [];
 
-    if(!agent){
-      throw new UnauthorizedException();
+      if (segments.length <= 1) {
+        return false;
+      }
+
+      if (segments.length > 2) {
+        return true;
+      }
+
+      return segments[0]?.depfrom !== segments[1]?.arrto;
     }
 
-    await this.searchhistoryService.create(agent, flightDto);
+    async airsearch(header: any, flightDto: FlightSearchModel) {
+      const agent = await this.authService.verifyAgentToken(header);
 
-    const AlhindData = await this.alhindAPI.flights(agent, flightDto);
+      if (!agent) {
+        throw new UnauthorizedException();
+      }
 
-    AlhindData.sort((a, b) => a.NetFare - b.NetFare);
-    return AlhindData;
+      // Do not block search for history logging
+      this.searchhistoryService.create(agent, flightDto).catch(
+        console.error,
+      );
 
-  }
+      const isMulticity = this.isMulticitySearch(flightDto);
 
-  async airsearchNew(header: any, flightDto :FlightSearchModel){
-    const agent = await this.authService.verifyAgentToken(header);
+      // Run searches in parallel
+      const [sabreResult, alhindResult] = await Promise.allSettled([
+        this.sabreService.shopping(agent, flightDto),
+        isMulticity ? Promise.resolve([]) : this.alhindAPI.flights(agent, flightDto),
+      ]);
 
-    if(!agent){
-      throw new UnauthorizedException();
-    }
+      // Safely extract arrays
+      const sabreFlights =
+        sabreResult.status === 'fulfilled'
+          ? sabreResult.value
+          : [];
 
-    await this.searchhistoryService.create(agent, flightDto);
+      const alhindFlights =
+        alhindResult.status === 'fulfilled'
+          ? alhindResult.value
+          : [];
 
-    const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
-
-    const AlhindData = await this.alhindAPI.flights(agent, flightDto);
-
-    const combinedArray = Sabre_FlightData.concat(AlhindData);
-    combinedArray.sort((a, b) => a.NetFare - b.NetFare);
-    return combinedArray;
-
+      // Merge + sort efficiently
+      return [...sabreFlights, ...alhindFlights].sort(
+        (a, b) => a.NetFare - b.NetFare,
+      );
   }
 
   async airrevalidation(header: any, revalidationDto: any){
@@ -412,17 +428,19 @@ export class FlightService {
     const passengerdata =  await this.passengerRepository.find({ where : {bookingId: booking.bookingId}});
 
     if(booking.system === 'Sabre'){
-      const  ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
+      const ticketdetails=  await this.ticketingRepository.find({ where : {bookingId: booking.bookingId}});
       const refunddata = await this.refundRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
       const reissuedata =  await this.reissueRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
       const voiddata =  await this.voidRepository.find({ where : {bookingId: booking.bookingId}, order: { created_at: "DESC" }});
 
+      const sabreData = await this.sabreService.airretrieve(booking.pnr);
       const customResponseData = {
         bookingdata: booking,
         passengerdata: passengerdata,
         refunddata: refunddata,
         reissuedata: reissuedata,
         voiddata: voiddata,
+        sabredata: sabreData || [],
         ticketdetails: ticketdetails,
         partialpaymentdata: ''
       };
@@ -610,4 +628,3 @@ export class FlightService {
 
   }
 }
-

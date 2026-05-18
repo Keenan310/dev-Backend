@@ -14,13 +14,15 @@ export class BookingUtils {
 
     async bookingParser(agentdata: AgentModel, responseData: any,  bookingDto: any){
 
+        console.log(responseData);
+
         const agentId : string = agentdata.agentId;
-        const email : string = bookingDto.ContactInfo.email || "dev@flyjatt.com";
-        const phone : string = bookingDto.ContactInfo.phone || "08801685370455";
-        const name : string = bookingDto.PassengerInfo.adult[0].givenname +" " + bookingDto.PassengerInfo.adult[0].surname;
-        const adult : number = (bookingDto.PassengerInfo.adult).length;
-        const child : number = (bookingDto.PassengerInfo.child).length || 0;
-        const infant : number = (bookingDto.PassengerInfo.infant).length || 0;
+        const email : string = bookingDto?.ContactInfo?.email || "dev@flyjatt.com";
+        const phone : string = bookingDto?.ContactInfo?.phone || "08801685370455";
+        const name : string = bookingDto?.PassengerInfo?.adult?.[0]?.givenname +" " + bookingDto?.PassengerInfo?.adult?.[0]?.surname;
+        const adult : number = (bookingDto?.PassengerInfo?.adult).length;
+        const child : number = (bookingDto?.PassengerInfo?.child).length || 0;
+        const infant : number = (bookingDto?.PassengerInfo?.infant).length || 0;
         const paxCount  : number = adult + child + infant;
 
         const booking = await this.bookingRepository.find({order: { id: 'DESC' }, take : 1});
@@ -31,9 +33,9 @@ export class BookingUtils {
             bookingId = "KTB" + (parseInt(old_booking_id) + 1);
         }
 
-        let PNR : string = responseData?.CreatePassengerNameRecordRS?.ItineraryRef?.ID || await this.generatePNR();
-        let airlinesPnr : string = await this.generateAirlinesPNR();
-        let system : string = responseData?.CreatePassengerNameRecordRS?.ItineraryRef?.ID;
+        let PNR : string = responseData?.bookingId || await this.generatePNR();
+        let airlinesPnr : string = responseData?.flights?.[0]?.confirmationId || await this.generateAirlinesPNR();
+        let systems : string = bookingDto?.FlightInfo?.System;
 
         let totalsegments : number = 0;
         for (let sgFlight of bookingDto?.FlightInfo?.AllLegsInfo) {
@@ -44,18 +46,18 @@ export class BookingUtils {
         const bookingData = {
             agentId: agentId,
             bookingId: bookingId,
-            system: system,
-            carrier_name: bookingDto.FlightInfo.CarrierName,
-            carrier_code: bookingDto.FlightInfo.Carrier,
-            depfrom: bookingDto.FlightInfo.AllLegsInfo[0].DepFrom,
+            system: systems,
+            carrier_name: bookingDto?.FlightInfo?.CarrierName,
+            carrier_code: bookingDto?.FlightInfo?.Carrier,
+            depfrom: bookingDto?.FlightInfo?.AllLegsInfo?.[0]?.DepFrom,
             pnr: PNR,
             airlinespnr: airlinesPnr,
-            refundable: bookingDto.FlightInfo.Refundable,
-            arrto: bookingDto.FlightInfo.AllLegsInfo[0].ArrTo,
-            triptype: bookingDto.FlightInfo.TripType,
-            netfare: bookingDto.FlightInfo.NetFare,
-            grossfare: bookingDto.FlightInfo.GrossFare,
-            comission: bookingDto.FlightInfo.Comission,
+            refundable: bookingDto?.FlightInfo?.Refundable,
+            arrto: bookingDto?.FlightInfo?.AllLegsInfo?.[0]?.ArrTo,
+            triptype: bookingDto?.FlightInfo?.TripType,
+            netfare: bookingDto?.FlightInfo?.NetFare,
+            grossfare: bookingDto?.FlightInfo?.GrossFare,
+            comission: bookingDto?.FlightInfo?.Comission,
             status: "Hold",
             name: name,
             email: email,
@@ -64,18 +66,15 @@ export class BookingUtils {
             childcount: child,
             infantcount: infant,
             totalpax: paxCount,
-            flightdata: null,
+            flightdata: responseData,
             totalsegment: totalsegments,
-            itenary: bookingDto.FlightInfo,
-            timelimit: bookingDto.FlightInfo.TimeLimit || 'N/F',
-            flightdate: bookingDto.FlightInfo.AllLegsInfo[0].DepDate,
-            companyname: agentdata.company
+            itenary: bookingDto?.FlightInfo,
+            timelimit: bookingDto?.FlightInfo?.TimeLimit || 'N/F',
+            flightdate: bookingDto?.FlightInfo?.AllLegsInfo?.[0]?.DepDate,
+            companyname: agentdata?.company
         }
 
-        const activityLog = {agentId: agentId, status: 'Hold', platform: 'B2B',
-        refId: bookingId, module: 'Booking', action_by: agentdata.name};
-
-        return bookingData
+        return bookingData;
     }
 
     async generatePNR() {

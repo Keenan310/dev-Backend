@@ -15,6 +15,7 @@ import { AirBookingModel } from '../flight/dto/booking-flight.dto';
 import { TravellerService } from '../traveller/traveller.service';
 import { BookingUtils } from './booking.utils';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
+import { SabreService } from '../flight/sabre.flights.service';
 
 @Injectable()
 export class BookingService {
@@ -24,13 +25,8 @@ export class BookingService {
     private readonly bookingRepository: Repository<BookingModel>,
     @InjectRepository(AgentModel)
     private readonly agentRepository: Repository<AgentModel>,
-    @InjectRepository(GroupFareModel)
-    private readonly groupFareRepository: Repository<GroupFareModel>,
     @InjectRepository(AgentLedgerModel)
     private readonly agentLedgerRepository: Repository<AgentLedgerModel>,
-    @InjectRepository(CurrencyConverter)
-    private readonly  CurrencyConverterRepository: Repository<CurrencyConverter>,
-    private readonly travellerService: TravellerService,
     private readonly passengerService: PassengerService,
     private readonly authService: AuthService,
     private readonly mailService: MailService,
@@ -38,16 +34,6 @@ export class BookingService {
   ) {}
 
   async createBooking(agentdata: AgentModel, responseData: any,  bookingDto: any){
-    if(responseData?.ApplicationResults){
-      const bookingId='';
-      await this.travellerService.createBookingPax(bookingDto?.PassengerInfo, agentdata?.agentId, bookingId);
-      return{
-        "status": "error",
-        "error": responseData.ApplicationResults,
-        "message": "Booking Failed",
-      };
-    }
-
     const bookingData = await this.bookingUtils.bookingParser(agentdata, responseData,  bookingDto);
     const bookingResult = await this.bookingRepository.save(bookingData);
     await this.passengerService.createBookingPax(bookingDto?.PassengerInfo, agentdata?.agentId, bookingData?.bookingId);
