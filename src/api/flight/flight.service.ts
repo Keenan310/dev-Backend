@@ -47,7 +47,7 @@ export class FlightService {
       private readonly alhindAPI: AlhindAPI,
     ) {}
 
-  async airsearch(header: any, flightDto :FlightSearchModel){
+   async airsearch(header: any, flightDto :FlightSearchModel){
     const agent = await this.authService.verifyAgentToken(header);
 
     if(!agent){
@@ -56,18 +56,29 @@ export class FlightService {
 
     await this.searchhistoryService.create(agent, flightDto);
 
-    //const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
+    const AlhindData = await this.alhindAPI.flights(agent, flightDto);
 
-    // let Groupdata: any[] = [];
-    // if (flightDto.segments.length === 1 && flightDto.adultcount === 1) {
-    //   Groupdata = await this.groupFareService.findBySearchFlight(flightDto);
-    // }
+    AlhindData.sort((a, b) => a.NetFare - b.NetFare);
+    return AlhindData;
 
-      const AlhindData = await this.alhindAPI.flights(agent, flightDto);
+  }
 
-      //const combinedArray = Sabre_FlightData.concat(AlhindData);
-      AlhindData.sort((a, b) => a.NetFare - b.NetFare);
-      return AlhindData;
+  async airsearchNew(header: any, flightDto :FlightSearchModel){
+    const agent = await this.authService.verifyAgentToken(header);
+
+    if(!agent){
+      throw new UnauthorizedException();
+    }
+
+    await this.searchhistoryService.create(agent, flightDto);
+
+    const Sabre_FlightData = await this.sabreService.shopping(agent, flightDto);
+
+    const AlhindData = await this.alhindAPI.flights(agent, flightDto);
+
+    const combinedArray = Sabre_FlightData.concat(AlhindData);
+    combinedArray.sort((a, b) => a.NetFare - b.NetFare);
+    return combinedArray;
 
   }
 
@@ -215,7 +226,7 @@ export class FlightService {
     const System = revalidationDto.System;
 
     if(System == 'Sabre'){
-       return await this.sabreService.price_check(agentdata, revalidationDto);
+      
     }else{
        return 'Other System';
     }

@@ -108,13 +108,13 @@ export class SabreService {
     const sabreToken = await this.restToken();
 
     let payload_data = {
-      "OTA_AirLowFareSearchRQ": {
-        "Version": "5",
-        "POS": {
-          "Source": [
+      OTA_AirLowFareSearchRQ: {
+        Version: "5",
+        POS: {
+          Source: [
             {
-              "PseudoCityCode": process.env.SABRE_PCC,
-              "RequestorID": {
+              PseudoCityCode: process.env.SABRE_PCC,
+              RequestorID: {
                 "Type": "1",
                 "ID": "1",
                 "CompanyName": {
@@ -124,9 +124,9 @@ export class SabreService {
             }
           ]
         },
-        "OriginDestinationInformation": SegmentList,
-        "TravelPreferences": {
-          "TPA_Extensions": {
+        OriginDestinationInformation: SegmentList,
+        TravelPreferences: {
+          TPA_Extensions: {
             "DataSources": {
               "NDC": "Disable",
               "ATPCO": "Enable",
@@ -162,10 +162,10 @@ export class SabreService {
             }
           ]
         },
-        "TPA_Extensions": {
-          "IntelliSellTransaction": {
-            "RequestType": {
-              "Name": "50ITINS"
+        TPA_Extensions: {
+          IntelliSellTransaction: {
+            RequestType: {
+              Name: "50ITINS"
             }
           }
         }
@@ -185,9 +185,9 @@ export class SabreService {
     
     try {
       const response = await axios.request(shoppingrequest);
-      return await this.sabreUtils.restBFMParser(agentdata, response?.data);
-    } catch (error) {
-      return error?.response?.data;
+      return await this.sabreUtils.restBFMParser(agentdata, flightDto, response?.data);
+    } catch (e) {
+      return e;
     }
   }
 
@@ -355,175 +355,7 @@ export class SabreService {
       }
   }
 
-  async price_check(agentdata: AgentModel, revalidationDto: any){
-
-    let AdultCount = 0;
-    let ChildCount = 0;
-    let InfantCount = 0;
-  
-    const PriceBreakDown = revalidationDto?.PriceBreakDown;
-  
-    for (const pricebreakdown of PriceBreakDown) {
-      if (pricebreakdown.PaxType === 'ADT') {
-        AdultCount = pricebreakdown.PaxCount;
-      } else if (pricebreakdown.PaxType === 'C09') {
-        ChildCount = pricebreakdown.PaxCount;
-      } else if (pricebreakdown.PaxType === 'INF') {
-        InfantCount = pricebreakdown.PaxCount;
-      } else {
-        throw new Error("Invalid Price Break down");
-      }
-    }
-    
-    const SabreRequestPax = [];
-  
-    if (AdultCount > 0) {
-      SabreRequestPax.push({
-        Code: "ADT",
-        Quantity: AdultCount,
-      });
-    }
-  
-    if (ChildCount > 0) {
-      SabreRequestPax.push({
-        Code: "C09",
-        Quantity: ChildCount,
-      });
-    }
-  
-    if (InfantCount > 0) {
-      SabreRequestPax.push({
-        Code: "INF",
-        Quantity: InfantCount,
-      });
-    }
-
-    let SeatReq = AdultCount + ChildCount
-    const RequestArray = [];
-    const AllSegments = revalidationDto.AllLegsInfo;
-    for (const segments of AllSegments) {
-      for (let i = 0; i < segments.Segments.length; i++) {
-        const segment = segments.Segments[i];
-        const MarketingCarrier = segment.MarketingCarrier;
-        const MarketingFlightNumber = segment.MarketingFlightNumber;
-        const OperatingCarrier = segment.OperatingCarrier;
-        const DepFrom = segment.DepFrom;
-        const ArrTo = segment.ArrTo;
-        const DepTime = segment.DepTime.slice(0, 19);
-        const ArrTime = segment.ArrTime.slice(0, 19);
-        const BookingCode = segment.SegmentCode.bookingCode;
-
-        const MultiRequest = {
-          RPH: String(i + 1),
-          DepartureDateTime: DepTime,
-          OriginLocation: {
-            LocationCode: DepFrom,
-          },
-          DestinationLocation: {
-            LocationCode: ArrTo,
-          },
-          TPA_Extensions: {
-            SegmentType: {
-              Code: "O",
-            },
-            Flight: [
-              {
-                Number: MarketingFlightNumber,
-                DepartureDateTime: DepTime,
-                ArrivalDateTime: ArrTime,
-                Type: "A",
-                ClassOfService: BookingCode,
-                OriginLocation: {
-                  LocationCode: DepFrom,
-                },
-                DestinationLocation: {
-                  LocationCode: ArrTo,
-                },
-                Airline: {
-                  Operating: OperatingCarrier,
-                  Marketing: MarketingCarrier,
-                },
-              },
-            ],
-          },
-        };
-
-        RequestArray.push(MultiRequest);
-      }
-    }
-
-    const sabre_revalidation_request_data = {
-      OTA_AirLowFareSearchRQ: {
-        Version: "4",
-        TravelPreferences: {
-          TPA_Extensions: {
-            VerificationItinCallLogic: {
-              Value: "L",
-            },
-          },
-        },
-        TravelerInfoSummary: {
-          SeatsRequested: [SeatReq],
-          AirTravelerAvail: [
-            {
-              PassengerTypeQuantity: SabreRequestPax,
-            },
-          ],
-        },
-        POS: {
-          Source: [
-            {
-              PseudoCityCode: process.env.SABRE_PCC,
-              RequestorID: {
-                Type: "1",
-                ID: "1",
-                CompanyName: {
-                  Code: "TN",
-                },
-              },
-            },
-          ],
-        },
-        OriginDestinationInformation: RequestArray,
-        TPA_Extensions: {
-          IntelliSellTransaction: {
-            RequestType: {
-              Name: "50ITINS",
-            },
-          },
-        },
-      },
-    };
-
-    
-    const sabreToken = await this.restToken();
-
-    let sabreflightrequest = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: process.env.SABRE_AIRPRICE_ENDPOINT,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Conversation-ID': '2021.01.DevStudio',
-        'Authorization': `Bearer ${sabreToken}`,
-      },
-      data : sabre_revalidation_request_data
-    };
-  
-      try {
-        const response = await axios.request(sabreflightrequest);
-        return await this.sabreUtils.restBFMParser(agentdata, response?.data);
-      }catch (error) {
-        throw error;
-      }
-  }
-
   async booking(agentdata: AgentModel, bookingDto: any){
-
-    const priceCheck = await this.price_check(agentdata, bookingDto.FlightInfo);
-    if(priceCheck[0].IsBookable === false){
-      return this.bookingService.createBooking(agentdata, '', bookingDto, priceCheck[0]);
-    }
 
     const time_now = new Date();
     const email : string = bookingDto.ContactInfo.email || "dev@flyjatt.com";
@@ -1504,7 +1336,7 @@ export class SabreService {
     
     try {
       const response = await axios.request(sabrebookingrequest);
-      return this.bookingService.createBooking(agentdata, response?.data, bookingDto, priceCheck[0]);
+      return this.bookingService.createBooking(agentdata, response?.data, bookingDto);
     }catch (error) {
       console.error(error);
       throw error;

@@ -47,11 +47,14 @@ export class TicketingService {
       throw new HttpException(`Booking already ${booking.status}`, HttpStatusCode.AlreadyReported);
     }
 
-    if(booking.system ==='Alhind'){
+    if(booking.system === 'AlHind'){
       booking.status = 'Issue In Process';
       booking.updated_at = new Date();
     }else if(booking.system === 'GroupFare' 
       && booking?.itenary?.FlightInfo?.provideCode ==='GP-NCT'){
+
+      booking.status = 'Ticketed';
+      booking.updated_at = new Date();
 
         const paxList: any = []
         for (let i = 0; i < booking?.totalpax; i++) {

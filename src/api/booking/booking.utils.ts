@@ -12,7 +12,7 @@ export class BookingUtils {
         @InjectRepository(BookingModel)
         private readonly bookingRepository: Repository<BookingModel>){}
 
-    async bookingParser(agentdata: AgentModel, responseData: any,  bookingDto: any, priceCheck: any){
+    async bookingParser(agentdata: AgentModel, responseData: any,  bookingDto: any){
 
         const agentId : string = agentdata.agentId;
         const email : string = bookingDto.ContactInfo.email || "dev@flyjatt.com";
@@ -33,11 +33,10 @@ export class BookingUtils {
 
         let PNR : string = responseData?.CreatePassengerNameRecordRS?.ItineraryRef?.ID || await this.generatePNR();
         let airlinesPnr : string = await this.generateAirlinesPNR();
-        let system : string = responseData?.CreatePassengerNameRecordRS?.ItineraryRef?.ID
-                             ? priceCheck?.System : 'Portal';
+        let system : string = responseData?.CreatePassengerNameRecordRS?.ItineraryRef?.ID;
 
         let totalsegments : number = 0;
-        for (let sgFlight of priceCheck.AllLegsInfo) {
+        for (let sgFlight of bookingDto?.FlightInfo?.AllLegsInfo) {
             for (let flight of sgFlight.Segments) {
                 totalsegments++;
             }
@@ -46,14 +45,12 @@ export class BookingUtils {
             agentId: agentId,
             bookingId: bookingId,
             system: system,
-            carrier_name: priceCheck.CarrierName,
-            carrier_code: priceCheck.Carrier,
+            carrier_name: bookingDto.FlightInfo.CarrierName,
+            carrier_code: bookingDto.FlightInfo.Carrier,
             depfrom: bookingDto.FlightInfo.AllLegsInfo[0].DepFrom,
             pnr: PNR,
             airlinespnr: airlinesPnr,
-            refundable: priceCheck.Refundable,
-            instant_payment: priceCheck.InstantPayment,
-            issue_permit: priceCheck.IssuePermit,
+            refundable: bookingDto.FlightInfo.Refundable,
             arrto: bookingDto.FlightInfo.AllLegsInfo[0].ArrTo,
             triptype: bookingDto.FlightInfo.TripType,
             netfare: bookingDto.FlightInfo.NetFare,
@@ -70,8 +67,8 @@ export class BookingUtils {
             flightdata: null,
             totalsegment: totalsegments,
             itenary: bookingDto.FlightInfo,
-            timelimit: priceCheck.TimeLimit || 'N/F',
-            flightdate: priceCheck.AllLegsInfo[0].DepDate,
+            timelimit: bookingDto.FlightInfo.TimeLimit || 'N/F',
+            flightdate: bookingDto.FlightInfo.AllLegsInfo[0].DepDate,
             companyname: agentdata.company
         }
 

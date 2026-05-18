@@ -37,7 +37,7 @@ export class BookingService {
     private readonly bookingUtils: BookingUtils,
   ) {}
 
-  async createBooking(agentdata: AgentModel, responseData: any,  bookingDto: any, priceCheck: any){
+  async createBooking(agentdata: AgentModel, responseData: any,  bookingDto: any){
     if(responseData?.ApplicationResults){
       const bookingId='';
       await this.travellerService.createBookingPax(bookingDto?.PassengerInfo, agentdata?.agentId, bookingId);
@@ -48,7 +48,7 @@ export class BookingService {
       };
     }
 
-    const bookingData = await this.bookingUtils.bookingParser(agentdata, responseData,  bookingDto, priceCheck);
+    const bookingData = await this.bookingUtils.bookingParser(agentdata, responseData,  bookingDto);
     const bookingResult = await this.bookingRepository.save(bookingData);
     await this.passengerService.createBookingPax(bookingDto?.PassengerInfo, agentdata?.agentId, bookingData?.bookingId);
     await this.mailService.bookingConfirmation(bookingResult);
