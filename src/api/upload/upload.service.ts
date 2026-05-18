@@ -23,11 +23,12 @@ import { MailService } from 'src/mail/mail.service';
 import { StaffModel } from '../staff/staff.model';
 import { AdminModel } from '../admin/admin.model';
 import { AuthUtils } from '../auth/auth.utils';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 import * as fs from 'fs';
 import * as path from 'path';
 
-function saveBufferToStorage(key: string, buffer: Buffer) {
+/*function saveBufferToStorage(key: string, buffer: Buffer) {
   const baseDir = process.env.STORAGE_DIR || '/opt/storage/keenan-b2b';
   const fullPath = path.join(baseDir, key);
 
@@ -35,6 +36,30 @@ function saveBufferToStorage(key: string, buffer: Buffer) {
   fs.writeFileSync(fullPath, buffer);
 
   const baseUrl = process.env.STORAGE_BASE_URL || 'https://storage.keenantravel.com';
+  return `${baseUrl}/${key}`;
+}
+*/
+const r2Client = new S3Client({
+  region: 'auto',
+  endpoint: process.env.R2_ENDPOINT,
+  credentials: {
+    accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+  },
+});
+
+async function saveBufferToStorage(key: string, buffer: Buffer, contentType?: string) {
+  const baseUrl = process.env.STORAGE_BASE_URL || 'https://storage.keenantravel.com';
+
+  await r2Client.send(
+    new PutObjectCommand({
+      Bucket: process.env.R2_BUCKET,
+      Key: key,
+      Body: buffer,
+      ContentType: contentType || 'application/octet-stream',
+    }),
+  );
+
   return `${baseUrl}/${key}`;
 }
 
@@ -102,13 +127,16 @@ export class UploadService {
       if (files?.nid?.[0]) {
         const nidFileType = files.nid[0].originalname.split('.').pop();
         const nidKey = `B2B/${agentId}/Docs/nid.${nidFileType}`;
-        agentDto.nid = saveBufferToStorage(nidKey, files.nid[0].buffer);
+        //agentDto.nid = saveBufferToStorage(nidKey, files.nid[0].buffer);
+        agentDto.nid = await saveBufferToStorage(nidKey, files.nid[0].buffer, files.nid[0].mimetype);
       }
 
       if (files?.tl?.[0]) {
         const tlFileType = files.tl[0].originalname.split('.').pop();
         const tlKey = `B2B/${agentId}/Docs/tl.${tlFileType}`;
-        agentDto.tradelicense = saveBufferToStorage(tlKey, files.tl[0].buffer);
+        
+       // agentDto.tradelicense = saveBufferToStorage(tlKey, files.tl[0].buffer);
+       agentDto.tradelicense = await saveBufferToStorage(tlKey, files.tl[0].buffer, files.tl[0].mimetype);
       }
 
       const responseData = await this.agentRepository.save(agentDto);
@@ -133,7 +161,8 @@ export class UploadService {
     const key = `B2B/${keyvalue}`;
 
     try {
-      const url = saveBufferToStorage(key, file.buffer);
+      //const url = saveBufferToStorage(key, file.buffer);
+      const url = await saveBufferToStorage(key, file.buffer, file.mimetype);
 
       agent['logo'] = url;
       await this.agentRepository.update(agent.id, agent);
@@ -165,7 +194,8 @@ export class UploadService {
     const key = `B2B/${keyvalue}`;
 
     try {
-      const url = saveBufferToStorage(key, file.buffer);
+      //const url = saveBufferToStorage(key, file.buffer);
+      const url = await saveBufferToStorage(key, file.buffer, file.mimetype);
 
       agent[folder] = url;
       await this.agentRepository.update(agent.id, agent);
@@ -195,7 +225,8 @@ export class UploadService {
     const key = `B2B/${keyvalue}`;
 
     try {
-      const url = saveBufferToStorage(key, file.buffer);
+      // const url = saveBufferToStorage(key, file.buffer);
+      const url = await saveBufferToStorage(key, file.buffer, file.mimetype);
 
       if (docs === 'visa') passenger['visa'] = url;
       else if (docs === 'passport') passenger['passport'] = url;
@@ -244,7 +275,8 @@ export class UploadService {
 
     let url: string;
     try {
-      url = saveBufferToStorage(key, file.buffer);
+      // url = saveBufferToStorage(key, file.buffer);
+      url = await saveBufferToStorage(key, file.buffer, file.mimetype);
     } catch (err) {
       throw new HttpException('Something Error', HttpStatus.BAD_REQUEST);
     }
@@ -288,7 +320,8 @@ export class UploadService {
     const key = `B2B/${keyvalue}`;
 
     try {
-      const url = saveBufferToStorage(key, file.buffer);
+      // const url = saveBufferToStorage(key, file.buffer);
+      const url = await saveBufferToStorage(key, file.buffer, file.mimetype);
 
       const data = new PromotionModel();
       data.image = url;
@@ -324,7 +357,8 @@ export class UploadService {
     const reissue = await this.reissueRepository.findOne({ where: { uid: UId } });
 
     try {
-      const url = saveBufferToStorage(key, file.buffer);
+      // const url = saveBufferToStorage(key, file.buffer);
+      const url = await saveBufferToStorage(key, file.buffer, file.mimetype);
 
       reissue.reissuecopy = url;
       await this.reissueRepository.update(reissue.id, reissue);
