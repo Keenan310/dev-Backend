@@ -61,6 +61,14 @@ export class FlightService {
       return segments[0]?.depfrom !== segments[1]?.arrto;
     }
 
+    private getFulfilledArray(result: PromiseSettledResult<any>): any[] {
+      if (result.status !== 'fulfilled') {
+        return [];
+      }
+
+      return Array.isArray(result.value) ? result.value : [];
+    }
+
     async airsearch(header: any, flightDto: FlightSearchModel) {
       const agent = await this.authService.verifyAgentToken(header);
 
@@ -78,19 +86,14 @@ export class FlightService {
       // Run searches in parallel
       const [sabreResult, alhindResult] = await Promise.allSettled([
         this.sabreService.shopping(agent, flightDto),
-        isMulticity ? Promise.resolve([]) : this.alhindAPI.flights(agent, flightDto),
+        isMulticity
+          ? Promise.resolve([])
+          : this.alhindAPI.flights(agent, flightDto),
       ]);
 
       // Safely extract arrays
-      const sabreFlights =
-        sabreResult.status === 'fulfilled'
-          ? sabreResult.value
-          : [];
-
-      const alhindFlights =
-        alhindResult.status === 'fulfilled'
-          ? alhindResult.value
-          : [];
+      const sabreFlights = this.getFulfilledArray(sabreResult);
+      const alhindFlights = this.getFulfilledArray(alhindResult);
 
       // Merge + sort efficiently
       return [...sabreFlights, ...alhindFlights].sort(
