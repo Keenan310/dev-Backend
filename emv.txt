@@ -1,0 +1,67 @@
+JWT_SECREATE_KEY=RYFEGUIHUEP9F87NTYOIRXTCYUIOUTYRUTYDPTUFYGUTHCNOW458Y9PTW5HT8H5THOCW4OUGHOW8GHOWC8HMWERTYUI
+DATABASE_URL='mysql+mysqlconnector://u595224811_b2b:%40Keenan2030@82.25.121.97:3306/u595224811_b2b'
+
+
+#STORAGE_DIR=/opt/storage/keenan-b2b
+#STORAGE_BASE_URL=https://storage.keenantravel.com
+#STORAGE_BASE_URL=https://pub-abc123.r2.dev
+#ALLOW_IMAGE_SIZE=3000000
+
+# NEW R2 STORAGE
+STORAGE_BASE_URL=https://pub-6ef341e2a42b464fbaa5a56df21e6ec5.r2.dev
+R2_BUCKET=keenan-b2b
+R2_ENDPOINT=https://dc6ef1b3af60bd439cdde08e1cb2378a.r2.cloudflarestorage.com
+R2_ACCESS_KEY_ID=993e5b2c8ca1b1648c1ce2c69f79c363
+R2_SECRET_ACCESS_KEY=0a570aef75a52774ac2e8375b132ce363d203d99ed683c6f14cb8af3cfe6b4d3
+ALLOW_IMAGE_SIZE=3000000
+
+
+#Mail Service
+MAIL_HOST=smtp.hostinger.com
+MAIL_PORT=465
+MAIL_SECURE=true
+MAIL_USER=noreply@keenantravel.com
+MAIL_PASS=Keenan@310
+MAIL_FROM="Keenan Travel <noreply@keenantravel.com>"
+
+# Mail Service (used by MailService OTPSend / OTPSend2FA in your code)
+EMAIL_HOST=smtp.hostinger.com
+EMAIL_USERNAME=noreply@keenantravel.com
+EMAIL_PASSWORD=Keenan@310
+
+ADMIN_NOTIFY_EMAIL=admin@keenantravel.com
+
+#AlHind API
+AH_USERID=AEDXB029001500
+AH_PASSWORD=APIuser@1234
+AH_ENDPOINT_SEARCH=https://b2b.keenantravel.com/search.php
+
+#Group Fare Auth
+GROUPFARE_AUTH_URL=https://bhot6v8b74.execute-api.ap-south-1.amazonaws.com/stg/auth/cognito/client/user/signin/initiate
+GROUPFARE_AVAIL_FARE_URL=https://nct-groupbooking-adapter-stg.aiqs.link/product/availList
+GROUPFARE_CLIENT_ID=6tvsrg4go69ktu9f4369tvmvi8
+GROUPFARE_AUTH_FLOW=USER_PASSWORD_AUTH
+GROUPFARE_USERNAME=groupapidev@aiqs.link
+GROUPFARE_PASSWORD=123456
+
+
+# Saber Info
+AGENCY_NAME=KeenanTravel
+SABRE_PCC_COUNTRY=PK
+SABRE_CITY_NAME=Peshawar
+SABRE_AGENCY_STNO=Peshawar
+SABRE_POSTAL_CODE=1229
+SABRE_STATE_CODE=PEW
+
+SABRE_ID=429715
+SABRE_PASSWORD=sswres99
+SABRE_PCC=3C0D
+SABRE_HOSTID=1B
+SABRE_BASE_URL=https://api.platform.sabre.com
+SABRE_AUTH_ENDPOINT=https://api.platform.sabre.com/v2/auth/token
+SABRE_AIRSEARCH_ENDPOINT=https://api.platform.sabre.com/v4/offers/shop
+SABRE_AIRPRICE_ENDPOINT=https://api.platform.sabre.com/v4/shop/flights/revalidate
+SABRE_AIRBOOKING_ENDPOINT=https://api.platform.sabre.com/v2.4.0/passenger/records?mode=create
+SABRE_AIRCANCEL_ENDPOINT=https://api.platform.sabre.com/v1/trip/orders/cancelBooking
+SABRE_AIRRETRIEVE_ENDPOINT=https://api.platform.sabre.com/v1/trip/orders/getBooking
+SABRE_AIRTICKETING_ENDPOINT=https://api.cert.platform.sabre.com/v1.3.0/air/ticket
