@@ -14,8 +14,6 @@ export class BookingUtils {
 
     async bookingParser(agentdata: AgentModel, responseData: any,  bookingDto: any){
 
-        console.log(responseData);
-
         const agentId : string = agentdata.agentId;
         const email : string = bookingDto?.ContactInfo?.email || "dev@flyjatt.com";
         const phone : string = bookingDto?.ContactInfo?.phone || "08801685370455";

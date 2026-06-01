@@ -358,6 +358,11 @@ export class SabreService {
 
   async booking(agentdata: AgentModel, bookingDto: any){
 
+    if(bookingDto.PaymentType === 'Hold'){
+      const responseData = null;
+      return this.bookingService.createBooking(agentdata, responseData, bookingDto);
+    }
+
     const time_now = new Date();
     const email : string = bookingDto.ContactInfo.email || "dev@flyjatt.com";
     const leadPassengerEmail : string = email.replace("@", "//");

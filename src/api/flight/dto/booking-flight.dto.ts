@@ -72,4 +72,7 @@ export class AirBookingModel {
   
     @ApiProperty()
     FlightInfo: any;
+
+    @ApiProperty()
+    PaymentType: string;
   }

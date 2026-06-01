@@ -76,14 +76,12 @@ export class FlightService {
         throw new UnauthorizedException();
       }
 
-      // Do not block search for history logging
       this.searchhistoryService.create(agent, flightDto).catch(
         console.error,
       );
 
       const isMulticity = this.isMulticitySearch(flightDto);
 
-      // Run searches in parallel
       const [sabreResult, alhindResult] = await Promise.allSettled([
         this.sabreService.shopping(agent, flightDto),
         isMulticity
@@ -262,7 +260,7 @@ export class FlightService {
     const System = bookingDto?.FlightInfo?.System;
 
     if(System === 'Sabre'){
-      return await this.sabreService.booking(agent, bookingDto);
+        return await this.sabreService.booking(agent, bookingDto);
     }else if(System === 'GroupFare'){
       return await this.bookingService.group_booking(agent, bookingDto);
     }else if(System === 'AlHind'){

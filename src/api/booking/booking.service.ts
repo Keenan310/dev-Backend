@@ -42,7 +42,6 @@ export class BookingService {
 
   }
 
-
   async group_booking(agentdata: AgentModel, bookingDto: AirBookingModel){
 
     const agentId : string = agentdata.agentId;

@@ -13,6 +13,7 @@ import { Revalidation } from './dto/revalidation-flight.dto';
 import { CurrencyConverter } from '../currency/entities/currency.entity';
 import { SaveFlightsData } from './entity/save-flight.entity';
 import { AirlineDiscount, AirlineDiscountForAgent } from '../airlines/airlines.model';
+import { BookingService } from '../booking/booking.service';
 dotenv.config()
 
 type AlhindFlightLeg = {
@@ -51,6 +52,7 @@ export class AlhindAPI {
       @InjectRepository(SaveFlightsData)
       private readonly saveFlightsData: Repository<SaveFlightsData>,
       private readonly airlinesService: AirlinesService,
+      private readonly bookingService: BookingService,
       private readonly airportsService: AirportsService,
     ) {}
 
@@ -471,6 +473,18 @@ export class AlhindAPI {
   async priceCheck(agent : AgentModel, revalidation: Revalidation){
     return revalidation;
   }
+
+  async booking(agentdata : AgentModel, bookingDto : any){
+    if(bookingDto.PaymentType === 'Hold'){
+      const responseData = null;
+      return this.bookingService.alhind_booking(agentdata, bookingDto);
+    }
+
+    
+    
+
+  }
+
   async getAirports(code: string) {
     const foundItem = airportsData.find(item => item.code === code);
     if (foundItem) {
