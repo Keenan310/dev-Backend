@@ -823,8 +823,9 @@ export class GroupfareService {
   async NCTflightParser(agent: AgentModel, resultData: any, triptype: string, origin: string, destination: string){
 
     const tripTypeFilter = triptype === 'O' ? 'ONE_WAY' : 'ROUND_WAY';
-    const routeFilter = triptype === 'O' ? `${origin}-${destination} ` : `${origin}-${destination}-${origin}`;
+    const routeFilter = triptype === 'O' ? `${origin}-${destination}` : `${origin}-${destination}-${origin}`;
     const flightList = resultData.filter(item =>item.route === routeFilter && item.tripType === tripTypeFilter);
+    
     const AllFlights : any [] = [];
     for (const flight of flightList) {
       const conversionData = await this.CurrencyConverterRepository.findOne({where: {source: 'Group'}});
