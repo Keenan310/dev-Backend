@@ -278,7 +278,7 @@ export class GroupfareService {
         throw new UnauthorizedException();
     }
 
-    const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+    const today = new Date().toISOString().split("T")[0];
     const [groupdata, groupFareNCT] = await Promise.all([
       this.groupFareRepository
         .createQueryBuilder('gf')
@@ -822,10 +822,40 @@ export class GroupfareService {
 
   async NCTflightParser(agent: AgentModel, resultData: any, triptype: string, origin: string, destination: string){
 
-    const tripTypeFilter = triptype === 'O' ? 'ONE_WAY' : 'ROUND_WAY';
-    const routeFilter = triptype === 'O' ? `${origin}-${destination}` : `${origin}-${destination}-${origin}`;
-    const flightList = resultData.filter(item =>item.route === routeFilter && item.tripType === tripTypeFilter);
-    
+    const normalizeCode = (value: any) => String(value ?? '').trim().toUpperCase();
+    const parseRouteParts = (route: any) =>
+      String(route ?? '')
+        .split('-')
+        .map(part => part.trim().toUpperCase())
+        .filter(Boolean);
+
+    const requestedOrigin = normalizeCode(origin);
+    const requestedDestination = normalizeCode(destination);
+    const tripTypeFilter = triptype === 'O' ? ['ONE_WAY'] : ['ROUND_TRIP'];
+
+    const flightList = resultData.filter(item => {
+      const routeParts = parseRouteParts(item.route);
+      let itemOrigin = routeParts[0];
+      let itemDestination = routeParts.at(-1);
+      const isRoundTripRoute = routeParts.length > 2 && itemOrigin && itemDestination && itemOrigin === itemDestination;
+      const outboundDestination = isRoundTripRoute ? routeParts[routeParts.length - 2] : itemDestination;
+
+      if (!itemOrigin || !itemDestination) {
+        const segments = Array.isArray(item.flightSegmentList) ? item.flightSegmentList : [];
+        if (segments.length > 0) {
+          itemOrigin = normalizeCode(segments[0].origin);
+          itemDestination = normalizeCode(segments[segments.length - 1].destination);
+        }
+      }
+
+      const originMatch = itemOrigin === requestedOrigin;
+      const destinationMatch = requestedDestination === requestedOrigin && isRoundTripRoute
+        ? itemDestination === requestedDestination
+        : outboundDestination === requestedDestination;
+      const tripMatch = tripTypeFilter.includes(normalizeCode(item.tripType));
+
+      return originMatch && destinationMatch && tripMatch;
+    });
     const AllFlights : any [] = [];
     for (const flight of flightList) {
       const conversionData = await this.CurrencyConverterRepository.findOne({where: {source: 'Group'}});
@@ -869,63 +899,88 @@ export class GroupfareService {
         });
       }
 
+      const formatSegment = async (segment: any) => ({
+        "MarketingCarrier": flight.airline,
+        "MarketingCarrierName": await this.airlinesService.getAirlinesName(flight.airline),
+        "MarketingFlightNumber": String(segment.flightNumber ?? '').slice(2,6),
+        "OperatingCarrier": await this.airlinesService.getAirlinesName(flight.airline),
+        "OperatingFlightNumber": String(segment.flightNumber ?? '').slice(2,6),
+        "OperatingCarrierName": await this.airlinesService.getAirlinesName(flight.airline),
+        "DepFrom": segment.origin,
+        "DepAirPort": await this.airportsService.getAirportName(segment.origin),
+        "DepLocation": await this.airportsService.getAirportLocation(segment.origin),
+        "DepDateAdjustment": 0,
+        "DepTime": `${segment.departureDate}T${segment.departureTime}`,
+        "ArrTo": segment.destination,
+        "ArrAirPort": await this.airportsService.getAirportName(segment.destination),
+        "ArrLocation": await this.airportsService.getAirportLocation(segment.destination),
+        "ArrDateAdjustment": 0,
+        "ArrTime": `${segment.arrivalDate}T${segment.arrivalTime}`,
+        "OperatedBy": await this.airlinesService.getAirlinesName(flight.airline),
+        "StopCount": 0,
+        "Duration": 0,
+        "SegmentCode": {
+          "bookingCode": segment.rbd,
+          "cabinCode": 'Y',
+          "mealCode": segment.meals,
+          "seatsAvailable": flight.availableSeats
+        }
+      });
+
       const SegmentList = [];
       for(const segment of flight?.flightSegmentList){
-        SegmentList.push({
-          "MarketingCarrier": flight.airline,
-          "MarketingCarrierName": await this.airlinesService.getAirlinesName(flight.airline),
-          "MarketingFlightNumber": segment.flightNumber.slice(2,6),
-          "OperatingCarrier": await this.airlinesService.getAirlinesName(flight.airline),
-          "OperatingFlightNumber": segment.flightNumber.slice(2,6),
-          "OperatingCarrierName": await this.airlinesService.getAirlinesName(flight.airline),
-          "DepFrom": segment.origin,
-          "DepAirPort": await this.airportsService.getAirportName(segment.origin),
-          "DepLocation": await this.airportsService.getAirportLocation(segment.origin),
-          "DepDateAdjustment": 0,
-          "DepTime": `${segment.departureDate}T${segment.departureTime}`,
-          "ArrTo": segment.destination,
-          "ArrAirPort": await this.airportsService.getAirportName(segment.destination),
-          "ArrLocation": await this.airportsService.getAirportLocation(segment.destination),
-          "ArrDateAdjustment": 0,
-          "ArrTime": `${segment.arrivalDate}T${segment.arrivalTime}`,
-          "OperatedBy": await this.airlinesService.getAirlinesName(flight.airline),
-          "StopCount": 0,
-          "Duration": 0,
-          "SegmentCode": {
-            "bookingCode": segment.rbd,
-            "cabinCode": 'Y',
-            "mealCode": segment.meals,
-            "seatsAvailable": flight.availableSeats
-          }
-          }
-        );
+        SegmentList.push(await formatSegment(segment));
+      }
+
+      const routeParts = parseRouteParts(flight.route);
+      const originCode = routeParts[0] || '';
+      const firstStop = routeParts[1] || '';
+      const returnOrigin = routeParts[routeParts.length - 2] || originCode;
+
+      const outboundSegments: any[] = [];
+      const returnSegments: any[] = [];
+      let returnStarted = false;
+
+      for (let index = 0; index < (flight?.flightSegmentList || []).length; index++) {
+        const segment = flight.flightSegmentList[index];
+        const formattedSegment = SegmentList[index];
+        const segOrigin = String(segment.origin ?? '').trim().toUpperCase();
+
+        if (!returnStarted && segOrigin === returnOrigin && outboundSegments.length > 0) {
+          returnStarted = true;
+        }
+
+        if (returnStarted) {
+          returnSegments.push(formattedSegment);
+        } else {
+          outboundSegments.push(formattedSegment);
+        }
       }
 
       const AllLegs = [];
-      if(flight.tripType === 'ONE_WAY'){
+      if (flight.tripType === 'ONE_WAY') {
         AllLegs.push({
           "DepDate": flight.departureDate,
-          "DepFrom": flight.route.slice(0,3),
-          "ArrTo": flight.route.slice(4,7),
+          "DepFrom": originCode,
+          "ArrTo": routeParts[routeParts.length - 1] || '',
           "Duration": 0,
           "Segments": SegmentList
         });
-      }if(flight.tripType === 'ROUND_WAY'){
+      } else if (flight.tripType === 'ROUND_TRIP') {
         AllLegs.push({
           "DepDate": flight.departureDate,
-          "DepFrom": flight.route.slice(0,3),
-          "ArrTo": flight.route.slice(4,7),
+          "DepFrom": originCode,
+          "ArrTo": firstStop,
           "Duration": 0,
-          "Segments": SegmentList
+          "Segments": outboundSegments.length ? outboundSegments : SegmentList
         },
-      {
+        {
           "DepDate": flight.returnDate,
-          "DepFrom": flight.route.slice(8,11),
-          "ArrTo": flight.route.slice(0,3),
+          "DepFrom": returnOrigin,
+          "ArrTo": originCode,
           "Duration": 0,
-          "Segments": SegmentList
+          "Segments": returnSegments.length ? returnSegments : SegmentList
         });
-
       }
 
       AllFlights.push({
