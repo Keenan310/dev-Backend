@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as dotenv from "dotenv";
 import { AirlinesService } from '../airlines/airlines.service';
-import { AirportsService } from '../airports/airports.service';
 import { AgentModel } from '../agent/agent.model';
 import { airportsData } from './data/airports.data';
 import { airlinesData } from './data/airlines.data';
@@ -37,7 +36,7 @@ export class SabreUtils {
 
             const FlightItenary = [];
             if (SearchResponse?.groupedItineraryResponse?.itineraryGroups?.[0]?.itineraries) {
-                const AllFlights : any[] = SearchResponse?.groupedItineraryResponse?.itineraryGroups;
+                const AllFlights : any[] = SearchResponse?.groupedItineraryResponse?.itineraryGroups[0]?.itineraries;
                 const AllBaggage  : any[] = SearchResponse?.groupedItineraryResponse?.baggageAllowanceDescs;
                 const AllLegDescs : any[] = SearchResponse?.groupedItineraryResponse?.legDescs;
                 const AllscheduleDescs : any[] = SearchResponse?.groupedItineraryResponse?.scheduleDescs;
@@ -46,7 +45,14 @@ export class SabreUtils {
 
                 const GroupAllFlights = [];
                 for(const group of AllFlights){
-                    GroupAllFlights.push(group.itineraries);
+                    const leg = group.legs;
+                    for(const singleBrand of group?.pricingInformation || []){
+                        if(singleBrand?.brandsOnAnyMarket === true){
+                            const  singleBrandFare = singleBrand?.fare;
+                            singleBrandFare.legs = leg;
+                            GroupAllFlights.push(singleBrandFare);
+                        }
+                    }
                 }
 
                 let TripType: string;
@@ -197,15 +203,14 @@ export class SabreUtils {
                     };
 
 
-
-                for (const flights of GroupAllFlights.flat()) {
-                    const ValidatingCarrier : string = flights?.pricingInformation[0].fare.validatingCarrierCode;
+                for (const flights of GroupAllFlights) {
+                    const ValidatingCarrier : string = flights?.validatingCarrierCode;
                     const airlineData : any = await this.airlinesService.getAirlines(ValidatingCarrier);
-                    const AllPassenger : any[] = flights?.pricingInformation[0].fare.passengerInfoList;
+                    const AllPassenger : any[] = flights?.passengerInfoList;
                     const CarrierName: string = airlineData?.marketing_name || 'N/F';
-                    const AprxTotalBaseFare : number = Number(flights?.pricingInformation[0]?.fare?.totalFare?.equivalentAmount) || 0;
-                    const AprxTotalTax : number = Number(flights?.pricingInformation[0]?.fare?.totalFare?.totalTaxAmount) || 0;
-                    const TotalAmount: number = Number(flights?.pricingInformation[0]?.fare?.totalFare?.totalPrice) || 0;
+                    const AprxTotalBaseFare : number = Number(flights?.totalFare?.equivalentAmount) || 0;
+                    const AprxTotalTax : number = Number(flights?.totalFare?.totalTaxAmount) || 0;
+                    const TotalAmount: number = Number(flights?.totalFare?.totalPrice) || 0;
 
                     let conversionRate: any = 1;
                     if(agentdata?.currency === "AED"){
@@ -251,11 +256,11 @@ export class SabreUtils {
 
                     if (NetFare > TotalFare) TotalFare = NetFare;
 
-                    const Refundable : boolean = !flights.pricingInformation?.[0].fare.passengerInfoList?.[0].passengerInfo.nonRefundable;
+                    const Refundable : boolean = !flights?.passengerInfoList?.[0].passengerInfo.nonRefundable;
                     let TimeLimit : string;
-                    if (flights?.pricingInformation?.[0]?.fare?.lastTicketDate) {
-                        const lastTicketDate : string = flights.pricingInformation?.[0]?.fare?.lastTicketDate;
-                        const lastTicketTime : string = flights.pricingInformation?.[0]?.fare?.lastTicketTime;
+                    if (flights?.lastTicketDate) {
+                        const lastTicketDate : string = flights.lastTicketDate;
+                        const lastTicketTime : string = flights.lastTicketTime;
                         TimeLimit = `${lastTicketDate}T${lastTicketTime}:00`;
                     }
 
@@ -277,6 +282,8 @@ export class SabreUtils {
                         Class = "Economy";
                         break;
                     }
+
+                    const CabinClass = AllFareCompoDescs[AllPassenger[0]?.passengerInfo?.fareComponents[0]?.ref-1].brand.brandName;
 
                     const PriceBreakDown : any[] = AllPassenger?.map(allPassenger => {
                         const addValue = DiscountAmount < 0 ? DiscountAmount : 0;
@@ -325,7 +332,7 @@ export class SabreUtils {
                     });
 
                     const AllLegsInfo = [];
-                    const AllLegsData = flights?.pricingInformation?.[0]?.fare?.passengerInfoList[0]?.passengerInfo?.fareComponents;
+                    const AllLegsData = flights?.passengerInfoList[0]?.passengerInfo?.fareComponents;
                     const LegDescRef = flights?.legs;
 
 
@@ -425,7 +432,7 @@ export class SabreUtils {
                         Carrier: ValidatingCarrier,
                         CarrierName: CarrierName,
                         ProviderCode: "2S",
-                        Cabinclass: Class,
+                        Cabinclass: CabinClass,
                         Currency: agentdata?.currency,
                         BaseFare: Number(equivalentAmount).toFixed(2),
                         Taxes : Number(Taxes).toFixed(2),
@@ -620,9 +627,9 @@ export class SabreUtils {
 
 
                 for (const flights of GroupAllFlights.flat()) {
-                    const ValidatingCarrier : string = flights?.pricingInformation[0].fare.validatingCarrierCode;
+                    const ValidatingCarrier : string = flights?.fare.validatingCarrierCode;
                     const airlineData : any = await this.airlinesService.getAirlines(ValidatingCarrier);
-                    const AllPassenger : any[] = flights?.pricingInformation[0].fare.passengerInfoList;
+                    const AllPassenger : any[] = flights?.fare.passengerInfoList;
                     const CarrierName: string = airlineData?.marketing_name || 'N/F';
                     const AprxTotalBaseFare : number = Number(flights?.pricingInformation[0]?.fare?.totalFare?.equivalentAmount) || 0;
                     const AprxTotalTax : number = Number(flights?.pricingInformation[0]?.fare?.totalFare?.totalTaxAmount) || 0;

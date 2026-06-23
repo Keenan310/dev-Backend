@@ -169,7 +169,7 @@ export class GroupfareService {
       },
       data: {
         pageIndex: 0,
-        pageSize: 200000000000,
+        pageSize: 2000,
         filter: {},
         sortColumns: [],
       },

@@ -160,7 +160,14 @@ export class SabreService {
             {
               "PassengerTypeQuantity": SabreRequestPax
             }
-          ]
+          ],
+          PriceRequestInformation: {
+            TPA_Extensions: {
+              BrandedFareIndicators: {
+                MultipleBrandedFares: true
+              }
+            }
+          },
         },
         TPA_Extensions: {
           IntelliSellTransaction: {
