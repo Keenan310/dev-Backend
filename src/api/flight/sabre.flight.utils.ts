@@ -465,17 +465,13 @@ export class SabreUtils {
 
             const FlightItenary = [];
             if (SearchResponse?.groupedItineraryResponse?.itineraryGroups?.[0]?.itineraries) {
-                const AllFlights : any[] = SearchResponse?.groupedItineraryResponse?.itineraryGroups;
+                const AllFlights : any[] = SearchResponse?.groupedItineraryResponse?.itineraryGroups?.[0]?.itineraries?.[0]?.pricingInformation;
                 const AllBaggage  : any[] = SearchResponse?.groupedItineraryResponse?.baggageAllowanceDescs;
                 const AllLegDescs : any[] = SearchResponse?.groupedItineraryResponse?.legDescs;
                 const AllscheduleDescs : any[] = SearchResponse?.groupedItineraryResponse?.scheduleDescs;
                 const AllFareCompoDescs : any[] = SearchResponse?.groupedItineraryResponse?.fareComponentDescs;
                 const GroupLegDescs : any[] = SearchResponse?.groupedItineraryResponse?.itineraryGroups[0]?.groupDescription?.legDescriptions;
 
-                const GroupAllFlights = [];
-                for(const group of AllFlights){
-                    GroupAllFlights.push(group.itineraries);
-                }
 
                 let TripType: string;
                 if(GroupLegDescs.length === 1){
@@ -486,7 +482,7 @@ export class SabreUtils {
                     TripType = 'Multicity';
                 }
 
-                            // ---- Caching helpers ----
+                // ---- Caching helpers ----
                 const airportCache = new Map<string, any>();
                 const airlineCache = new Map<string, any>();
 
@@ -624,16 +620,14 @@ export class SabreUtils {
                         }
                     };
 
-
-
-                for (const flights of GroupAllFlights.flat()) {
+                for (const flights of AllFlights) {
                     const ValidatingCarrier : string = flights?.fare.validatingCarrierCode;
                     const airlineData : any = await this.airlinesService.getAirlines(ValidatingCarrier);
                     const AllPassenger : any[] = flights?.fare.passengerInfoList;
                     const CarrierName: string = airlineData?.marketing_name || 'N/F';
-                    const AprxTotalBaseFare : number = Number(flights?.pricingInformation[0]?.fare?.totalFare?.equivalentAmount) || 0;
-                    const AprxTotalTax : number = Number(flights?.pricingInformation[0]?.fare?.totalFare?.totalTaxAmount) || 0;
-                    const TotalAmount: number = Number(flights?.pricingInformation[0]?.fare?.totalFare?.totalPrice) || 0;
+                    const AprxTotalBaseFare : number = Number(flights?.fare?.totalFare?.equivalentAmount) || 0;
+                    const AprxTotalTax : number = Number(flights?.fare?.totalFare?.totalTaxAmount) || 0;
+                    const TotalAmount: number = Number(flights?.fare?.totalFare?.totalPrice) || 0;
 
                     let conversionRate: any = 1;
                     if(agentdata?.currency === "AED"){
@@ -753,8 +747,8 @@ export class SabreUtils {
                     });
 
                     const AllLegsInfo = [];
-                    const AllLegsData = flights?.pricingInformation?.[0]?.fare?.passengerInfoList[0]?.passengerInfo?.fareComponents;
-                    const LegDescRef = flights?.legs;
+                    const AllLegsData = flights?.fare?.passengerInfoList[0]?.passengerInfo?.fareComponents;
+                    const LegDescRef = SearchResponse?.groupedItineraryResponse?.itineraryGroups?.[0]?.itineraries?.[0]?.legs;
 
 
                     for (let i = 0; i < LegDescRef.length; i++) {
@@ -870,7 +864,7 @@ export class SabreUtils {
                 }
             }
 
-            return FlightItenary;
+            return revalidationDto;
         }else{
             return [];
         }

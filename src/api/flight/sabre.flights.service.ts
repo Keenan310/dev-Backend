@@ -67,7 +67,7 @@ export class SabreService {
     }
     if (childCount > 0) {
       const PaxQuantity = {
-        Code: "C09",
+        Code: "CNN",
         Quantity: childCount,
       };
       SabreRequestPax.push(PaxQuantity);
@@ -228,7 +228,7 @@ export class SabreService {
   
     if (ChildCount > 0) {
       SabreRequestPax.push({
-        Code: "C09",
+        Code: "CNN",
         Quantity: ChildCount,
       });
     }
@@ -316,7 +316,7 @@ export class SabreService {
         POS: {
           Source: [
             {
-              PseudoCityCode: process.env.SABRE_PCC,  // Replace with the actual PCC value
+              PseudoCityCode: process.env.SABRE_PCC,
               RequestorID: {
                 Type: "1",
                 ID: "1",
@@ -355,7 +355,7 @@ export class SabreService {
   
       try {
         const revalidation_response = await axios.request(sabreflightrequest);
-        const RevalidationResponse = revalidation_response.data;
+        const RevalidationResponse = revalidation_response?.data;
         return this.sabreUtils.restRevalidationParser(agentdata, revalidationDto, RevalidationResponse);
       }catch (error) {
         console.error(error);
@@ -1369,6 +1369,8 @@ export class SabreService {
   async import_pnr(pnr: string, agentdata: AgentModel){
 
     const getBooking = await this.checkpnr(pnr);
+
+    return getBooking;
 
     try {
       if (getBooking?.isTicketed === false && getBooking?.fares && getBooking?.journeys) {

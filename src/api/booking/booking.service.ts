@@ -82,7 +82,12 @@ export class BookingService {
       uid: generatedUUID
     }
 
-    await this.agentLedgerRepository.save(AgentLedgerData);
+    let bookingststatus = "Hold";
+    if(bookingDto.PaymentType === 'Instant'){
+      bookingststatus = "Issue In Process";
+      await this.agentLedgerRepository.save(AgentLedgerData);
+    }
+
 
     const bookingData = {
       agentId: agentId,
@@ -97,7 +102,7 @@ export class BookingService {
       triptype: bookingDto.FlightInfo.TripType,
       netfare: NetFare,
       grossfare: NetFare,
-      status: "Issue In Process",
+      status: bookingststatus,
       name: name,
       email: email,
       phone: phone,
