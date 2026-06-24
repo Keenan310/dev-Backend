@@ -366,8 +366,9 @@ export class SabreService {
   async booking(agentdata: AgentModel, bookingDto: any){
 
     if(bookingDto.PaymentType === 'Hold'){
-      const responseData = null;
-      return this.bookingService.createBooking(agentdata, responseData, bookingDto);
+      const bookingPNR = null;
+      const airlinesPNR = null;
+      return this.bookingService.createBooking(agentdata, bookingPNR, airlinesPNR, bookingDto);
     }
 
     const time_now = new Date();
@@ -392,7 +393,7 @@ export class SabreService {
           Quantity: adult.toString()
         },
         {
-          Code: 'C09',
+          Code: 'CNN',
           Quantity: child.toString()
         },
         {
@@ -1323,9 +1324,6 @@ export class SabreService {
           EndTransaction: {
             Source: {
               ReceivedFrom: "API WEB",
-            },
-            Email: {
-              Ind: true
             }
           },
           RedisplayReservation: {
@@ -1352,7 +1350,9 @@ export class SabreService {
       const responseDatas = response?.data;
       if(responseDatas?.CreatePassengerNameRecordRS?.ItineraryRef?.ID){
         const responseData = await this.airretrieve(responseDatas?.CreatePassengerNameRecordRS?.ItineraryRef?.ID);
-        return this.bookingService.createBooking(agentdata, responseData, bookingDto);
+        const bookingPNR = responseDatas?.CreatePassengerNameRecordRS?.ItineraryRef?.ID;
+        const airlinesPNR = responseData?.flights?.[0]?.confirmationId;
+        return this.bookingService.createBooking(agentdata, bookingPNR, airlinesPNR, bookingDto);
       }else if(responseDatas?.ApplicationResults){
         return{
           "status": "error",

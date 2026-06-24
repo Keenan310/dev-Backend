@@ -616,10 +616,10 @@ export class FlightService {
       throw new UnauthorizedException();
     }
 
-    const bookingdata =  await this.bookingRepository.findOne({ where : {pnr: pnr}});
-    if(bookingdata){
-      throw new HttpException("Pnr Already Imported", HttpStatusCode.Found);
-    }
+    // const bookingdata =  await this.bookingRepository.findOne({ where : {pnr: pnr}});
+    // if(bookingdata){
+    //   throw new HttpException("Pnr Already Imported", HttpStatusCode.Found);
+    // }
 
     if(system.toLowerCase() != 'sabre'){
       throw new NotFoundException("Invalid System");

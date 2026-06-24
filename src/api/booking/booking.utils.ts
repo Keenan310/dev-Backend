@@ -12,7 +12,7 @@ export class BookingUtils {
         @InjectRepository(BookingModel)
         private readonly bookingRepository: Repository<BookingModel>){}
 
-    async bookingParser(agentdata: AgentModel, responseData: any,  bookingDto: any){
+    async bookingParser(agentdata: AgentModel, bookingDto: any, bookingPNR: string, airlinesPNR: string){
 
         const agentId : string = agentdata.agentId;
         const email : string = bookingDto?.ContactInfo?.email || "dev@flyjatt.com";
@@ -31,8 +31,8 @@ export class BookingUtils {
             bookingId = "KTB" + (parseInt(old_booking_id) + 1);
         }
 
-        let PNR : string = responseData?.bookingId || await this.generatePNR();
-        let airlinesPnr : string = responseData?.flights?.[0]?.confirmationId || await this.generateAirlinesPNR();
+        let PNR : string = bookingPNR;
+        let airlinesPnr : string = airlinesPNR;
         let systems : string = bookingDto?.FlightInfo?.System;
 
         let totalsegments : number = 0;
@@ -64,7 +64,7 @@ export class BookingUtils {
             childcount: child,
             infantcount: infant,
             totalpax: paxCount,
-            flightdata: responseData,
+            flightdata: '',
             totalsegment: totalsegments,
             itenary: bookingDto?.FlightInfo,
             timelimit: bookingDto?.FlightInfo?.TimeLimit || 'N/F',

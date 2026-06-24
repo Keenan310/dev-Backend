@@ -33,8 +33,8 @@ export class BookingService {
     private readonly bookingUtils: BookingUtils,
   ) {}
 
-  async createBooking(agentdata: AgentModel, responseData: any,  bookingDto: any){
-    const bookingData = await this.bookingUtils.bookingParser(agentdata, responseData,  bookingDto);
+  async createBooking(agentdata: AgentModel,bookingPNR : string, airlinesPNR: string, bookingDto: any){
+    const bookingData = await this.bookingUtils.bookingParser(agentdata, bookingDto, bookingPNR, airlinesPNR,);
     const bookingResult = await this.bookingRepository.save(bookingData);
     await this.passengerService.createBookingPax(bookingDto?.PassengerInfo, agentdata?.agentId, bookingData?.bookingId);
     await this.mailService.bookingConfirmation(bookingResult);
