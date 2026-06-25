@@ -1370,8 +1370,6 @@ export class SabreService {
 
     const getBooking = await this.checkpnr(pnr);
 
-    return getBooking;
-
     try {
       if (getBooking?.isTicketed === false && getBooking?.fares && getBooking?.journeys) {
         const booking = await this.bookingRepository.find({order: { id: 'DESC' }, take : 1});
