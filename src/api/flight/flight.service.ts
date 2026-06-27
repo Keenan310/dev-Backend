@@ -19,12 +19,15 @@ import { VoidModel } from '../void/void.model';
 import { SearchhistoryService } from '../searchhistory/searchhistory.service';
 import { GetFare } from './dto/getfare-flight.dto';
 import { SaveFlightsData } from './entity/save-flight.entity';
+import { CurrencyConverter } from '../currency/entities/currency.entity';
 
 @Injectable()
 export class FlightService {
   constructor(
       @InjectRepository(BookingModel)
       private readonly bookingRepository: Repository<BookingModel>,
+      @InjectRepository(CurrencyConverter)
+      private readonly currencyConverterRepository: Repository<CurrencyConverter>,
       @InjectRepository(AgentModel)
       private readonly agentRepository: Repository<AgentModel>,
       @InjectRepository(PassengerModel)
@@ -278,10 +281,10 @@ export class FlightService {
       throw new UnauthorizedException();
     }
 
-    // const bookingdata =  await this.bookingRepository.findOne({ where : {pnr: pnr}});
-    // if(bookingdata){
-    //   throw new HttpException("Pnr Already Imported", HttpStatusCode.Found);
-    // }
+    const bookingdata =  await this.bookingRepository.findOne({ where : {pnr: pnr}});
+    if(bookingdata){
+      throw new HttpException("Pnr Already Imported", HttpStatusCode.Found);
+    }
   
     let BookingResponse: any;
     if(system.toLowerCase() === 'sabre'){
@@ -616,16 +619,34 @@ export class FlightService {
       throw new UnauthorizedException();
     }
 
-    // const bookingdata =  await this.bookingRepository.findOne({ where : {pnr: pnr}});
-    // if(bookingdata){
-    //   throw new HttpException("Pnr Already Imported", HttpStatusCode.Found);
-    // }
+    const bookingdata =  await this.bookingRepository.findOne({ where : {pnr: pnr}});
+    if(bookingdata){
+      throw new HttpException("Pnr Already Imported", HttpStatusCode.Found);
+    }
 
     if(system.toLowerCase() != 'sabre'){
       throw new NotFoundException("Invalid System");
     }
 
-    return await this.sabreService.checkpnr(pnr);;
+    const sabreData = await this.sabreService.checkpnr(pnr);
+
+    let conversionRate: number = 1;
+    if(agent.currency === 'AED'){
+      const currencyData = await this.currencyConverterRepository.findOne({where: { airline: 'IM',  source: 'IM', }});
+      if(currencyData && currencyData?.exchange_rate){
+        conversionRate = currencyData.exchange_rate;
+      }else{
+        conversionRate = 1;
+      }
+    }
+
+    const response  = {
+      sabreData: sabreData,
+      conversionRate: 1 / conversionRate,
+      currency: agent.currency || 'AED'
+    }
+
+    return response;
 
   }
 }

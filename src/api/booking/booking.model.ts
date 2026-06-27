@@ -111,6 +111,9 @@ export class BookingModel {
   @Column()
   companyname: string
 
+  @Column({default: false})
+  imported: boolean
+
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 

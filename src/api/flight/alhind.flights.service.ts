@@ -361,18 +361,18 @@ export class AlhindAPI {
                           : 'Inf_Baggage';
 
             const baggageInfo = buildBaggageInfo(bagType);
-            const PaxequivalentAmount = (pax?.BaseFare + (-addValue) + anotherFees) * conversionRate;
-            const totalTaxAmount = pax?.Tax * conversionRate;
+            const PaxequivalentAmount = (pax?.BaseFare * conversionRate)+addValue+anotherFees;
+            const totalTaxAmount = Number(pax?.Tax * conversionRate);
             const PaxtotalFare = Number((PaxequivalentAmount + totalTaxAmount).toFixed(2));
 
             return {
                 PaxType,
-                BaseFare: Number(PaxequivalentAmount).toFixed(2),
-                Taxes: totalTaxAmount.toFixed(2),
+                BaseFare: Number(PaxequivalentAmount.toFixed(2)),
+                Taxes: Number(totalTaxAmount.toFixed(2)),
                 TotalFare: PaxtotalFare,
                 PaxCount: paxCount,
                 Bag: baggageInfo,
-                ASC: adminMarkUpAmount + agentMarkUpAmount,
+                ASC: Number((adminMarkUpAmount + agentMarkUpAmount).toFixed(2)),
                 FareComponent: {}
             };
         });
@@ -413,7 +413,7 @@ export class AlhindAPI {
                     HiddenStops: segment?.hiddenStops || [],
                     TotalMilesFlown: segment?.Distance || 0,
                     SegmentCode: {
-                        bookingCode: segment.RBD || 'Y',
+                        bookingCode: segment.RBD || null,
                         cabinCode: 'Y',
                         mealCode: segment.MealKey,
                         seatsAvailable: availableSeat
@@ -452,12 +452,12 @@ export class AlhindAPI {
             CarrierName,
             Cabinclass: FareName,
             Currency: agentdata?.currency,
-            BaseFare: Number(equivalentAmount).toFixed(2),
-            Taxes : Number(Taxes).toFixed(2),
+            BaseFare: Number(equivalentAmount.toFixed(2)),
+            Taxes : Number(Taxes.toFixed(2)),
             NetFare,
-            GrossFare: Number(TotalFare).toFixed(2),
+            GrossFare: Number(TotalFare.toFixed(2)),
             Fees,
-            MarkUp: Number(-DiscountAmount).toFixed(2),
+            MarkUp: Number(-DiscountAmount.toFixed(2)),
             ConversionRate : conversionRate,
             TimeLimit: '',
             Refundable: isRefundable,

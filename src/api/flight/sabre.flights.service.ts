@@ -10,6 +10,7 @@ import { BookingService } from '../booking/booking.service';
 import { SabreUtils } from './sabre.flight.utils';
 import { FlightSearchModel } from './dto/search-flight.dto';
 import { SearchhistoryService } from '../searchhistory/searchhistory.service';
+import { CurrencyConverter } from '../currency/entities/currency.entity';
 dotenv.config()
 
 @Injectable()
@@ -17,6 +18,8 @@ export class SabreService {
     constructor(
       @InjectRepository(BookingModel)
       private readonly bookingRepository: Repository<BookingModel>,
+      @InjectRepository(CurrencyConverter)
+      private readonly currencyRepository: Repository<CurrencyConverter>,
       private readonly passengerService: PassengerService,
       private readonly bookingService: BookingService,
       private readonly sabreUtils: SabreUtils,
@@ -1370,6 +1373,11 @@ export class SabreService {
 
     const getBooking = await this.checkpnr(pnr);
 
+    let convertionRate = 1;
+    if(agentdata.currency === 'AED'){
+      convertionRate = (await this.currencyRepository.findOne({where: { airline: 'IM' }})).exchange_rate || 1;
+    }
+
     try {
       if (getBooking?.isTicketed === false && getBooking?.fares && getBooking?.journeys) {
         const booking = await this.bookingRepository.find({order: { id: 'DESC' }, take : 1});
@@ -1424,9 +1432,9 @@ export class SabreService {
         for (const item of getBooking?.fares) {
           const pax = {
             "PaxType": "ADT",
-            "BaseFare": item.totals.subtotal,
-            "Taxes": item.totals.taxes,
-            "TotalFare": item.totals.total,
+            "BaseFare": item.totals.subtotal / convertionRate,
+            "Taxes": item.totals.taxes / convertionRate,
+            "TotalFare": item.totals.total / convertionRate,
             "PaxCount": adult,
             "Bag": [
               {
@@ -1476,8 +1484,8 @@ export class SabreService {
           refundable: getBooking?.fareRules[0].isRefundable || false,
           arrto: getBooking?.journeys[0]?.lastAirportCode ||'',
           triptype: TripType,
-          netfare: getBooking?.payments?.flightTotals[0].total || 0,
-          grossfare: getBooking?.payments?.flightTotals[0].total || 0,
+          netfare: (getBooking?.payments?.flightTotals[0].total || 0) / convertionRate,
+          grossfare: (getBooking?.payments?.flightTotals[0].total || 0) / convertionRate,
           status: "Hold",
           name: getBooking?.travelers[0]?.identityDocuments[0].givenName+' '+getBooking?.travelers[0]?.identityDocuments[0].surname ||'',
           email: email || 'N/A',
@@ -1490,7 +1498,8 @@ export class SabreService {
           itenary: itenary,
           flightdata: getBooking?.flights,
           flightdate: getBooking?.journeys[0]?.departureDate ||'',
-          companyname: agentdata.company
+          companyname: agentdata.company,
+          imported: true,
         }
 
         const passengerData = getBooking?.travelers;
@@ -1502,7 +1511,7 @@ export class SabreService {
         return{
           "status": "error",
           "error": 'PNR Cannot Import Failed',
-          "message": "Fares may be not loaded or segment notavailable or already ticketd",
+          "message": "Fares may be not loaded or segment not available or already ticketd",
         };
       }
     }catch (error) {
@@ -1577,14 +1586,11 @@ export class SabreService {
   }
 
   async checkpnr(pnr: string){
-
     const payload ={
       confirmationId: pnr
     };
 
-    
     const sabreToken = await this.restToken();
-
     let sabreflightrequest = {
       method: 'post',
       maxBodyLength: Infinity,
@@ -1605,156 +1611,5 @@ export class SabreService {
         throw error;
       }
 
-  }
-
-  async airticketing(BookingData){
-
-    const adult = BookingData.adultcount;
-    const child = BookingData.childcount;
-    const infant = BookingData.infantcount;
-    const pnr = BookingData.pnr;
-
-    let passengerArray = [];
-
-    if (adult > 0 && child > 0 && infant > 0) {
-
-      passengerArray=[{ Number: 1 }, { Number: 2 }, { Number: 3 }];
-
-    } else if (adult > 0 && child == 0) {
-      passengerArray=[{ Number: 1 }];
-    } else if (adult > 0 && child > 0) {
-      passengerArray=[{ Number: 1 }, { Number: 2 }];
-    } else if (adult > 0 && infant > 0) {
-      passengerArray=[{ Number: 1 }, { Number: 2 }];
-    }
-
-    const payload = {
-      "AirTicketRQ":{
-        "version":"1.3.0",
-        "targetCity": process.env.SABRE_PCC,
-        "DesignatePrinter":{
-            "Printers":{
-              "Ticket":{
-                  "CountryCode": process.env.SABRE_PCC_COUNTRY
-              },
-              "Hardcopy":{
-                  "LNIATA": process.env.SABRE_LNIATA
-              },
-              "InvoiceItinerary":{
-                  "LNIATA": process.env.SABRE_LNIATA
-              }
-            }
-        },
-        "Itinerary":{
-            "ID": pnr
-        },
-        "Ticketing":[
-            {
-              "MiscQualifiers":{
-                  "Commission":{
-                    "Percent":7
-                  }
-              },
-              "PricingQualifiers": {
-                "PriceQuote": [
-                  {
-                    "Record": passengerArray
-                  }
-                ]
-              }
-            }         
-        ],
-        "PostProcessing":{
-            "EndTransaction":{
-              "Source":{
-                  "ReceivedFrom":"SABRE WEB"
-              }
-            }
-        }
-      }
-    };
-
-    const sabreToken = await this.restToken(); 
-
-    let sabreissuerequest = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: process.env.SABRE_AIRTICKETING_ENDPOINT,
-      headers: { 
-        'Content-Type': 'application/json', 
-        'Conversation-ID': '2021.01.DevStudio', 
-        'Authorization': `Bearer ${sabreToken}`, 
-      },
-      data : payload
-    };
-  
-      try {
-        const ticketing_response = await axios.request(sabreissuerequest);
-        const get_ticket_data = ticketing_response.data;
-
-       // console.log(JSON.stringify(get_ticket_data))
-        if(get_ticket_data.AirTicketRS.Summary){
-
-          const allticket_data = [];
-          const extractedData = get_ticket_data.AirTicketRS.Summary.map((item) => {
-            const givenName = item.FirstName;
-            const surname = item.LastName;
-            const ticketNumber = item.DocumentNumber;
-            const ticketCopy = `${givenName}/${surname}-${ticketNumber}`;
-            allticket_data.push(ticketCopy);
-
-          });
-
-          BookingData['ticketcopy'] = allticket_data.join(' ,');
-          BookingData['ticketed_at'] = get_ticket_data.AirTicketRS.Summary[0].LocalIssueDateTime; 
-          BookingData['status'] = 'Ticketed';
-
-          await this.bookingRepository.update(BookingData.id, BookingData);
-          return get_ticket_data;
-
-        }
-
-        return get_ticket_data;
-
-      }catch (error) {
-        console.error(error);
-        throw error;
-      }
-    
-  }
-
-  async airvoid(pnr : string){
-    const payload ={
-      confirmationId: pnr,
-      "retrieveBooking": true,
-      "cancelAll": true,
-      "flightTicketOperation": "VOID",
-      "errorHandlingPolicy": "HALT_ON_ERROR"
-    };
-
-    
-    const sabreToken = await this.restToken(); 
-
-    let sabrevoidrequest = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: process.env.SABRE_AIRVOID_ENDPOINT,
-      headers: { 
-        'Content-Type': 'application/json', 
-        'Conversation-ID': '2021.01.DevStudio', 
-        'Authorization': `Bearer ${sabreToken}`, 
-      },
-      data : payload
-    };
-  
-      try {
-        const void_response = await axios.request(sabrevoidrequest);
-        const voidreponse = void_response.data;
-        return voidreponse;
-      }catch (error) {
-        console.error(error);
-        throw error;
-      }
-    
   }
 }
