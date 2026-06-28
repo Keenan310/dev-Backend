@@ -195,6 +195,7 @@ export class SabreService {
     
     try {
       const response = await axios.request(shoppingrequest);
+      return response?.data;
       return await this.sabreUtils.restBFMParser(agentdata, flightDto, response?.data);
     } catch (e) {
       return e;
@@ -1392,7 +1393,10 @@ export class SabreService {
         const rawphone = getBooking?.specialServices?.find(item => item.code === 'CTCM')?.message || '';
 
         if(!rawemail){
-          throw new NotFoundException("CTCE Email not found");
+          return {
+            status: "error",
+            message: "CTCE Email not found"
+          };
         }
 
         let email : string='';
@@ -1403,7 +1407,10 @@ export class SabreService {
 
         let phone : string = '';
         if(!rawphone){
-          throw new NotFoundException("CTCM Mobile not found");
+          return {
+            status: "error",
+            message: "CTCM Mobile not found"
+          };
         }
         if(rawphone != ''){
           phone = rawphone.replace(/\/\//g,'');

@@ -79,6 +79,8 @@ export class FlightService {
         throw new UnauthorizedException();
       }
 
+      return this.sabreService.shopping(agent, flightDto);
+
       this.searchhistoryService.create(agent, flightDto).catch(
         console.error,
       );
